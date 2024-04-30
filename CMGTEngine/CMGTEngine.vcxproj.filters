@@ -1,0 +1,69 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="core">
+      <UniqueIdentifier>{b6ff3071-bce0-4b22-a6db-aec1aa98afe5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="shaders">
+      <UniqueIdentifier>{6c279e1d-56e5-43be-b9ba-791de540a9d0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game">
+      <UniqueIdentifier>{3f0fb5d9-8477-498f-9f8d-3a1ea7609e1a}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="core\Game.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="core\Window.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="core\InstanceAPI.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="core\VulkanInstance.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="core\ShaderProgram.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\FirstGame.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="core\Game.hpp">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\Window.hpp">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\InstanceAPI.hpp">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\VulkanInstance.hpp">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\ShaderProgram.hpp">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\config.hpp">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\FirstGame.hpp">
+      <Filter>Game</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="shaders\BasicVertexShader.vert">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\BasicFragmentShader.frag">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\compile.bat">
+      <Filter>shaders</Filter>
+    </None>
+  </ItemGroup>
+</Project>
