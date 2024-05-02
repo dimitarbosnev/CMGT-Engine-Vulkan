@@ -9,28 +9,29 @@
 using namespace std;
 namespace cmgt
 {
-    class Window
-    {
-    private:
-        GLFWwindow* window;
+	class Window
+	{
+	private:
+		GLFWwindow* window;
 
-        void InitWindow();
+		void InitWindow();
 
-        Window(const Window&) = delete;
-        Window& operator=(const Window&) = delete;
-    public:
-        Window(int Width, int Height, string WindowName);
-        ~Window();
+		Window(const Window&) = delete;
+		Window& operator=(const Window&) = delete;
+	public:
+		Window(int Width, int Height, string WindowName);
+		~Window();
 
-        const int _width;
-        const int _height;
-        const string windowName;
+		const int _width;
+		const int _height;
+		const string windowName;
 
-        bool isOpened();
-        void update();
-        void close();
+		bool isOpened();
+		void update();
+		void close();
 
-        void initVKSurface(VkInstance& instance, VkSurfaceKHR& surface);
-        void GetFrameBuffer(int& width, int& height);
-    };
-} 
+		void initVKSurface(VkInstance& instance, VkSurfaceKHR& surface);
+		void GetFrameBuffer(int& width, int& height);
+		VkExtent2D getWindiwExtend() { return { static_cast<uint32_t>(_width), static_cast<uint32_t>(_height) }; }
+	};
+}

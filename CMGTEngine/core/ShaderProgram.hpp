@@ -10,7 +10,6 @@ namespace cmgt {
 	{
 		VkViewport viewport;
 		VkRect2D scissor;
-		VkPipelineViewportStateCreateInfo viewportInfo;
 		VkPipelineInputAssemblyStateCreateInfo inputAssemblyInfo;
 		VkPipelineRasterizationStateCreateInfo rasterizationInfo;
 		VkPipelineMultisampleStateCreateInfo multisampleInfo;
@@ -23,7 +22,7 @@ namespace cmgt {
 	};
 	class ShaderProgram {
 	public:
-		ShaderProgram(InstanceAPI& instance, const string& vertexFile, const string& fragmentFile, const ShaderProgramInfo info);
+		ShaderProgram(VulkanInstance& instance, const string& vertexFile, const string& fragmentFile, const ShaderProgramInfo info);
 		~ShaderProgram();
 
 		static ShaderProgramInfo defaultShaderProgramInfo(uint32_t width, uint32_t height);
@@ -32,7 +31,7 @@ namespace cmgt {
 
 		void CreateShaderProgram(const string& vertexFile, const string& fragmentFile, const ShaderProgramInfo& info);
 		void CreateShaderModule(const vector<char>& shader, VkShaderModule* module);
-		InstanceAPI& _instance;
+		VulkanInstance& instance;
 		VkPipeline graphicsPipeline;
 		VkShaderModule vertexShaderModule;
 		VkShaderModule fragmentShaderModule;

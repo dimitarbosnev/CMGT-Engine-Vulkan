@@ -19,9 +19,6 @@
     <ClCompile Include="core\Window.cpp">
       <Filter>core</Filter>
     </ClCompile>
-    <ClCompile Include="core\InstanceAPI.cpp">
-      <Filter>core</Filter>
-    </ClCompile>
     <ClCompile Include="core\VulkanInstance.cpp">
       <Filter>core</Filter>
     </ClCompile>
@@ -31,15 +28,15 @@
     <ClCompile Include="Game\FirstGame.cpp">
       <Filter>Game</Filter>
     </ClCompile>
+    <ClCompile Include="core\VulkanSwapchain.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\Game.hpp">
       <Filter>core</Filter>
     </ClInclude>
     <ClInclude Include="core\Window.hpp">
-      <Filter>core</Filter>
-    </ClInclude>
-    <ClInclude Include="core\InstanceAPI.hpp">
       <Filter>core</Filter>
     </ClInclude>
     <ClInclude Include="core\VulkanInstance.hpp">
@@ -53,6 +50,9 @@
     </ClInclude>
     <ClInclude Include="Game\FirstGame.hpp">
       <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="core\VulkanSwapchain.hpp">
+      <Filter>core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

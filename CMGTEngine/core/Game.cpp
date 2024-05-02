@@ -2,10 +2,10 @@
 
 
 namespace cmgt {
-	Game::Game(int Width,int Height,string Name,bool debug) {
+	Game::Game(int Width,int Height,string Name) {
 		
 		gameWindow = new Window(Width, Height, Name);
-		gameAPI = new VulkanInstance(*gameWindow, debug);
+		
 	}
 
 	Game::~Game() {
@@ -14,7 +14,8 @@ namespace cmgt {
 
 	void Game::initEngine() {
 		cout << "Initializing CMGT Engine...\n";
-		gameAPI->initAPI();
+		vulkanAPI = new VulkanInstance(*gameWindow);
+		vulkanSwapChian = new VulkanSwapchain(*vulkanAPI, gameWindow->getWindiwExtend());
 		cout << "CMGT Engine Initialized!\n";
 	}
 
@@ -22,16 +23,18 @@ namespace cmgt {
 		initEngine();
 		OnInit();
 		OnStart();
-		gameWindow->update();
-
+		while (!gameWindow->isOpened()) {
+			gameWindow->update();
+			OnUpdate();
+			OnRender();
+		}
 		exit();
 	}
 
 	void Game::exit() {
-		gameAPI->destroyAPI();
 		gameWindow->close();
 		delete gameWindow;
-		delete gameAPI;
+		delete vulkanAPI;
 	}
 
 }

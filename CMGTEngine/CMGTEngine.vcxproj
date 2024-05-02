@@ -78,6 +78,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -94,6 +95,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -111,7 +113,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>
       </PrecompiledHeaderFile>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalIncludeDirectories>%VULKAN_SDK%\Include;%VULKAN_SDK%\..\glm;%VULKAN_SDK%\..\glfw-3.4\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
@@ -131,6 +133,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -141,9 +144,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="core\Game.cpp" />
-    <ClCompile Include="core\InstanceAPI.cpp" />
     <ClCompile Include="core\ShaderProgram.cpp" />
     <ClCompile Include="core\VulkanInstance.cpp" />
+    <ClCompile Include="core\VulkanSwapchain.cpp" />
     <ClCompile Include="core\Window.cpp" />
     <ClCompile Include="Game\FirstGame.cpp" />
     <ClCompile Include="main.cpp" />
@@ -151,9 +154,9 @@
   <ItemGroup>
     <ClInclude Include="core\config.hpp" />
     <ClInclude Include="core\Game.hpp" />
-    <ClInclude Include="core\InstanceAPI.hpp" />
     <ClInclude Include="core\ShaderProgram.hpp" />
     <ClInclude Include="core\VulkanInstance.hpp" />
+    <ClInclude Include="core\VulkanSwapchain.hpp" />
     <ClInclude Include="core\Window.hpp" />
     <ClInclude Include="Game\FirstGame.hpp" />
   </ItemGroup>

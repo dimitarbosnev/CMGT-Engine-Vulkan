@@ -27,9 +27,7 @@ namespace cmgt{
     }
 
     void Window::update() {
-        while (!isOpened()) {
             glfwPollEvents();
-        }
     }
 
     void Window::close() {

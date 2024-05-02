@@ -5,7 +5,7 @@ using namespace glm;
 class FirstGame : public Game
 {
 public:
-	FirstGame(ivec2 resolution, string name, bool debug = false);
+	FirstGame(ivec2 resolution, string name);
 	~FirstGame();
 protected:
 	void OnInit() override;
