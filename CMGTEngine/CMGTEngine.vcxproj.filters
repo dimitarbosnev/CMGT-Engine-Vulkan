@@ -31,6 +31,21 @@
     <ClCompile Include="core\VulkanSwapchain.cpp">
       <Filter>core</Filter>
     </ClCompile>
+    <ClCompile Include="core\GameObject.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="core\WorldSeed.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="core\Component.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="core\Camera.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="core\Light.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\Game.hpp">
@@ -54,6 +69,22 @@
     <ClInclude Include="core\VulkanSwapchain.hpp">
       <Filter>core</Filter>
     </ClInclude>
+    <ClInclude Include="core\GameObject.hpp">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\WorldSeed.hpp">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\Component.hpp">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="glm.hpp" />
+    <ClInclude Include="core\Camera.hpp">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\Light.hpp">
+      <Filter>core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\BasicVertexShader.vert">
@@ -62,7 +93,7 @@
     <None Include="shaders\BasicFragmentShader.frag">
       <Filter>shaders</Filter>
     </None>
-    <None Include="shaders\compile.bat">
+    <None Include="shaders\compile_shaders.bat">
       <Filter>shaders</Filter>
     </None>
   </ItemGroup>

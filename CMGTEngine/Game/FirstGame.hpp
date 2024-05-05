@@ -12,6 +12,7 @@ protected:
 	void OnStart() override;
 	void OnUpdate() override;
 	void OnRender() override;
+	void OnExit() override;
 private:
 
 };

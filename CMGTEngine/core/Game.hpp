@@ -9,9 +9,12 @@
 #include<algorithm> 
 #include<limits>
 #include<map>
+#include<array>
 #include "Window.hpp"
 #include "VulkanInstance.hpp"
 #include  "VulkanSwapchain.hpp"
+#include "ShaderProgram.hpp"
+
 using namespace std;
 
 namespace cmgt {
@@ -28,16 +31,19 @@ namespace cmgt {
 		virtual void OnStart() = 0;
 		virtual void OnUpdate() = 0;
 		virtual void OnRender() = 0;
+		virtual void OnExit() = 0;
 		Window* gameWindow;
 		VulkanInstance* vulkanAPI;
 		VulkanSwapchain* vulkanSwapChian;
 		VkPipelineLayout pipelineLayout;
+		ShaderProgram* shader;
 		vector<VkCommandBuffer> commandBuffers;
 	private:
 		void initEngine();
 		void createPipelineLayout();
 		void createPipeline();
-		void createFrameBufferCommands();
+		void createCommandBuffers();
+		void drawFrame();
 
 		Game(const Game&) = delete;
 		Game& operator=(const Game&) = delete;

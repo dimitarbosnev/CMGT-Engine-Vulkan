@@ -19,11 +19,11 @@ namespace cmgt
 		Window(const Window&) = delete;
 		Window& operator=(const Window&) = delete;
 	public:
-		Window(int Width, int Height, string WindowName);
+		Window(int Width, int Height, const string& WindowName);
 		~Window();
 
-		const int _width;
-		const int _height;
+		const int Width;
+		const int Height;
 		const string windowName;
 
 		bool isOpened();
@@ -32,6 +32,6 @@ namespace cmgt
 
 		void initVKSurface(VkInstance& instance, VkSurfaceKHR& surface);
 		void GetFrameBuffer(int& width, int& height);
-		VkExtent2D getWindiwExtend() { return { static_cast<uint32_t>(_width), static_cast<uint32_t>(_height) }; }
+		VkExtent2D getWindiwExtend() { return { static_cast<uint32_t>(Width), static_cast<uint32_t>(Height) }; }
 	};
 }

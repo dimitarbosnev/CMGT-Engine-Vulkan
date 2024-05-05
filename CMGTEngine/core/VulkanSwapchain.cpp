@@ -266,7 +266,7 @@ namespace cmgt {
 	void VulkanSwapchain::createFramebuffers() {
 		swapChainFramebuffers.resize(imageCount());
 		for (size_t i = 0; i < imageCount(); i++) {
-			std::array<VkImageView, 2> attachments = { swapChainImageViews[i], depthImageViews[i] };
+			array<VkImageView, 2> attachments = { swapChainImageViews[i], depthImageViews[i] };
 
 			VkExtent2D swapChainExtent = getSwapChainExtent();
 			VkFramebufferCreateInfo framebufferInfo = {};

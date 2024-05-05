@@ -6,28 +6,31 @@
 namespace cmgt {
 
 	ShaderProgram::ShaderProgram(VulkanInstance& instance, const string& vertexFile,
-		const string& fragmentFile, const ShaderProgramInfo info): instance(instance)  {
+		const string& fragmentFile, const ShaderProgramInfo info) : instance(instance) {
 		CreateShaderProgram(vertexFile, fragmentFile, info);
 	}
 
-	ShaderProgram::~ShaderProgram(){
+	ShaderProgram::~ShaderProgram() {
 		vkDestroyShaderModule(instance.device(), vertexShaderModule, nullptr);
 		vkDestroyShaderModule(instance.device(), fragmentShaderModule, nullptr);
 		vkDestroyPipeline(instance.device(), graphicsPipeline, nullptr);
-
+		cout << "Shader destroyed" << endl;
 	}
 
-	vector<char> ShaderProgram::readFile(const string& filepath) {
 
-		ifstream file(filepath, std::ios_base::ate | std::ios_base::binary);
+	vector<char> ShaderProgram::readFile(const string& filename) {
+		std::ifstream file(filename, ios::ate | ios::binary);
 
-		if(!file.is_open())
-			throw std::runtime_error("failed to open file!");
+		if (!file.is_open()) {
+			throw runtime_error("failed to open file!");
+		}
 
 		size_t fileSize = (size_t)file.tellg();
 		vector<char> buffer(fileSize);
+
 		file.seekg(0);
 		file.read(buffer.data(), fileSize);
+
 		file.close();
 
 		return buffer;
@@ -108,10 +111,13 @@ namespace cmgt {
 		createInfo.codeSize = shader.size();
 		createInfo.pCode = reinterpret_cast<const uint32_t*>(shader.data());
 
-		VkShaderModule shaderModule;
-		if (vkCreateShaderModule(instance.device(), &createInfo, nullptr, &shaderModule) != VK_SUCCESS) {
+		if (vkCreateShaderModule(instance.device(), &createInfo, nullptr, module) != VK_SUCCESS) {
 			throw std::runtime_error("failed to create shader module!");
 		}
+	}
+
+	void ShaderProgram::bind(VkCommandBuffer commandBuffer) {
+		vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS,graphicsPipeline);
 	}
 
 	ShaderProgramInfo ShaderProgram::defaultShaderProgramInfo(uint32_t width, uint32_t height) {

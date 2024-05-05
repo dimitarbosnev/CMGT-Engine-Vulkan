@@ -13,7 +13,8 @@ void FirstGame::OnInit() {
 	string vert = "vert.spv";
 	string frag = "frag.spv";
 
-	ShaderProgram* shader = new ShaderProgram(*vulkanAPI, vert, frag,ShaderProgram::defaultShaderProgramInfo(gameWindow->_width, gameWindow->_height));
+	//ShaderProgram* shader = new ShaderProgram(*vulkanAPI, vert, frag,ShaderProgram::defaultShaderProgramInfo(gameWindow->Width, gameWindow->Height));
+	//delete shader;
 }
 
 void FirstGame::OnStart() {
@@ -25,5 +26,9 @@ void FirstGame::OnUpdate() {
 }
 
 void FirstGame::OnRender() {
+
+}
+
+void FirstGame::OnExit(){
 
 }

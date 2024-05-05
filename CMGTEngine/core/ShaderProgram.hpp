@@ -25,6 +25,7 @@ namespace cmgt {
 		ShaderProgram(VulkanInstance& instance, const string& vertexFile, const string& fragmentFile, const ShaderProgramInfo info);
 		~ShaderProgram();
 
+		void bind(VkCommandBuffer commandBuffer);
 		static ShaderProgramInfo defaultShaderProgramInfo(uint32_t width, uint32_t height);
 	private:
 		static vector<char> readFile(const string& filepath);

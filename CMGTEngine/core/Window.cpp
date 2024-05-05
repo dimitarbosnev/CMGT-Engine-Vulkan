@@ -2,7 +2,7 @@
 
 namespace cmgt{
 
-    Window::Window(int Width, int Height, string Name) : _width(Width), _height(Height), windowName(Name) {
+    Window::Window(int pWidth, int pHeight, const string& pName) : Width(pWidth), Height(pHeight), windowName(pName) {
         InitWindow();
     }
 
@@ -18,7 +18,7 @@ namespace cmgt{
         glfwWindowHint(GLFW_CLIENT_API,GLFW_NO_API);
         glfwWindowHint(GLFW_RESIZABLE,GLFW_FALSE);
 
-        window = glfwCreateWindow(_width, _height, windowName.c_str(),nullptr,nullptr);
+        window = glfwCreateWindow(Width, Height, windowName.c_str(),nullptr,nullptr);
         cout << "Window Initialized!\n";
     }
 
