@@ -1,3 +1,4 @@
+#pragma once
 #include "WorldSeed.hpp"
 
 namespace cmgt{

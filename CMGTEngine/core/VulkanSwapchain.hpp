@@ -1,17 +1,16 @@
+#ifndef VULKANSWAPCHIAN_HPP
+#define VULKANSWAPCHIAN_HPP
+
 #pragma once
-
 #include "VulkanInstance.hpp"
-
-// vulkan headers
+#include "config.hpp"
 #include <vulkan/vulkan.h>
-
-// std lib headers
 #include <string>
 #include <vector>
 
 namespace cmgt {
 
-	class VulkanSwapchain {
+	class VulkanSwapchain : public Singleton<VulkanSwapchain>{
 	public:
 		static constexpr int MAX_FRAMES_IN_FLIGHT = 2;
 
@@ -78,3 +77,5 @@ namespace cmgt {
 	};
 
 }
+
+#endif //VULKANSWAPCHIAN_HPP

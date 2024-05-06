@@ -1,6 +1,5 @@
 #pragma once
 #include "GameObject.hpp"
-#include <iostream>
 #include "Component.hpp"
 namespace cmgt{
 
@@ -23,8 +22,7 @@ namespace cmgt{
         _children.clear();
 
         while (_components.size() > 0) {
-            Component* component = _components[0];
-            delete component;
+            delete _components[0];
         }
         _components.clear();
         //do not forget to delete behaviour, material, mesh, collider manually if required!
@@ -67,14 +65,16 @@ namespace cmgt{
     }
 
 
-    void GameObject::addComponent(Component* pBehaviour)
+    void GameObject::addComponent(Component& pBehaviour)
     {
-        _components.push_back(pBehaviour);
-        pBehaviour->setOwner(this);
+        _components.push_back(&pBehaviour);
+
+        pBehaviour.setOwner(this);
     }
 
-    template<typename T> T* GameObject::getComponent()
+    template<class T> T* GameObject::getComponent()
     {
+        static_assert(is_base_of<Component, T>::value, "type parameter of this class must derive from Component");
         const auto findType = [](const Component* a) {
             return typeid(T) == typeid(a);
             };

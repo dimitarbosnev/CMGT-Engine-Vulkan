@@ -1,14 +1,16 @@
-#pragma once
-#include "../glm.hpp"
-#include "GameObject.hpp"
-#include "Component.hpp"
-#include "WorldSeed.hpp"
-/**
- * Exercise for the student: implement the Light class...
- * Imagine things like setLightType, setLightIntensity, setFalloffAngle etc, see the corresponding lectures
- */
+#ifndef LIGHT_HPP
+#define LIGHT_HPP
 
+#pragma once
+#include <string>
+#include "../glm.hpp"
+#include "Component.hpp"
+
+using namespace glm;
+using namespace std;
 namespace cmgt {
+
+	class GameObject;
 
 	enum LightType {
 		Ambient = 0,
@@ -66,3 +68,4 @@ namespace cmgt {
 
 	};
 }
+#endif // LIGHT_HPP

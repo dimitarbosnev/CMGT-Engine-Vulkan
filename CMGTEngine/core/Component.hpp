@@ -1,32 +1,31 @@
-#pragma once
-#include "../glm.hpp"
-#include <string>
-#include <vector>
-#include "GameObject.hpp"
-using namespace std;
-using namespace glm;
+#ifndef COMPONENT_HPP
+#define COMPONENT_HPP
+
 namespace cmgt
 {
-    class Component
-    {
-    public:
+	class GameObject;
 
-        Component(GameObject* pOwner = nullptr);
-        virtual ~Component() = 0;
+	class Component
+	{
+	public:
 
-        //for internal administration, do not use directly
-        virtual void setOwner(GameObject* pGameObject);
+		Component(GameObject* pOwner = nullptr);
+		virtual ~Component();
 
-        //behaviour should be able to update itself every step and MUST be implemented
-        virtual void update(float pStep) = 0;
-    protected:
+		//for internal administration, do not use directly
+		virtual void setOwner(GameObject* pGameObject);
 
-        GameObject* _owner;
+		//behaviour should be able to update itself every step and MUST be implemented
+		virtual void update(float pStep);
+	protected:
 
-    private:
+		GameObject* _owner;
 
-        //disallow copy and assignment
-        Component(const Component&) = delete;
-        Component& operator=(const Component&) = delete;
-    };
-}
+	private:
+
+		//disallow copy and assignment
+		Component(const Component&) = delete;
+		Component& operator=(const Component&) = delete;
+	};
+} 
+#endif // COMPONENT_HPP

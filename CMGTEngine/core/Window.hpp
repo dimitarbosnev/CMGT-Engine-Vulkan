@@ -1,15 +1,18 @@
+#ifndef WINDOW_HPP
+#define WINDOW_HPP
+
 #pragma once
 #define VK_USE_PLATFORM_WIN32_KHR
 #define GLFW_INCLUDE_VULKAN
 #define GLFW_EXPOSE_NATIVE_WIN32
 #include <GLFW/glfw3.h>
-#include <GLFW/glfw3native.h>
 #include<iostream>
 #include<string>
+#include "config.hpp"
 using namespace std;
 namespace cmgt
 {
-	class Window
+	class Window : public Singleton<Window>
 	{
 	private:
 		GLFWwindow* window;
@@ -35,3 +38,4 @@ namespace cmgt
 		VkExtent2D getWindiwExtend() { return { static_cast<uint32_t>(Width), static_cast<uint32_t>(Height) }; }
 	};
 }
+#endif //WINDOW_HPP

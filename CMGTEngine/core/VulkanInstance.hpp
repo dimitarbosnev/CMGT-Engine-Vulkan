@@ -1,3 +1,6 @@
+#ifndef VULKANINSTANCE_HPP
+#define VULKANINSTANCE_HPP
+
 #pragma once
 #define GLFW_INCLUDE_VULKAN
 #define NOMINMAX
@@ -14,6 +17,7 @@
 #include <iostream>
 #include <unordered_set>
 #include "Window.hpp"
+#include "config.hpp"
 namespace cmgt {
 
 	struct SwapChainSupportDetails {
@@ -30,7 +34,7 @@ namespace cmgt {
 		bool isComplete() { return graphicsFamilyHasValue && presentFamilyHasValue; }
 	};
 
-	class VulkanInstance {
+	class VulkanInstance : public Singleton<VulkanInstance>{
 	public:
 #ifdef NDEBUG
 		const bool enableValidationLayers = false;
@@ -114,3 +118,4 @@ namespace cmgt {
 	};
 
 }
+#endif //VULKANINSTANCE_HPP

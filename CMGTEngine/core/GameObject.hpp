@@ -1,16 +1,21 @@
+#ifndef GAMEOBJECT_HPP
+#define GAMEOBJECT_HPP
+
+
+
 #pragma once
 #include "..\glm.hpp"
 #include <string>
 #include <vector>
-#include <unordered_map>
 using namespace std;
 using namespace glm;
 
-class WorldSeed;
-class Light;
-class Component;
 namespace cmgt
 {
+	class WorldSeed;
+	class Light;
+	class Component;
+
 	class GameObject
 	{
 	public:
@@ -19,6 +24,7 @@ namespace cmgt
 
 		void setName(const string& pName);
 		string getName() const;
+
 
 		//contains local rotation, scale, position
 		void setTransform(const mat4& pTransform);
@@ -38,8 +44,9 @@ namespace cmgt
 		void Rotate(float pAngle, vec3 pAxis);
 		void Scale(vec3 pScale);
 
-		void addComponent(Component* pBehaviour);
-		template<typename T>  T* getComponent();
+
+		void addComponent(Component& pBehaviour);
+		template<class T>  T* getComponent();
 		virtual void update(float pStep);
 
 		//child management, note that add/remove and setParent are closely coupled.
@@ -81,3 +88,4 @@ namespace cmgt
 		GameObject& operator= (const GameObject&) = delete;
 	};
 }
+#endif // GAMEOBJECT_HPP

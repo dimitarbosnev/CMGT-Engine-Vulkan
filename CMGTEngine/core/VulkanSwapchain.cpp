@@ -1,6 +1,5 @@
+#pragma once
 #include "VulkanSwapchain.hpp"
-
-// std
 #include <array>
 #include <cstdlib>
 #include <cstring>

@@ -1,15 +1,14 @@
+#pragma once
 #include "Window.hpp"
 
 namespace cmgt{
-
     Window::Window(int pWidth, int pHeight, const string& pName) : Width(pWidth), Height(pHeight), windowName(pName) {
         InitWindow();
     }
 
     Window::~Window() {
         glfwDestroyWindow(window);
-        glfwTerminate();
-        cout << "Window destroyed\n";
+        cout << "WINDOW DESTROYED\n";
     }
 
     void Window::InitWindow() {

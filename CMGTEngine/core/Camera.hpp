@@ -1,11 +1,17 @@
+#ifndef CAMERA_HPP
+#define CAMERA_HPP
+
+
 #pragma once
 #include <string>
 #include "Component.hpp"
-#include "GameObject.hpp"
 #include "../glm.hpp"
+
+
 using namespace std;
 using namespace glm;
 namespace cmgt {
+    class GmaeObject;
     class Camera : public Component
     {
     public:
@@ -27,4 +33,5 @@ namespace cmgt {
         Camera(const Camera&) = delete;
         Camera& operator= (const Camera&) = delete;
     };
-}
+} 
+#endif // CAMERA_HPP

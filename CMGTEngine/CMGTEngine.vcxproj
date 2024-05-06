@@ -175,10 +175,14 @@
   <ItemGroup>
     <ClCompile Include="core\Camera.cpp" />
     <ClCompile Include="core\Component.cpp" />
+    <ClCompile Include="core\config.cpp" />
     <ClCompile Include="core\Game.cpp" />
     <ClCompile Include="core\GameObject.cpp" />
     <ClCompile Include="core\Light.cpp" />
+    <ClCompile Include="core\Material.cpp" />
+    <ClCompile Include="core\Mesh.cpp" />
     <ClCompile Include="core\ShaderProgram.cpp" />
+    <ClCompile Include="core\Texture.cpp" />
     <ClCompile Include="core\VulkanInstance.cpp" />
     <ClCompile Include="core\VulkanSwapchain.cpp" />
     <ClCompile Include="core\Window.cpp" />
@@ -193,7 +197,10 @@
     <ClInclude Include="core\Game.hpp" />
     <ClInclude Include="core\GameObject.hpp" />
     <ClInclude Include="core\Light.hpp" />
+    <ClInclude Include="core\Material.hpp" />
+    <ClInclude Include="core\Mesh.hpp" />
     <ClInclude Include="core\ShaderProgram.hpp" />
+    <ClInclude Include="core\Texture.hpp" />
     <ClInclude Include="core\VulkanInstance.hpp" />
     <ClInclude Include="core\VulkanSwapchain.hpp" />
     <ClInclude Include="core\Window.hpp" />

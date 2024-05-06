@@ -1,3 +1,6 @@
+#ifndef GAME_HPP
+#define GAME_HPP
+
 #pragma once
 #define GLFW_INCLUDE_VULKAN
 #define NOMINMAX
@@ -12,13 +15,13 @@
 #include<array>
 #include "Window.hpp"
 #include "VulkanInstance.hpp"
-#include  "VulkanSwapchain.hpp"
+#include "VulkanSwapchain.hpp"
 #include "ShaderProgram.hpp"
-
+#include "config.hpp"
 using namespace std;
 
 namespace cmgt {
-	class Game
+	class Game : public Singleton<Game>
 	{
 	public:
 		Game(int Width, int Heigth, string Name);
@@ -50,3 +53,4 @@ namespace cmgt {
 	};
 
 }
+#endif //GAME_HPP

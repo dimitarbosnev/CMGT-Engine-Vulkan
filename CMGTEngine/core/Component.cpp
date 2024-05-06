@@ -1,3 +1,4 @@
+#pragma once
 #include "Component.hpp"
 
 namespace cmgt{
@@ -12,4 +13,6 @@ namespace cmgt{
     void Component::setOwner(GameObject* pOwner) {
         _owner = pOwner;
     }
+
+    void Component::update(float pStep) {}
 }

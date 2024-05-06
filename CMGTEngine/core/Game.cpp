@@ -1,13 +1,14 @@
+#pragma once
 #include "Game.hpp"
-
 
 namespace cmgt {
 	Game::Game(int Width,int Height,string Name) {	
 		gameWindow = new Window(Width, Height, Name);
+		Window* gameWindow2 = new Window(Width, Height, Name);
 	}
 
 	Game::~Game() {
-
+		glfwTerminate();
 		cout << "Game destroyed\n";
 	}
 

@@ -1,15 +1,20 @@
+#ifndef WORLDSEED_HPP
+#define WORLDSEED_HPP
+
 #pragma once
+#include "../glm.hpp"
 #include "GameObject.hpp"
-#include "Light.hpp"
-#include "Camera.hpp"
 #include <string>
 #include <vector>
+
 using namespace std;
 using namespace glm;
 
-class GmaeObject;
 namespace cmgt
 {
+    class Camera;
+    class Light;
+
     class WorldSeed : public GameObject
     {
     public:
@@ -33,3 +38,4 @@ namespace cmgt
         WorldSeed& operator=(const WorldSeed&);
     };
 }
+#endif // WORLDSEED_HPP

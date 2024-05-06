@@ -1,5 +1,7 @@
 #pragma once
 #include "Light.hpp"
+#include "GameObject.hpp"
+#include "WorldSeed.hpp"
 namespace cmgt {
 	Light::Light(const string& pName, const glm::vec3& pPosition, LightType type, GameObject* pOwner) : Component(pOwner) {
 	}
