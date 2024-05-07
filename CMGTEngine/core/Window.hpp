@@ -21,8 +21,9 @@ namespace cmgt
 
 		Window(const Window&) = delete;
 		Window& operator=(const Window&) = delete;
+		Window(int pWidth, int pHeight, const string& pName);
 	public:
-		Window(int Width, int Height, const string& WindowName);
+		static void InitializeWindow(int pWidth, int pHeight, const string& pName);
 		~Window();
 
 		const int Width;

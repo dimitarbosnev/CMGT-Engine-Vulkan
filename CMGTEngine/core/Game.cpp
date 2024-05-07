@@ -2,9 +2,8 @@
 #include "Game.hpp"
 
 namespace cmgt {
-	Game::Game(int Width,int Height,string Name) {	
-		gameWindow = new Window(Width, Height, Name);
-		Window* gameWindow2 = new Window(Width, Height, Name);
+	Game::Game(int pWidth,int pHeight,string pName) {
+		Window::InitializeWindow(pWidth, pHeight, pName);
 	}
 
 	Game::~Game() {
@@ -14,8 +13,8 @@ namespace cmgt {
 
 	void Game::initEngine() {
 		cout << "Initializing CMGT Engine...\n";
-		vulkanAPI = new VulkanInstance(*gameWindow);
-		vulkanSwapChian = new VulkanSwapchain(*vulkanAPI, gameWindow->getWindiwExtend());
+		VulkanInstance::InitializeVulkan();
+		VulkanSwapchain::InitializeSwapchain(Window::getInstance().getWindiwExtend());
 		createPipelineLayout();
 		createPipeline();
 		createCommandBuffers();
@@ -29,26 +28,29 @@ namespace cmgt {
 		pipelineLayoutInfo.pSetLayouts = nullptr;
 		pipelineLayoutInfo.pushConstantRangeCount = 0;
 		pipelineLayoutInfo.pPushConstantRanges = nullptr;
-		if (vkCreatePipelineLayout(vulkanAPI->device(), &pipelineLayoutInfo, nullptr, &pipelineLayout) != VK_SUCCESS)
+		if (vkCreatePipelineLayout(VulkanInstance::getInstance().device(), &pipelineLayoutInfo, nullptr, &pipelineLayout) != VK_SUCCESS)
 			throw runtime_error("failed to create pipelin layout");
 	}
 
 	void Game::createPipeline() {
-		auto pipelineConfig = ShaderProgram::defaultShaderProgramInfo(vulkanSwapChian->width(), vulkanSwapChian->height());
-		pipelineConfig.renderPass = vulkanSwapChian->getRenderPass();
+		VulkanSwapchain& swapchian = VulkanSwapchain::getInstance();
+		auto pipelineConfig = ShaderProgram::defaultShaderProgramInfo(swapchian.width(), swapchian.height());
+		pipelineConfig.renderPass = swapchian.getRenderPass();
 		pipelineConfig.pipelineLayout = pipelineLayout;
-		shader = new ShaderProgram(*vulkanAPI, "vert.spv", "frag.spv", pipelineConfig);
+		shader = new ShaderProgram(VulkanInstance::getInstance(), "vert.spv", "frag.spv", pipelineConfig);
 	}
 
 	void Game::createCommandBuffers() {
-		commandBuffers.resize(vulkanSwapChian->imageCount());
+		VulkanSwapchain& swapchian = VulkanSwapchain::getInstance();
+		VulkanInstance& instance = VulkanInstance::getInstance();
+		commandBuffers.resize(swapchian.imageCount());
 		VkCommandBufferAllocateInfo allocInfo{};
 		allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
 		allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-		allocInfo.commandPool = vulkanAPI->getCommandPool();
+		allocInfo.commandPool = instance.getCommandPool();
 		allocInfo.commandBufferCount = static_cast<uint32_t>(commandBuffers.size());
 
-		if (vkAllocateCommandBuffers(vulkanAPI->device(), &allocInfo, commandBuffers.data()) != VK_SUCCESS)
+		if (vkAllocateCommandBuffers(instance.device(), &allocInfo, commandBuffers.data()) != VK_SUCCESS)
 			throw runtime_error("failed to allocate command buffers!");
 
 		for (int i = 0; i < commandBuffers.size(); i++) {
@@ -60,10 +62,10 @@ namespace cmgt {
 
 			VkRenderPassBeginInfo renderPassInfo{};
 			renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-			renderPassInfo.renderPass = vulkanSwapChian->getRenderPass();
-			renderPassInfo.framebuffer = vulkanSwapChian->getFrameBuffer(i);
+			renderPassInfo.renderPass = swapchian.getRenderPass();
+			renderPassInfo.framebuffer = swapchian.getFrameBuffer(i);
 			renderPassInfo.renderArea.offset = { 0,0 };
-			renderPassInfo.renderArea.extent = vulkanSwapChian->getSwapChainExtent();
+			renderPassInfo.renderArea.extent = swapchian.getSwapChainExtent();
 
 			array<VkClearValue, 2> clearValues{};
 			clearValues[0].color = { 0.1f, 0.1f, 0.1f, 1.0f };
@@ -82,22 +84,23 @@ namespace cmgt {
 	}
 
 	void Game::drawFrame() {
+		VulkanSwapchain& swapchian = VulkanSwapchain::getInstance();
 		uint32_t imageIndex;
-		VkResult result = vulkanSwapChian->acquireNextImage(&imageIndex);
+		VkResult result = swapchian.acquireNextImage(&imageIndex);
 		if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR)
 			throw runtime_error("failed to accure swap chain image");
 
-		result = vulkanSwapChian->submitCommandBuffers(&commandBuffers[imageIndex], &imageIndex);
+		result = swapchian.submitCommandBuffers(&commandBuffers[imageIndex], &imageIndex);
 		if (result != VK_SUCCESS)
 			throw runtime_error("failed to present swap chian image!");
 	}
 
 	void Game::run() {
+
 		initEngine();
 		OnInit();
 		OnStart();
-		while (!gameWindow->isOpened()) {
-			gameWindow->update();
+		while (!Window::getInstance().isOpened()) {
 			OnUpdate();
 			OnRender();
 			drawFrame();
@@ -106,14 +109,19 @@ namespace cmgt {
 	}
 
 	void Game::exit() {
-		vkDeviceWaitIdle(vulkanAPI->device());
+		VulkanInstance& instance = VulkanInstance::getInstance();
+		Window& window = Window::getInstance();
+		VulkanSwapchain& swapchain = VulkanSwapchain::getInstance();
+		vkDeviceWaitIdle(instance.device());
 		OnExit();
-		vkDestroyPipelineLayout(vulkanAPI->device(), pipelineLayout, nullptr);
-		gameWindow->close();
-		delete gameWindow;
+		vkDestroyPipelineLayout(instance.device(), pipelineLayout, nullptr);
+		delete &window;
 		delete shader;
-		delete vulkanSwapChian;
-		delete vulkanAPI;
+		delete &swapchain;
+		delete &instance;
+
+		glfwTerminate();
+		cout << "GLFW Terminated!\n";
 	}
 
 }

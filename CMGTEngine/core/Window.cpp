@@ -2,13 +2,18 @@
 #include "Window.hpp"
 
 namespace cmgt{
-    Window::Window(int pWidth, int pHeight, const string& pName) : Width(pWidth), Height(pHeight), windowName(pName) {
+    void Window::InitializeWindow(int pWidth, int pHeight, const string& pName) 
+    { assignInstance(*(new Window(pWidth, pHeight, pName))); }  
+
+    Window::Window(int pWidth, int pHeight, const string& pName) 
+        : Width(pWidth), Height(pHeight), windowName(pName) {
         InitWindow();
     }
 
+
     Window::~Window() {
-        glfwDestroyWindow(window);
-        cout << "WINDOW DESTROYED\n";
+        close();
+        cout << "Window Destroyed!\n";
     }
 
     void Window::InitWindow() {
@@ -22,6 +27,7 @@ namespace cmgt{
     }
 
     bool Window::isOpened() {
+        update();
         return  glfwWindowShouldClose(window);
     }
 
@@ -31,8 +37,6 @@ namespace cmgt{
 
     void Window::close() {
         glfwDestroyWindow(window);
-        cout << "Window closed!\n";
-        glfwTerminate();
     }
 
     void Window::initVKSurface(VkInstance& instance,VkSurfaceKHR& surface) {

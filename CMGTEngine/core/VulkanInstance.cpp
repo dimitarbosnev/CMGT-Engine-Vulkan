@@ -43,13 +43,16 @@ namespace cmgt {
 	}
 
 	// class member functions
-	VulkanInstance::VulkanInstance(Window& window) : window{ window } {
+	VulkanInstance::VulkanInstance() {
 		createInstance();
 		setupDebugMessenger();
 		createSurface();
 		pickPhysicalDevice();
 		createLogicalDevice();
 		createCommandPool();
+	}
+	void VulkanInstance::InitializeVulkan() {
+		assignInstance(*(new VulkanInstance())); 
 	}
 
 	VulkanInstance::~VulkanInstance() {
@@ -227,7 +230,7 @@ namespace cmgt {
 		}
 	}
 
-	void VulkanInstance::createSurface() { window.initVKSurface(instance, surface_); }
+	void VulkanInstance::createSurface() { Window::getInstance().initVKSurface(instance, surface_); }
 
 	bool VulkanInstance::isDeviceSuitable(VkPhysicalDevice device) {
 		QueueFamilyIndices indices = findQueueFamilies(device);

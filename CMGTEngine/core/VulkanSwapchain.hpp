@@ -14,7 +14,7 @@ namespace cmgt {
 	public:
 		static constexpr int MAX_FRAMES_IN_FLIGHT = 2;
 
-		VulkanSwapchain(VulkanInstance& deviceRef, VkExtent2D windowExtent);
+		static void InitializeSwapchain(VkExtent2D windowExtent);
 		~VulkanSwapchain();
 
 		VulkanSwapchain(const VulkanSwapchain&) = delete;
@@ -38,6 +38,8 @@ namespace cmgt {
 		VkResult submitCommandBuffers(const VkCommandBuffer* buffers, uint32_t* imageIndex);
 
 	private:
+		VulkanSwapchain(VkExtent2D windowExtent);
+
 		void createSwapChain();
 		void createImageViews();
 		void createDepthResources();
@@ -64,9 +66,7 @@ namespace cmgt {
 		std::vector<VkImage> swapChainImages;
 		std::vector<VkImageView> swapChainImageViews;
 
-		VulkanInstance& device;
 		VkExtent2D windowExtent;
-
 		VkSwapchainKHR swapChain;
 
 		std::vector<VkSemaphore> imageAvailableSemaphores;

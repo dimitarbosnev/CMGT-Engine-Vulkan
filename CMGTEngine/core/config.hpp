@@ -1,7 +1,7 @@
 #pragma once
 #include<string>
 #include<iostream>
-
+#include <format>
 using namespace std;
 namespace config {
     //const string CMGT_MODEL_PATH("");
@@ -14,15 +14,25 @@ namespace cmgt {
     template<typename T>
     class Singleton {
     public:
-        static Singleton<T>& instance() {
+        static T& getInstance() {
             if (_instance == nullptr)
-                _instance = new Singleton<T>();
+                throw runtime_error(format("{} is not initalized!", typeid(T).name()));
             return *_instance;
         }
     protected:
         Singleton() = default;
+        static void assignInstance(T& pInstance) {
+            if (_instance != nullptr) { 
+                delete &pInstance; 
+                throw runtime_error(format("{} is already initalized!", typeid(T).name()));
+            }
+            else if (_instance == nullptr) {
+                _instance = &pInstance;
+                cout << typeid(T).name() << " initalized successfuly!" << endl;
+            }
+        }
     private:
-        inline static Singleton<T>* _instance = nullptr;
+        inline static T* _instance = nullptr;
         Singleton(const Singleton&) = delete;
         Singleton& operator= (const Singleton) = delete;
     };

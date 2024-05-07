@@ -41,8 +41,7 @@ namespace cmgt {
 #else
 		const bool enableValidationLayers = true;
 #endif
-
-		VulkanInstance(Window& window);
+		static void InitializeVulkan();
 		~VulkanInstance();
 
 		// Not copyable or movable
@@ -85,6 +84,8 @@ namespace cmgt {
 		VkPhysicalDeviceProperties properties;
 
 	private:
+		VulkanInstance();
+
 		void createInstance();
 		void setupDebugMessenger();
 		void createSurface();
@@ -102,12 +103,10 @@ namespace cmgt {
 		bool checkDeviceExtensionSupport(VkPhysicalDevice device);
 		SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice device);
 
-		VkInstance instance;
 		VkDebugUtilsMessengerEXT debugMessenger;
 		VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
-		Window& window;
 		VkCommandPool commandPool;
-
+		VkInstance instance;
 		VkDevice device_;
 		VkSurfaceKHR surface_;
 		VkQueue graphicsQueue_;

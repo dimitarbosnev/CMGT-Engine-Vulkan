@@ -21,7 +21,7 @@
 using namespace std;
 
 namespace cmgt {
-	class Game : public Singleton<Game>
+	class Game
 	{
 	public:
 		Game(int Width, int Heigth, string Name);
@@ -35,9 +35,6 @@ namespace cmgt {
 		virtual void OnUpdate() = 0;
 		virtual void OnRender() = 0;
 		virtual void OnExit() = 0;
-		Window* gameWindow;
-		VulkanInstance* vulkanAPI;
-		VulkanSwapchain* vulkanSwapChian;
 		VkPipelineLayout pipelineLayout;
 		ShaderProgram* shader;
 		vector<VkCommandBuffer> commandBuffers;
