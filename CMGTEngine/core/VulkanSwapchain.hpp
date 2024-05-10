@@ -7,7 +7,6 @@
 #include <vulkan/vulkan.h>
 #include <string>
 #include <vector>
-
 namespace cmgt {
 
 	class VulkanSwapchain : public Singleton<VulkanSwapchain>{
@@ -15,6 +14,7 @@ namespace cmgt {
 		static constexpr int MAX_FRAMES_IN_FLIGHT = 2;
 
 		static void InitializeSwapchain(VkExtent2D windowExtent);
+		static void RecreateSwapchain(VkExtent2D windowExtent);
 		~VulkanSwapchain();
 
 		VulkanSwapchain(const VulkanSwapchain&) = delete;
@@ -38,8 +38,10 @@ namespace cmgt {
 		VkResult submitCommandBuffers(const VkCommandBuffer* buffers, uint32_t* imageIndex);
 
 	private:
-		VulkanSwapchain(VkExtent2D windowExtent);
+		VulkanSwapchain(VkExtent2D extent);
+		VulkanSwapchain(VkExtent2D extent,VulkanSwapchain* pSwapchain);
 
+		void initSwapchain();
 		void createSwapChain();
 		void createImageViews();
 		void createDepthResources();
@@ -49,30 +51,31 @@ namespace cmgt {
 
 		// Helper functions
 		VkSurfaceFormatKHR chooseSwapSurfaceFormat(
-			const std::vector<VkSurfaceFormatKHR>& availableFormats);
+			const vector<VkSurfaceFormatKHR>& availableFormats);
 		VkPresentModeKHR chooseSwapPresentMode(
-			const std::vector<VkPresentModeKHR>& availablePresentModes);
+			const vector<VkPresentModeKHR>& availablePresentModes);
 		VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);
 
 		VkFormat swapChainImageFormat;
 		VkExtent2D swapChainExtent;
+		VulkanSwapchain* previousSwapchain = nullptr;
 
-		std::vector<VkFramebuffer> swapChainFramebuffers;
+		vector<VkFramebuffer> swapChainFramebuffers;
 		VkRenderPass renderPass;
 
-		std::vector<VkImage> depthImages;
-		std::vector<VkDeviceMemory> depthImageMemorys;
-		std::vector<VkImageView> depthImageViews;
-		std::vector<VkImage> swapChainImages;
-		std::vector<VkImageView> swapChainImageViews;
+		vector<VkImage> depthImages;
+		vector<VkDeviceMemory> depthImageMemorys;
+		vector<VkImageView> depthImageViews;
+		vector<VkImage> swapChainImages;
+		vector<VkImageView> swapChainImageViews;
 
 		VkExtent2D windowExtent;
 		VkSwapchainKHR swapChain;
 
-		std::vector<VkSemaphore> imageAvailableSemaphores;
-		std::vector<VkSemaphore> renderFinishedSemaphores;
-		std::vector<VkFence> inFlightFences;
-		std::vector<VkFence> imagesInFlight;
+		vector<VkSemaphore> imageAvailableSemaphores;
+		vector<VkSemaphore> renderFinishedSemaphores;
+		vector<VkFence> inFlightFences;
+		vector<VkFence> imagesInFlight;
 		size_t currentFrame = 0;
 	};
 

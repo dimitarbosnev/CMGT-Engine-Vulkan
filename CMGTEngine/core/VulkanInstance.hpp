@@ -86,6 +86,7 @@ namespace cmgt {
 	private:
 		VulkanInstance();
 
+
 		void createInstance();
 		void setupDebugMessenger();
 		void createSurface();

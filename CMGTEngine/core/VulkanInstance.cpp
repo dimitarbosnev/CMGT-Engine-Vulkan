@@ -52,7 +52,7 @@ namespace cmgt {
 		createCommandPool();
 	}
 	void VulkanInstance::InitializeVulkan() {
-		assignInstance(*(new VulkanInstance())); 
+		assignInstance(new VulkanInstance()); 
 	}
 
 	VulkanInstance::~VulkanInstance() {
@@ -66,6 +66,8 @@ namespace cmgt {
 		vkDestroySurfaceKHR(instance, surface_, nullptr);
 		vkDestroyInstance(instance, nullptr);
 	}
+
+
 
 	void VulkanInstance::createInstance() {
 		if (enableValidationLayers && !checkValidationLayerSupport()) {

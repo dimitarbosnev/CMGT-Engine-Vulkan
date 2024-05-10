@@ -15,7 +15,7 @@ namespace cmgt {
 	void Game::initEngine() {
 		cout << "Initializing CMGT Engine...\n";
 		VulkanInstance::InitializeVulkan();
-		VulkanSwapchain::InitializeSwapchain(Window::getInstance().getWindiwExtend());
+		VulkanSwapchain::InitializeSwapchain(Window::getInstance().getWindowExtend());
 		//Hard coded mesh
 		vector<Mesh::Vertex> vertecies{ {{0.0f,-0.5f,0.0f}, {1,0,0}},
 			{{0.5f,0.5f,0.0f}, {0,1,0}},
@@ -40,10 +40,33 @@ namespace cmgt {
 
 	void Game::createPipeline() {
 		VulkanSwapchain& swapchian = VulkanSwapchain::getInstance();
-		auto pipelineConfig = ShaderProgram::defaultShaderProgramInfo(swapchian.width(), swapchian.height());
+		ShaderProgramInfo pipelineConfig{};
+		ShaderProgram::defaultShaderProgramInfo(pipelineConfig);
 		pipelineConfig.renderPass = swapchian.getRenderPass();
 		pipelineConfig.pipelineLayout = pipelineLayout;
+		if (shader != nullptr)
+			delete shader;
+		shader = nullptr;
 		shader = new ShaderProgram(VulkanInstance::getInstance(), "vert.spv", "frag.spv", pipelineConfig);
+	}
+
+	void Game::recreateSwapchain() {
+		Window& window = Window::getInstance();
+		auto extent = window.getWindowExtend();
+		while (extent.width == 0 || extent.height == 0) {
+			extent = window.getWindowExtend();
+			glfwWaitEvents();
+		}
+
+		vkDeviceWaitIdle(VulkanInstance::getInstance().device());
+
+
+		VulkanSwapchain::RecreateSwapchain(extent);
+		if (VulkanSwapchain::getInstance().imageCount() != commandBuffers.size()) {
+			freeCommandBuffers();
+			createCommandBuffers();
+		}
+		createPipeline();
 	}
 
 	void Game::createCommandBuffers() {
@@ -58,50 +81,83 @@ namespace cmgt {
 
 		if (vkAllocateCommandBuffers(instance.device(), &allocInfo, commandBuffers.data()) != VK_SUCCESS)
 			throw runtime_error("failed to allocate command buffers!");
+	}
 
-		for (int i = 0; i < commandBuffers.size(); i++) {
-			VkCommandBufferBeginInfo beginInfo{};
-			beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+	void Game::freeCommandBuffers() {
+		VulkanInstance& instance = VulkanInstance::getInstance();
+		vkFreeCommandBuffers(instance.device(), instance.getCommandPool(), 
+			static_cast<uint32_t>(commandBuffers.size()), commandBuffers.data());
+		commandBuffers.clear();
+	}
 
-			if (vkBeginCommandBuffer(commandBuffers[i], &beginInfo) != VK_SUCCESS)
-				throw runtime_error("failed to begin recording command buffer!");
+	void Game::recordCommandBuffer(int imageIndex) {
+		VulkanSwapchain& swapchain = VulkanSwapchain::getInstance();
+		VkCommandBufferBeginInfo beginInfo{};
+		beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 
-			VkRenderPassBeginInfo renderPassInfo{};
-			renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-			renderPassInfo.renderPass = swapchian.getRenderPass();
-			renderPassInfo.framebuffer = swapchian.getFrameBuffer(i);
-			renderPassInfo.renderArea.offset = { 0,0 };
-			renderPassInfo.renderArea.extent = swapchian.getSwapChainExtent();
+		if (vkBeginCommandBuffer(commandBuffers[imageIndex], &beginInfo) != VK_SUCCESS)
+			throw runtime_error("failed to begin recording command buffer!");
 
-			array<VkClearValue, 2> clearValues{};
-			clearValues[0].color = { 0.1f, 0.1f, 0.1f, 1.0f };
-			clearValues[1].depthStencil = { 1.0f,0 };
-			renderPassInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
-			renderPassInfo.pClearValues = clearValues.data();
-			vkCmdBeginRenderPass(commandBuffers[i],&renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+		VkRenderPassBeginInfo renderPassInfo{};
+		renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+		renderPassInfo.renderPass = swapchain.getRenderPass();
+		renderPassInfo.framebuffer = swapchain.getFrameBuffer(imageIndex);
+		renderPassInfo.renderArea.offset = { 0,0 };
+		renderPassInfo.renderArea.extent = swapchain.getSwapChainExtent();
 
-			shader->bind(commandBuffers[i]);
-			mesh->bind(commandBuffers[i]);
-			mesh->render(commandBuffers[i]);
-			//vkCmdDraw(commandBuffers[i], 3, 1, 0, 0);
+		array<VkClearValue, 2> clearValues{};
+		clearValues[0].color = { 0.1f, 0.1f, 0.1f, 1.0f };
+		clearValues[1].depthStencil = { 1.0f,0 };
+		renderPassInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
+		renderPassInfo.pClearValues = clearValues.data();
+		vkCmdBeginRenderPass(commandBuffers[imageIndex], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 
-			vkCmdEndRenderPass(commandBuffers[i]);
-			if (vkEndCommandBuffer(commandBuffers[i]) != VK_SUCCESS)
-				throw runtime_error("failed to record command buffer!");
-		}
+		VkViewport viewport{};
+
+		viewport.x = 0.0f;
+		viewport.y = 0.0f;
+		viewport.width = static_cast<float>(swapchain.width());
+		viewport.height = static_cast<float>(swapchain.height());
+		viewport.minDepth = 0.0f;
+		viewport.maxDepth = 1.0f;
+		VkRect2D scissor{ {0, 0}, swapchain.getSwapChainExtent() };
+		vkCmdSetViewport(commandBuffers[imageIndex], 0, 1, &viewport);
+		vkCmdSetScissor(commandBuffers[imageIndex], 0, 1, &scissor);
+
+
+		shader->bind(commandBuffers[imageIndex]);
+		mesh->bind(commandBuffers[imageIndex]);
+		mesh->render(commandBuffers[imageIndex]);
+
+		vkCmdEndRenderPass(commandBuffers[imageIndex]);
+		if (vkEndCommandBuffer(commandBuffers[imageIndex]) != VK_SUCCESS)
+			throw runtime_error("failed to record command buffer!");
 	}
 
 	void Game::drawFrame() {
 		VulkanSwapchain& swapchian = VulkanSwapchain::getInstance();
 		uint32_t imageIndex;
 		VkResult result = swapchian.acquireNextImage(&imageIndex);
+
+		if (result == VK_ERROR_OUT_OF_DATE_KHR) {
+			recreateSwapchain();
+			return;
+		}
 		if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR)
 			throw runtime_error("failed to accure swap chain image");
 
+		recordCommandBuffer(imageIndex);
 		result = swapchian.submitCommandBuffers(&commandBuffers[imageIndex], &imageIndex);
+
+		if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || Window::getInstance().isWindowResized()) {
+			Window::getInstance().resetWindowResizeFlag();
+			recreateSwapchain();
+			return;
+		}
 		if (result != VK_SUCCESS)
 			throw runtime_error("failed to present swap chian image!");
 	}
+
 
 	void Game::run() {
 

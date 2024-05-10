@@ -11,11 +11,24 @@
 namespace cmgt {
 
 	void VulkanSwapchain::InitializeSwapchain(VkExtent2D windowExtent){
-		assignInstance(*(new VulkanSwapchain(windowExtent)));
+		assignInstance(new VulkanSwapchain(windowExtent));
+	}
+
+	void VulkanSwapchain::RecreateSwapchain(VkExtent2D windowExtent){
+		VulkanSwapchain& swapchain = getInstance();
+		assignInstance(new VulkanSwapchain(windowExtent, &swapchain));
 	}
 
 	VulkanSwapchain::VulkanSwapchain(VkExtent2D extent)
 		: windowExtent{ extent } {
+		initSwapchain();
+	}
+	VulkanSwapchain::VulkanSwapchain(VkExtent2D extent, VulkanSwapchain* pSwapchain) : windowExtent{ extent }, previousSwapchain{ pSwapchain } {
+		initSwapchain();
+		deleteInstance();
+	}
+
+	void VulkanSwapchain::initSwapchain() {
 		createSwapChain();
 		createImageViews();
 		createRenderPass();
@@ -23,7 +36,6 @@ namespace cmgt {
 		createFramebuffers();
 		createSyncObjects();
 	}
-
 
 	VulkanSwapchain::~VulkanSwapchain() {
 		VulkanInstance& instance = VulkanInstance::getInstance();
@@ -55,6 +67,7 @@ namespace cmgt {
 			vkDestroySemaphore(instance.device(), imageAvailableSemaphores[i], nullptr);
 			vkDestroyFence(instance.device(), inFlightFences[i], nullptr);
 		}
+		cout << "Swapchain deleted!" << endl;
 	}
 
 	VkResult VulkanSwapchain::acquireNextImage(uint32_t* imageIndex) {
@@ -171,7 +184,7 @@ namespace cmgt {
 		createInfo.presentMode = presentMode;
 		createInfo.clipped = VK_TRUE;
 
-		createInfo.oldSwapchain = VK_NULL_HANDLE;
+		createInfo.oldSwapchain = previousSwapchain == nullptr ? VK_NULL_HANDLE : previousSwapchain->swapChain;
 
 		if (vkCreateSwapchainKHR(instance.device(), &createInfo, nullptr, &swapChain) != VK_SUCCESS) {
 			throw std::runtime_error("failed to create swap chain!");

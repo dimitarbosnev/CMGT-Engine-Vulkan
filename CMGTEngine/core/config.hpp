@@ -21,16 +21,21 @@ namespace cmgt {
         }
     protected:
         Singleton() = default;
-        static void assignInstance(T& pInstance) {
+        static void assignInstance(T* pInstance) {
             if (_instance != nullptr) { 
-                delete &pInstance; 
+                delete pInstance; 
                 throw runtime_error(format("{} is already initalized!", typeid(T).name()));
             }
             else if (_instance == nullptr) {
-                _instance = &pInstance;
+                _instance = pInstance;
                 cout << typeid(T).name() << " initalized successfuly!" << endl;
             }
         }
+            static void deleteInstance() {
+                if(_instance != nullptr)
+                    delete _instance;
+                _instance = nullptr;
+            }
     private:
         inline static T* _instance = nullptr;
         Singleton(const Singleton&) = delete;

@@ -45,7 +45,10 @@ namespace cmgt {
 		void initEngine();
 		void createPipelineLayout();
 		void createPipeline();
+		void recreateSwapchain();
 		void createCommandBuffers();
+		void freeCommandBuffers();
+		void recordCommandBuffer(int imageIndex);
 		void drawFrame();
 
 		Game(const Game&) = delete;

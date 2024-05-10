@@ -8,25 +8,30 @@ using namespace std;
 namespace cmgt {
 	struct ShaderProgramInfo
 	{
-		VkViewport viewport;
-		VkRect2D scissor;
+		ShaderProgramInfo() = default;
+		ShaderProgramInfo(const ShaderProgramInfo&) = delete;
+		ShaderProgramInfo& operator=(const ShaderProgramInfo&) = delete;
+
+		VkPipelineViewportStateCreateInfo viewportInfo;
 		VkPipelineInputAssemblyStateCreateInfo inputAssemblyInfo;
 		VkPipelineRasterizationStateCreateInfo rasterizationInfo;
 		VkPipelineMultisampleStateCreateInfo multisampleInfo;
 		VkPipelineColorBlendAttachmentState colorBlendAttachment;
 		VkPipelineColorBlendStateCreateInfo colorBlendInfo;
 		VkPipelineDepthStencilStateCreateInfo depthStencilInfo;
+		vector<VkDynamicState> dynamicStateEnables;
+		VkPipelineDynamicStateCreateInfo dynamicStateInfo;
 		VkPipelineLayout pipelineLayout = nullptr;
 		VkRenderPass renderPass = nullptr;
 		uint32_t subpass = 0;
 	};
 	class ShaderProgram {
 	public:
-		ShaderProgram(VulkanInstance& instance, const string& vertexFile, const string& fragmentFile, const ShaderProgramInfo info);
+		ShaderProgram(VulkanInstance& instance, const string& vertexFile, const string& fragmentFile, const ShaderProgramInfo& info);
 		~ShaderProgram();
 
 		void bind(VkCommandBuffer commandBuffer);
-		static ShaderProgramInfo defaultShaderProgramInfo(uint32_t width, uint32_t height);
+		static void defaultShaderProgramInfo(ShaderProgramInfo& configInfo);
 	private:
 		static vector<char> readFile(const string& filepath);
 
