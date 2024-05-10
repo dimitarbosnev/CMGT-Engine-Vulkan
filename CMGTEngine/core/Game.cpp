@@ -2,6 +2,7 @@
 #include "Game.hpp"
 
 namespace cmgt {
+
 	Game::Game(int pWidth,int pHeight,string pName) {
 		Window::InitializeWindow(pWidth, pHeight, pName);
 	}
@@ -15,6 +16,11 @@ namespace cmgt {
 		cout << "Initializing CMGT Engine...\n";
 		VulkanInstance::InitializeVulkan();
 		VulkanSwapchain::InitializeSwapchain(Window::getInstance().getWindiwExtend());
+		//Hard coded mesh
+		vector<Mesh::Vertex> vertecies{ {{0.0f,-0.5f,0.0f}, {1,0,0}},
+			{{0.5f,0.5f,0.0f}, {0,1,0}},
+			{{-0.5f,0.5f,0.0f},{0,0,1}} };
+		mesh = new Mesh(vertecies);
 		createPipelineLayout();
 		createPipeline();
 		createCommandBuffers();
@@ -75,7 +81,9 @@ namespace cmgt {
 			vkCmdBeginRenderPass(commandBuffers[i],&renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 
 			shader->bind(commandBuffers[i]);
-			vkCmdDraw(commandBuffers[i], 3, 1, 0, 0);
+			mesh->bind(commandBuffers[i]);
+			mesh->render(commandBuffers[i]);
+			//vkCmdDraw(commandBuffers[i], 3, 1, 0, 0);
 
 			vkCmdEndRenderPass(commandBuffers[i]);
 			if (vkEndCommandBuffer(commandBuffers[i]) != VK_SUCCESS)
@@ -115,6 +123,7 @@ namespace cmgt {
 		vkDeviceWaitIdle(instance.device());
 		OnExit();
 		vkDestroyPipelineLayout(instance.device(), pipelineLayout, nullptr);
+		delete mesh;
 		delete &window;
 		delete shader;
 		delete &swapchain;

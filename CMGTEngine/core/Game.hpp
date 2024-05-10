@@ -18,13 +18,14 @@
 #include "VulkanSwapchain.hpp"
 #include "ShaderProgram.hpp"
 #include "config.hpp"
+#include"Mesh.hpp"
 using namespace std;
 
 namespace cmgt {
 	class Game
 	{
 	public:
-		Game(int Width, int Heigth, string Name);
+		Game(int pWidth, int pHeigth, string pName);
 		~Game();
 		void run();
 		void exit();
@@ -38,6 +39,8 @@ namespace cmgt {
 		VkPipelineLayout pipelineLayout;
 		ShaderProgram* shader;
 		vector<VkCommandBuffer> commandBuffers;
+		//hard coded mesh
+		Mesh* mesh;
 	private:
 		void initEngine();
 		void createPipelineLayout();

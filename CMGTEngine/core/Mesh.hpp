@@ -14,20 +14,17 @@ using namespace std;
 namespace cmgt {
 	class WorldSeed;
 
-	/**
-	 * A mesh represents an .OBJ file. It knows how it is constructed, how its data should be buffered to OpenGL
-	 * and how it should be streamed to OpenGL
-	 */
 	class Mesh : public Component
 	{
 	public:
 		struct Vertex {
 		public:
 			vec3 position;
+			vec3 color;
 			static vector<VkVertexInputBindingDescription> getBindingDescription();
 			static vector<VkVertexInputAttributeDescription> getAttributeDescription();
 		};
-		Mesh();
+		Mesh(const vector<Vertex>& vertecies);
 		virtual ~Mesh();
 		void bind(VkCommandBuffer commandBuffer);
 		void render(VkCommandBuffer commandBuffer);
@@ -35,6 +32,7 @@ namespace cmgt {
 
 		VkBuffer _vertexBuffer;
 		VkDeviceMemory _vertexBufferMemory;
+		uint32_t vertexCount;
 		void createVertexBuffers(const vector<Vertex>& vertecies);
 
 	private:
