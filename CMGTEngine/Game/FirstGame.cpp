@@ -18,7 +18,9 @@ void FirstGame::OnInit() {
 }
 
 void FirstGame::OnStart() {
-
+	vec3 pos;
+	vec3 color;
+	vec3 normal;
 }
 
 void FirstGame::OnUpdate() {

@@ -3,7 +3,7 @@
 
 namespace cmgt {
 
-	Game::Game(int pWidth,int pHeight,string pName) {
+	Game::Game(int pWidth, int pHeight, string pName) {
 		Window::InitializeWindow(pWidth, pHeight, pName);
 	}
 
@@ -20,20 +20,30 @@ namespace cmgt {
 		vector<Mesh::Vertex> vertecies{ {{0.0f,-0.5f,0.0f}, {1,0,0}},
 			{{0.5f,0.5f,0.0f}, {0,1,0}},
 			{{-0.5f,0.5f,0.0f},{0,0,1}} };
-		mesh = new Mesh(vertecies);
+		//mesh = new Mesh(vertecies);
 		createPipelineLayout();
 		createPipeline();
 		createCommandBuffers();
+		cout << "Initalizing CMGT Engine Utils...\n";
+			ObjectManager::InitializesObjectManager();
+			SceneManager::InitializesSceneManager();
+		cout << "Utils Initalized!\n";
+
 		cout << "CMGT Engine Initialized!\n";
 	}
 
 	void Game::createPipelineLayout() {
+		VkPushConstantRange range;
+		range.stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
+		range.offset = 0;
+		range.size = sizeof(PushConstantData);
+
 		VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
 		pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
 		pipelineLayoutInfo.setLayoutCount = 0;
 		pipelineLayoutInfo.pSetLayouts = nullptr;
-		pipelineLayoutInfo.pushConstantRangeCount = 0;
-		pipelineLayoutInfo.pPushConstantRanges = nullptr;
+		pipelineLayoutInfo.pushConstantRangeCount = 1;
+		pipelineLayoutInfo.pPushConstantRanges = &range;
 		if (vkCreatePipelineLayout(VulkanInstance::getInstance().device(), &pipelineLayoutInfo, nullptr, &pipelineLayout) != VK_SUCCESS)
 			throw runtime_error("failed to create pipelin layout");
 	}
@@ -85,7 +95,7 @@ namespace cmgt {
 
 	void Game::freeCommandBuffers() {
 		VulkanInstance& instance = VulkanInstance::getInstance();
-		vkFreeCommandBuffers(instance.device(), instance.getCommandPool(), 
+		vkFreeCommandBuffers(instance.device(), instance.getCommandPool(),
 			static_cast<uint32_t>(commandBuffers.size()), commandBuffers.data());
 		commandBuffers.clear();
 	}
@@ -126,8 +136,17 @@ namespace cmgt {
 
 
 		shader->bind(commandBuffers[imageIndex]);
-		mesh->bind(commandBuffers[imageIndex]);
-		mesh->render(commandBuffers[imageIndex]);
+		//mesh->bind(commandBuffers[imageIndex]);
+
+		for (int i = 0; i < 4; i++) {
+			PushConstantData data;
+			data.offset = { 0.0f, -0.4f + i * 0.25f };
+			data.color = { 0.0f,0.0f, 0.2f + i * 0.2f };
+			vkCmdPushConstants(commandBuffers[imageIndex], pipelineLayout,
+				VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
+				0, sizeof(PushConstantData), &data);
+			//mesh->render(commandBuffers[imageIndex]);
+		}
 
 		vkCmdEndRenderPass(commandBuffers[imageIndex]);
 		if (vkEndCommandBuffer(commandBuffers[imageIndex]) != VK_SUCCESS)
@@ -179,11 +198,13 @@ namespace cmgt {
 		vkDeviceWaitIdle(instance.device());
 		OnExit();
 		vkDestroyPipelineLayout(instance.device(), pipelineLayout, nullptr);
-		delete mesh;
-		delete &window;
+		//delete mesh;
+		delete &SceneManager::getInstance();
+		delete& ObjectManager::getInstance();
+		delete& window;
 		delete shader;
-		delete &swapchain;
-		delete &instance;
+		delete& swapchain;
+		delete& instance;
 
 		glfwTerminate();
 		cout << "GLFW Terminated!\n";

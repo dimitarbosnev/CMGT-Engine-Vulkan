@@ -3,11 +3,6 @@
 
 namespace cmgt{
 
-    WorldSeed::WorldSeed() :GameObject("root"), _mainCamera(0)
-    {
-        _world = this;
-    }
-
     void WorldSeed::setMainCamera(Camera* pCamera) {
         if (pCamera != NULL) _mainCamera = pCamera;
     }
@@ -15,7 +10,6 @@ namespace cmgt{
     Camera* WorldSeed::getMainCamera() {
         return _mainCamera;
     }
-
 
     void WorldSeed::registerLight(Light* pLight) {
         _lights.push_back(pLight);

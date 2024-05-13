@@ -5,8 +5,10 @@
 
 #pragma once
 #include "..\glm.hpp"
+#include "config.hpp"
 #include <string>
 #include <vector>
+
 using namespace std;
 using namespace glm;
 
@@ -19,11 +21,12 @@ namespace cmgt
 	class GameObject
 	{
 	public:
-		GameObject(const string& pName = nullptr, const vec3& pPosition = vec3(0.0f, 0.0f, 0.0f));
+		GameObject(const string& pName);
+		id_t getID() { return id; }
 		virtual ~GameObject();
 
 		void setName(const string& pName);
-		string getName() const;
+		string getName() { return _name; }
 
 
 		//contains local rotation, scale, position
@@ -67,7 +70,9 @@ namespace cmgt
 		WorldSeed* getWorld() const;
 
 	protected:
+
 		string _name;
+		id_t id;
 		mat4 _transform;
 
 		GameObject* _parent;

@@ -58,6 +58,15 @@
     <ClCompile Include="core\config.cpp">
       <Filter>core</Filter>
     </ClCompile>
+    <ClCompile Include="core\SceneManager.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="core\Scene.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="core\ObjectManager.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\Game.hpp">
@@ -104,6 +113,15 @@
       <Filter>core</Filter>
     </ClInclude>
     <ClInclude Include="core\Texture.hpp">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\Scene.hpp">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\SceneManager.hpp">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\ObjectManager.hpp">
       <Filter>core</Filter>
     </ClInclude>
   </ItemGroup>

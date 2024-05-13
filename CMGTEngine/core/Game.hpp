@@ -17,11 +17,19 @@
 #include "VulkanInstance.hpp"
 #include "VulkanSwapchain.hpp"
 #include "ShaderProgram.hpp"
+#include "ObjectManager.hpp"
+#include "SceneManager.hpp"
 #include "config.hpp"
 #include"Mesh.hpp"
 using namespace std;
 
 namespace cmgt {
+
+	struct PushConstantData {
+		vec2 offset;
+		alignas(16) vec3 color;
+	};
+
 	class Game
 	{
 	public:
@@ -40,7 +48,7 @@ namespace cmgt {
 		ShaderProgram* shader;
 		vector<VkCommandBuffer> commandBuffers;
 		//hard coded mesh
-		Mesh* mesh;
+		//Mesh* mesh;
 	private:
 		void initEngine();
 		void createPipelineLayout();

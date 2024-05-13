@@ -11,14 +11,12 @@ namespace cmgt {
 
 	class VulkanSwapchain : public Singleton<VulkanSwapchain>{
 	public:
-		static constexpr int MAX_FRAMES_IN_FLIGHT = 2;
+		static constexpr int MAX_FRAMES_IN_FLIGHT = 3;
 
 		static void InitializeSwapchain(VkExtent2D windowExtent);
 		static void RecreateSwapchain(VkExtent2D windowExtent);
 		~VulkanSwapchain();
 
-		VulkanSwapchain(const VulkanSwapchain&) = delete;
-		void operator=(const VulkanSwapchain&) = delete;
 
 		VkFramebuffer getFrameBuffer(int index) { return swapChainFramebuffers[index]; }
 		VkRenderPass getRenderPass() { return renderPass; }
@@ -77,6 +75,9 @@ namespace cmgt {
 		vector<VkFence> inFlightFences;
 		vector<VkFence> imagesInFlight;
 		size_t currentFrame = 0;
+
+		VulkanSwapchain(const VulkanSwapchain&) = delete;
+		VulkanSwapchain operator=(const VulkanSwapchain&) = delete;
 	};
 
 }

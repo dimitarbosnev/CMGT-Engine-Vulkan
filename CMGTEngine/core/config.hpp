@@ -1,7 +1,11 @@
+#ifndef CONFIG_HPP
+#define CONFIG_HPP
+
 #pragma once
 #include<string>
 #include<iostream>
 #include <format>
+
 using namespace std;
 namespace config {
     //const string CMGT_MODEL_PATH("");
@@ -11,6 +15,7 @@ namespace config {
 }
 
 namespace cmgt {
+    using id_t = uint32_t;
     template<typename T>
     class Singleton {
     public:
@@ -42,3 +47,4 @@ namespace cmgt {
         Singleton& operator= (const Singleton) = delete;
     };
 }
+#endif //CONFIG_HPP

@@ -181,6 +181,9 @@
     <ClCompile Include="core\Light.cpp" />
     <ClCompile Include="core\Material.cpp" />
     <ClCompile Include="core\Mesh.cpp" />
+    <ClCompile Include="core\ObjectManager.cpp" />
+    <ClCompile Include="core\Scene.cpp" />
+    <ClCompile Include="core\SceneManager.cpp" />
     <ClCompile Include="core\ShaderProgram.cpp" />
     <ClCompile Include="core\Texture.cpp" />
     <ClCompile Include="core\VulkanInstance.cpp" />
@@ -199,6 +202,9 @@
     <ClInclude Include="core\Light.hpp" />
     <ClInclude Include="core\Material.hpp" />
     <ClInclude Include="core\Mesh.hpp" />
+    <ClInclude Include="core\ObjectManager.hpp" />
+    <ClInclude Include="core\Scene.hpp" />
+    <ClInclude Include="core\SceneManager.hpp" />
     <ClInclude Include="core\ShaderProgram.hpp" />
     <ClInclude Include="core\Texture.hpp" />
     <ClInclude Include="core\VulkanInstance.hpp" />
