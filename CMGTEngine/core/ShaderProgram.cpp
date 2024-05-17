@@ -40,9 +40,9 @@ namespace cmgt {
 	void ShaderProgram::CreateShaderProgram(const string& vertexFile, const string& fragmentFile, const ShaderProgramInfo& configInfo) {
 		cout << "Initalizing Shaders...\n";
 
-		vector<char> vertCode = readFile(config::CMGT_SHADER_PATH + vertexFile);
+		vector<char> vertCode = readFile(paths::CMGT_SHADER_PATH + vertexFile);
 		cout << "\tVertex Shader Initalized!\n";
-		vector<char> fragCode = readFile(config::CMGT_SHADER_PATH + fragmentFile);
+		vector<char> fragCode = readFile(paths::CMGT_SHADER_PATH + fragmentFile);
 		cout << "\tFragment Shader Initalized!\n";
 
 		CreateShaderModule(vertCode, &vertexShaderModule);

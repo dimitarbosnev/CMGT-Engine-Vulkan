@@ -1,5 +1,5 @@
 #pragma once
-#include "config.hpp"
+#include "paths.hpp"
 #include<string>
 #include<vector>
 #include "VulkanInstance.hpp"

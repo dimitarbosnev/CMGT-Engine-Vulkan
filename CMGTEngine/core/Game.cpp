@@ -200,11 +200,11 @@ namespace cmgt {
 		vkDestroyPipelineLayout(instance.device(), pipelineLayout, nullptr);
 		//delete mesh;
 		delete &SceneManager::getInstance();
-		delete& ObjectManager::getInstance();
-		delete& window;
+		delete &ObjectManager::getInstance();
+		delete &window;
 		delete shader;
-		delete& swapchain;
-		delete& instance;
+		delete &swapchain;
+		delete &instance;
 
 		glfwTerminate();
 		cout << "GLFW Terminated!\n";

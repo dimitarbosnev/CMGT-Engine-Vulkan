@@ -55,9 +55,6 @@
     <ClCompile Include="core\Texture.cpp">
       <Filter>core</Filter>
     </ClCompile>
-    <ClCompile Include="core\config.cpp">
-      <Filter>core</Filter>
-    </ClCompile>
     <ClCompile Include="core\SceneManager.cpp">
       <Filter>core</Filter>
     </ClCompile>
@@ -122,6 +119,9 @@
       <Filter>core</Filter>
     </ClInclude>
     <ClInclude Include="core\ObjectManager.hpp">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\paths.hpp">
       <Filter>core</Filter>
     </ClInclude>
   </ItemGroup>

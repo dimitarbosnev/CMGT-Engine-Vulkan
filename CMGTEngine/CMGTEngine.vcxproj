@@ -175,7 +175,6 @@
   <ItemGroup>
     <ClCompile Include="core\Camera.cpp" />
     <ClCompile Include="core\Component.cpp" />
-    <ClCompile Include="core\config.cpp" />
     <ClCompile Include="core\Game.cpp" />
     <ClCompile Include="core\GameObject.cpp" />
     <ClCompile Include="core\Light.cpp" />
@@ -203,6 +202,7 @@
     <ClInclude Include="core\Material.hpp" />
     <ClInclude Include="core\Mesh.hpp" />
     <ClInclude Include="core\ObjectManager.hpp" />
+    <ClInclude Include="core\paths.hpp" />
     <ClInclude Include="core\Scene.hpp" />
     <ClInclude Include="core\SceneManager.hpp" />
     <ClInclude Include="core\ShaderProgram.hpp" />
