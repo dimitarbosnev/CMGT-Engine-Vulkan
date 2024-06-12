@@ -3,8 +3,7 @@
 
 namespace cmgt{
 
-    Component::Component(GameObject* pOwner) {
-        setOwner(pOwner);
+    Component::Component() {
     }
 
     Component::~Component() {

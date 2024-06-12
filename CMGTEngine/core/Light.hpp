@@ -3,7 +3,7 @@
 
 #pragma once
 #include <string>
-#include "../glm.hpp"
+#include "glm.hpp"
 #include "Component.hpp"
 
 using namespace glm;
@@ -20,8 +20,7 @@ namespace cmgt {
 	class Light : public Component
 	{
 	public:
-		Light(const string& aName = nullptr, const vec3& aPosition = vec3(2.0f, 10.0f, 5.0f), 
-			LightType type = Ambient, GameObject* pOwner = nullptr);
+		Light(LightType type = Ambient);
 		~Light() override;
 
 		virtual void setOwner(GameObject* pOwner) override;

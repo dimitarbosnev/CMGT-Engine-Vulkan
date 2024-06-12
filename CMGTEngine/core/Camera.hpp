@@ -5,7 +5,7 @@
 #pragma once
 #include <string>
 #include "Component.hpp"
-#include "../glm.hpp"
+#include "glm.hpp"
 
 
 using namespace std;
@@ -18,8 +18,7 @@ namespace cmgt {
         Camera(
             string pName = "camera",
             vec3 pPosition = vec3(0.0f, 3.0f, 5.0f),
-            mat4 pProjectionMatrix = perspective(radians(70.0f), 4.0f / 3.0f, 0.1f, 1000.0f),
-            GameObject* pOwner = nullptr
+            mat4 pProjectionMatrix = perspective(radians(70.0f), 4.0f / 3.0f, 0.1f, 1000.0f)
         );
 
         virtual ~Camera() override;

@@ -6,7 +6,7 @@
 #include <GLFW/glfw3.h>
 #include <vector>
 #include "Component.hpp"
-#include "../glm.hpp"
+#include "glm.hpp"
 
 using namespace glm;
 using namespace std;

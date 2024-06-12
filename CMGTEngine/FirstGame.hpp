@@ -1,5 +1,5 @@
-#include "../core/Game.hpp"
-#include "glm/glm.hpp"
+#include "core/Game.hpp"
+#include "core/glm.hpp"
 using namespace cmgt;
 using namespace glm;
 class FirstGame : public Game

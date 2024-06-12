@@ -5,7 +5,7 @@
 #include<string>
 #include<iostream>
 #include <format>
-
+#include<cassert>
 using namespace std;
 namespace cmgt {
 	using id_t = uint32_t;
@@ -13,21 +13,15 @@ namespace cmgt {
 	class Singleton {
 	public:
 		static T& getInstance() {
-			if (_instance == nullptr)
-				throw runtime_error(format("{} is not initalized!", typeid(T).name()));
+			assert(_instance != nullptr && format("{} is not initalized!", typeid(T).name()).c_str());
 			return *_instance;
 		}
 	protected:
 		Singleton() = default;
 		static void assignInstance(T* pInstance) {
-			if (_instance != nullptr) {
-				delete pInstance;
-				throw runtime_error(format("{} is already initalized!", typeid(T).name()));
-			}
-			else if (_instance == nullptr) {
-				_instance = pInstance;
-				cout << typeid(T).name() << " initalized successfuly!" << endl;
-			}
+			assert(_instance == nullptr && format("{} is already initalized!", typeid(T).name()).c_str());
+			_instance = pInstance;
+			cout << typeid(T).name() << " initalized successfuly!" << endl;
 		}
 		static void deleteInstance() {
 			if (_instance != nullptr)

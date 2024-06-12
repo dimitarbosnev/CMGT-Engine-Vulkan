@@ -9,10 +9,10 @@ namespace cmgt {
 
 	ObjectManager::~ObjectManager()
 	{
-		while (gameObjects.size() > 0) {
-			delete gameObjects[0];
-			gameObjects.erase(0);
+		for (auto& obj : gameObjects) {
+			delete obj.second;
 		}
+		gameObjects.clear();
 	}
 	void ObjectManager::addGameObject(GameObject& obj) {
 		getInstance().gameObjects.emplace(obj.getID(), &obj);
@@ -32,7 +32,9 @@ namespace cmgt {
 	{
 		ObjectManager& objectManager = getInstance();
 		id_t i = 0;
-		while (objectManager.gameObjects.contains(i++));
+		while (objectManager.gameObjects.contains(i)) {
+			i++;
+		}
 		return i;
 	}
 	void ObjectManager::deleteGameObject(GameObject& obj) { deleteGameObject(obj.getID()); }

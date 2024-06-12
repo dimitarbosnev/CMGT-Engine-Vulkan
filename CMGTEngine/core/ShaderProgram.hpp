@@ -1,3 +1,6 @@
+#ifndef SHADERPROGRAM_HPP
+#define SHDAERPROGRAM_HPP
+
 #pragma once
 #include "paths.hpp"
 #include<string>
@@ -25,19 +28,31 @@ namespace cmgt {
 		VkRenderPass renderPass = nullptr;
 		uint32_t subpass = 0;
 	};
+
+	struct PushConstantData {
+		vec2 offset;
+		alignas(16) vec3 color;
+	};
 	class ShaderProgram {
 	public:
-		ShaderProgram(VulkanInstance& instance, const string& vertexFile, const string& fragmentFile, const ShaderProgramInfo& info);
+		ShaderProgram(const string& vertexFile, const string& fragmentFile);
 		~ShaderProgram();
 
 		void bind(VkCommandBuffer commandBuffer);
 		static void defaultShaderProgramInfo(ShaderProgramInfo& configInfo);
 	private:
-		static vector<char> readFile(const string& filepath);
+		void createPipelineLayout();
+		void createPipeline(ShaderProgramInfo& pipelineConfig);
+		void recreateSwapchain();
+		void createCommandBuffers();
+		void freeCommandBuffers();
+		void recordCommandBuffer(int imageIndex);
 
+		static vector<char> readFile(const string& filepath);
 		void CreateShaderProgram(const string& vertexFile, const string& fragmentFile, const ShaderProgramInfo& info);
 		void CreateShaderModule(const vector<char>& shader, VkShaderModule* module);
-		VulkanInstance& instance;
+		vector<VkCommandBuffer> commandBuffers;
+		VkPipelineLayout pipelineLayout;
 		VkPipeline graphicsPipeline;
 		VkShaderModule vertexShaderModule;
 		VkShaderModule fragmentShaderModule;
@@ -46,3 +61,4 @@ namespace cmgt {
 		ShaderProgram& operator=(const ShaderProgram&) = delete;
 	};
 }
+#endif // SHADERPROGRAM_HPP

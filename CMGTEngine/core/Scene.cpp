@@ -12,9 +12,9 @@ namespace cmgt{
 	}
 	void Scene::update(float dt)
 	{
-		_world.update(dt);
+		_world->update(dt);
 	}
-	void Scene::renderScene()
-	{
+	void Scene::renderScene(VkCommandBuffer commandBuffer){
+
 	}
 }

@@ -10,10 +10,10 @@ namespace cmgt {
 		while (!scenesStack.empty()) {
 			scenesStack.pop();
 		}
-		while (scenes.size() > 0) {
-			delete scenes[0];
-			scenes.erase(0);
+		for (auto &scene : scenes) {
+			delete scene.second;
 		}
+		scenes.clear();
 	}
 
 	void SceneManager::update(float dt) {
@@ -37,7 +37,9 @@ namespace cmgt {
 	{
 		SceneManager& sceneManager = getInstance();
 		id_t i = 0;
-		while (sceneManager.scenes.contains(i++));
+		while (sceneManager.scenes.contains(i)) {
+			i++;
+		}
 		return i;
 	}
 

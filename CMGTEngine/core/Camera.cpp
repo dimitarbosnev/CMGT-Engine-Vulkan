@@ -2,7 +2,7 @@
 #include "Camera.hpp"
 
 namespace cmgt {
-	Camera::Camera(string pName, vec3 pPosition, mat4 pProjectionMatrix, GameObject* pOwner) : Component(pOwner){
+	Camera::Camera(string pName, vec3 pPosition, mat4 pProjectionMatrix) {
 	}
 
 	Camera::~Camera()

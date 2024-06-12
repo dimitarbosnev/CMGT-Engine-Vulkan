@@ -2,7 +2,8 @@
 #define MATERIAL_HPP
 
 #pragma once
-#include "../glm.hpp"
+#include "glm.hpp"
+
 using namespace glm;
 using namespace std;
 

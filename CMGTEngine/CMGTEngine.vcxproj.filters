@@ -25,9 +25,6 @@
     <ClCompile Include="core\ShaderProgram.cpp">
       <Filter>core</Filter>
     </ClCompile>
-    <ClCompile Include="Game\FirstGame.cpp">
-      <Filter>Game</Filter>
-    </ClCompile>
     <ClCompile Include="core\VulkanSwapchain.cpp">
       <Filter>core</Filter>
     </ClCompile>
@@ -64,6 +61,10 @@
     <ClCompile Include="core\ObjectManager.cpp">
       <Filter>core</Filter>
     </ClCompile>
+    <ClCompile Include="FirstGame.cpp" />
+    <ClCompile Include="core\VulkanRenderer.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\Game.hpp">
@@ -81,9 +82,6 @@
     <ClInclude Include="core\config.hpp">
       <Filter>core</Filter>
     </ClInclude>
-    <ClInclude Include="Game\FirstGame.hpp">
-      <Filter>Game</Filter>
-    </ClInclude>
     <ClInclude Include="core\VulkanSwapchain.hpp">
       <Filter>core</Filter>
     </ClInclude>
@@ -96,7 +94,6 @@
     <ClInclude Include="core\Component.hpp">
       <Filter>core</Filter>
     </ClInclude>
-    <ClInclude Include="glm.hpp" />
     <ClInclude Include="core\Camera.hpp">
       <Filter>core</Filter>
     </ClInclude>
@@ -122,6 +119,13 @@
       <Filter>core</Filter>
     </ClInclude>
     <ClInclude Include="core\paths.hpp">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\glm.hpp">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="FirstGame.hpp" />
+    <ClInclude Include="core\VulkanRenderer.hpp">
       <Filter>core</Filter>
     </ClInclude>
   </ItemGroup>

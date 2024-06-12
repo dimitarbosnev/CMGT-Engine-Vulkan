@@ -186,10 +186,11 @@
     <ClCompile Include="core\ShaderProgram.cpp" />
     <ClCompile Include="core\Texture.cpp" />
     <ClCompile Include="core\VulkanInstance.cpp" />
+    <ClCompile Include="core\VulkanRenderer.cpp" />
     <ClCompile Include="core\VulkanSwapchain.cpp" />
     <ClCompile Include="core\Window.cpp" />
     <ClCompile Include="core\WorldSeed.cpp" />
-    <ClCompile Include="Game\FirstGame.cpp" />
+    <ClCompile Include="FirstGame.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -198,6 +199,7 @@
     <ClInclude Include="core\config.hpp" />
     <ClInclude Include="core\Game.hpp" />
     <ClInclude Include="core\GameObject.hpp" />
+    <ClInclude Include="core\glm.hpp" />
     <ClInclude Include="core\Light.hpp" />
     <ClInclude Include="core\Material.hpp" />
     <ClInclude Include="core\Mesh.hpp" />
@@ -208,11 +210,11 @@
     <ClInclude Include="core\ShaderProgram.hpp" />
     <ClInclude Include="core\Texture.hpp" />
     <ClInclude Include="core\VulkanInstance.hpp" />
+    <ClInclude Include="core\VulkanRenderer.hpp" />
     <ClInclude Include="core\VulkanSwapchain.hpp" />
     <ClInclude Include="core\Window.hpp" />
     <ClInclude Include="core\WorldSeed.hpp" />
-    <ClInclude Include="Game\FirstGame.hpp" />
-    <ClInclude Include="glm.hpp" />
+    <ClInclude Include="FirstGame.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\BasicFragmentShader.frag" />

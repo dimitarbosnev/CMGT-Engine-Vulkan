@@ -9,7 +9,7 @@ namespace cmgt
 	{
 	public:
 
-		Component(GameObject* pOwner = nullptr);
+		Component();
 		virtual ~Component();
 
 		//for internal administration, do not use directly

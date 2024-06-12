@@ -2,10 +2,7 @@
 #define WORLDSEED_HPP
 
 #pragma once
-#include "../glm.hpp"
 #include "GameObject.hpp"
-#include <string>
-#include <vector>
 
 using namespace std;
 using namespace glm;

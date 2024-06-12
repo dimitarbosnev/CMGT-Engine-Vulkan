@@ -12,14 +12,9 @@ namespace cmgt {
     GameObject::~GameObject()
     {
         //detach all children
-        while (_children.size() > 0) {
-            GameObject* child = _children[0];
-            remove(child);
-            ObjectManager::deleteGameObject(*child);
-        }
         _children.clear();
 
-        while (_components.size() > 0) {
+        while (!_components.empty()) {
             delete _components[0];
             _components.erase(_components.begin());
         }

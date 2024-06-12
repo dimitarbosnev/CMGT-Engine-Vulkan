@@ -25,11 +25,6 @@ using namespace std;
 
 namespace cmgt {
 
-	struct PushConstantData {
-		vec2 offset;
-		alignas(16) vec3 color;
-	};
-
 	class Game
 	{
 	public:
@@ -44,19 +39,14 @@ namespace cmgt {
 		virtual void OnUpdate() = 0;
 		virtual void OnRender() = 0;
 		virtual void OnExit() = 0;
-		VkPipelineLayout pipelineLayout;
+
 		ShaderProgram* shader;
-		vector<VkCommandBuffer> commandBuffers;
+
 		//hard coded mesh
 		//Mesh* mesh;
 	private:
 		void initEngine();
-		void createPipelineLayout();
-		void createPipeline();
-		void recreateSwapchain();
-		void createCommandBuffers();
-		void freeCommandBuffers();
-		void recordCommandBuffer(int imageIndex);
+
 		void drawFrame();
 
 		Game(const Game&) = delete;

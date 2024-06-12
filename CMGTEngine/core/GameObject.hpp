@@ -4,7 +4,7 @@
 
 
 #pragma once
-#include "..\glm.hpp"
+#include "glm.hpp"
 #include "config.hpp"
 #include <string>
 #include <vector>

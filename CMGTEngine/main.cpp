@@ -1,6 +1,5 @@
 #define GLFW_INCLUDE_VULKAN
-#include "core/Game.hpp"
-#include "Game/FirstGame.hpp"
+#include "FirstGame.hpp"
 #include <memory>
 #include <string>
 using namespace std;
