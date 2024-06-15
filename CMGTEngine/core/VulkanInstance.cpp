@@ -164,6 +164,8 @@ namespace cmgt {
 		// Maximum possible size of textures affects graphics quality
 		score += deviceProperties.limits.maxImageDimension2D;
 		score += deviceProperties.limits.sampledImageColorSampleCounts;
+		cout << "Push constant size: " << deviceProperties.limits.maxPushConstantsSize << endl;
+		score += deviceProperties.limits.maxPushConstantsSize;
 		// Application can't function without geometry shaders
 		if (!deviceFeatures.geometryShader) {
 			return 0;

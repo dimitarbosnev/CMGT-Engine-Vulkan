@@ -29,8 +29,8 @@ namespace cmgt {
         mat4 _projection;
 
     private:
-        Camera(const Camera&) = delete;
-        Camera& operator= (const Camera&) = delete;
+        Camera(const Camera&);
+        Camera& operator= (const Camera&);
     };
 } 
 #endif // CAMERA_HPP

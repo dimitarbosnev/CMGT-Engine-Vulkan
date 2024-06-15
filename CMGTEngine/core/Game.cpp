@@ -1,6 +1,6 @@
 #pragma once
 #include "Game.hpp"
-
+#include "Camera.hpp"
 namespace cmgt {
 
 	Game::Game(int pWidth, int pHeight, string pName) {
@@ -144,11 +144,14 @@ namespace cmgt {
 
 		for (Mesh* mesh : VukanRenderer::getInstance().meshesToRender) {
 			PushConstantData data;
-			mesh->render(commandBuffers[imageIndex]);
+			Camera& camera = VukanRenderer::getCamera();
+			mat4 MVP = camera.getProjection() * camera.getTransform() * mesh->getTransform();
 			data.offset = (float)glfwGetTime();
+			data.mvpMatirx = MVP;
 			vkCmdPushConstants(commandBuffers[imageIndex], pipelineLayout,
 				VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
 				0, sizeof(PushConstantData), &data);
+			mesh->render(commandBuffers[imageIndex]);
 		}
 		
 

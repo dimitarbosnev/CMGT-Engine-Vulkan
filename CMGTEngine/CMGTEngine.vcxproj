@@ -176,6 +176,7 @@
   <ItemGroup>
     <ClCompile Include="core\Camera.cpp" />
     <ClCompile Include="core\Component.cpp" />
+    <ClCompile Include="core\FreeMovement.cpp" />
     <ClCompile Include="core\Game.cpp" />
     <ClCompile Include="core\GameObject.cpp" />
     <ClCompile Include="core\Light.cpp" />
@@ -198,6 +199,7 @@
     <ClInclude Include="core\Camera.hpp" />
     <ClInclude Include="core\Component.hpp" />
     <ClInclude Include="core\config.hpp" />
+    <ClInclude Include="core\FreeMovement.hpp" />
     <ClInclude Include="core\Game.hpp" />
     <ClInclude Include="core\GameObject.hpp" />
     <ClInclude Include="core\glm.hpp" />
