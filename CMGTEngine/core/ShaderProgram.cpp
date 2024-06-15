@@ -1,25 +1,17 @@
 #pragma once
 #include "ShaderProgram.hpp"
-#include "VulkanInstance.hpp"
-#include "VulkanSwapchain.hpp"
 #include "Mesh.hpp"
 #include <fstream>
-#include <stdexcept>
-#include <iostream>
-#include <array>
+#include<stdexcept>
+#include<iostream>
 namespace cmgt {
 
-	ShaderProgram::ShaderProgram(const string& vertexFile, const string& fragmentFile) {
-		ShaderProgramInfo info{};
-		createPipelineLayout();
-		createPipeline(info);
+	ShaderProgram::ShaderProgram(VulkanInstance& instance, const string& vertexFile,
+		const string& fragmentFile, const ShaderProgramInfo& info) : instance(instance) {
 		CreateShaderProgram(vertexFile, fragmentFile, info);
-		createCommandBuffers();
 	}
 
 	ShaderProgram::~ShaderProgram() {
-		VulkanInstance& instance = VulkanInstance::getInstance();
-		freeCommandBuffers();
 		vkDestroyShaderModule(instance.device(), vertexShaderModule, nullptr);
 		vkDestroyShaderModule(instance.device(), fragmentShaderModule, nullptr);
 		vkDestroyPipeline(instance.device(), graphicsPipeline, nullptr);
@@ -102,7 +94,7 @@ namespace cmgt {
 		pipelineInfo.basePipelineIndex = -1;
 		pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;
 
-		if (vkCreateGraphicsPipelines(VulkanInstance::getInstance().device(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &graphicsPipeline) != VK_SUCCESS)
+		if (vkCreateGraphicsPipelines(instance.device(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &graphicsPipeline) != VK_SUCCESS)
 			throw runtime_error("failed to create pipeline");
 
 		cout << "Shader Program Initalized!\n";
@@ -115,7 +107,7 @@ namespace cmgt {
 		createInfo.codeSize = shader.size();
 		createInfo.pCode = reinterpret_cast<const uint32_t*>(shader.data());
 
-		if (vkCreateShaderModule(VulkanInstance::getInstance().device(), &createInfo, nullptr, module) != VK_SUCCESS) {
+		if (vkCreateShaderModule(instance.device(), &createInfo, nullptr, module) != VK_SUCCESS) {
 			throw std::runtime_error("failed to create shader module!");
 		}
 	}
@@ -194,118 +186,5 @@ namespace cmgt {
 		configInfo.dynamicStateInfo.dynamicStateCount =
 			static_cast<uint32_t>(configInfo.dynamicStateEnables.size());
 		configInfo.dynamicStateInfo.flags = 0;
-	}
-
-	void ShaderProgram::createPipelineLayout() {
-		VkPushConstantRange range;
-		range.stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
-		range.offset = 0;
-		range.size = sizeof(PushConstantData);
-
-		VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
-		pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-		pipelineLayoutInfo.setLayoutCount = 0;
-		pipelineLayoutInfo.pSetLayouts = nullptr;
-		pipelineLayoutInfo.pushConstantRangeCount = 1;
-		pipelineLayoutInfo.pPushConstantRanges = &range;
-		if (vkCreatePipelineLayout(VulkanInstance::getInstance().device(), &pipelineLayoutInfo, nullptr, &pipelineLayout) != VK_SUCCESS)
-			throw runtime_error("failed to create pipelin layout");
-	}
-
-	void ShaderProgram::createPipeline(ShaderProgramInfo& pipelineConfig) {
-		ShaderProgram::defaultShaderProgramInfo(pipelineConfig);
-		pipelineConfig.renderPass = VulkanSwapchain::getInstance().getRenderPass();
-		pipelineConfig.pipelineLayout = pipelineLayout;
-
-	}
-
-	void ShaderProgram::recreateSwapchain() {
-		Window& window = Window::getInstance();
-		auto extent = window.getWindowExtend();
-		while (extent.width == 0 || extent.height == 0) {
-			extent = window.getWindowExtend();
-			glfwWaitEvents();
-		}
-
-		vkDeviceWaitIdle(VulkanInstance::getInstance().device());
-
-
-		VulkanSwapchain::RecreateSwapchain(extent);
-		if (VulkanSwapchain::getInstance().imageCount() != commandBuffers.size()) {
-			freeCommandBuffers();
-			createCommandBuffers();
-		}
-		ShaderProgramInfo pipelineConfig{};
-		createPipeline(pipelineConfig);
-	}
-
-	void ShaderProgram::createCommandBuffers() {
-		VulkanSwapchain& swapchian = VulkanSwapchain::getInstance();
-		VulkanInstance& instance = VulkanInstance::getInstance();
-		commandBuffers.resize(swapchian.imageCount());
-		VkCommandBufferAllocateInfo allocInfo{};
-		allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-		allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-		allocInfo.commandPool = instance.getCommandPool();
-		allocInfo.commandBufferCount = static_cast<uint32_t>(commandBuffers.size());
-
-		if (vkAllocateCommandBuffers(instance.device(), &allocInfo, commandBuffers.data()) != VK_SUCCESS)
-			throw runtime_error("failed to allocate command buffers!");
-	}
-
-	void ShaderProgram::freeCommandBuffers() {
-		VulkanInstance& instance = VulkanInstance::getInstance();
-		vkFreeCommandBuffers(instance.device(), instance.getCommandPool(),
-			static_cast<uint32_t>(commandBuffers.size()), commandBuffers.data());
-		commandBuffers.clear();
-	}
-
-	void ShaderProgram::recordCommandBuffer(int imageIndex) {
-		VulkanSwapchain& swapchain = VulkanSwapchain::getInstance();
-		VkCommandBufferBeginInfo beginInfo{};
-		beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-
-		if (vkBeginCommandBuffer(commandBuffers[imageIndex], &beginInfo) != VK_SUCCESS)
-			throw runtime_error("failed to begin recording command buffer!");
-
-		VkRenderPassBeginInfo renderPassInfo{};
-		renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-		renderPassInfo.renderPass = swapchain.getRenderPass();
-		renderPassInfo.framebuffer = swapchain.getFrameBuffer(imageIndex);
-		renderPassInfo.renderArea.offset = { 0,0 };
-		renderPassInfo.renderArea.extent = swapchain.getSwapChainExtent();
-
-		array<VkClearValue, 2> clearValues{};
-		clearValues[0].color = { 0.1f, 0.1f, 0.1f, 1.0f };
-		clearValues[1].depthStencil = { 1.0f,0 };
-		renderPassInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
-		renderPassInfo.pClearValues = clearValues.data();
-		vkCmdBeginRenderPass(commandBuffers[imageIndex], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
-
-		VkViewport viewport{};
-
-		viewport.x = 0.0f;
-		viewport.y = 0.0f;
-		viewport.width = static_cast<float>(swapchain.width());
-		viewport.height = static_cast<float>(swapchain.height());
-		viewport.minDepth = 0.0f;
-		viewport.maxDepth = 1.0f;
-		VkRect2D scissor{ {0, 0}, swapchain.getSwapChainExtent() };
-		vkCmdSetViewport(commandBuffers[imageIndex], 0, 1, &viewport);
-		vkCmdSetScissor(commandBuffers[imageIndex], 0, 1, &scissor);
-
-
-		bind(commandBuffers[imageIndex]);
-		//mesh->bind(commandBuffers[imageIndex]);
-
-			PushConstantData data;
-			data.offset = { 0.0f, -0.4f + 0.25f };
-			data.color = { 0.0f,0.0f, 0.2f + 0.2f };
-			vkCmdPushConstants(commandBuffers[imageIndex], pipelineLayout,
-				VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
-				0, sizeof(PushConstantData), &data);
-		vkCmdEndRenderPass(commandBuffers[imageIndex]);
-		if (vkEndCommandBuffer(commandBuffers[imageIndex]) != VK_SUCCESS)
-			throw runtime_error("failed to record command buffer!");
 	}
 }

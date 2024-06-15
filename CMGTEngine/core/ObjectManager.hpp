@@ -5,6 +5,7 @@
 #include "config.hpp"
 #include <string>
 #include<map>
+
 using namespace std;
 
 namespace cmgt
@@ -20,6 +21,7 @@ namespace cmgt
         static id_t assignGameObjectID();
         static void deleteGameObject(GameObject& obj);
         static void deleteGameObject(id_t pID);
+
     private:
         map<id_t, GameObject*> gameObjects;
         ObjectManager() = default;

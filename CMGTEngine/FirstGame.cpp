@@ -22,8 +22,8 @@ void FirstGame::OnInit() {
 	Scene* firstScene = new Scene("First Scene");
 
 	GameObject* firstObject = new GameObject("First GameObject");
-
-	firstObject->addComponent(*new Light());
+	;
+	firstObject->addComponent(*Mesh::createModelFromFile("cube.obj"));
 	firstScene->getWorld().add(firstObject);
 	//ShaderProgram* shader = new ShaderProgram(*vulkanAPI, vert, frag, ShaderProgram::defaultShaderProgramInfo(gameWindow->Width, gameWindow->Height));
 	//delete shader;

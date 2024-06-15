@@ -158,6 +158,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -209,6 +210,7 @@
     <ClInclude Include="core\SceneManager.hpp" />
     <ClInclude Include="core\ShaderProgram.hpp" />
     <ClInclude Include="core\Texture.hpp" />
+    <ClInclude Include="core\tiny_obj_loader.h" />
     <ClInclude Include="core\VulkanInstance.hpp" />
     <ClInclude Include="core\VulkanRenderer.hpp" />
     <ClInclude Include="core\VulkanSwapchain.hpp" />

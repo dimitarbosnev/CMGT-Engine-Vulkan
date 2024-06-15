@@ -3,21 +3,31 @@
 
 #pragma once
 #include "paths.hpp"
+#include "config.hpp"
 #include<string>
 #include<vector>
+#include<list>
 #include "VulkanInstance.hpp"
+#include "Mesh.hpp"
 using namespace std;
 
 namespace cmgt {
-	class VukanRenderer {
+	class VukanRenderer : public Singleton<VukanRenderer> {
 		public:
+			static void InitializeRenderer();
 			VukanRenderer(const VukanRenderer&) = delete;
 			VukanRenderer& operator=(const VukanRenderer&) = delete;
+
+			list<Mesh*> meshesToRender;
+			static void AddMeshToRender(Mesh& mesh);
+		protected:
+			
 		private:
-			void createCommandBuffers();
-			void freeCommandBuffers();
-			void render();
-			void recreateSwapchain();
+			VukanRenderer();
+			//void createCommandBuffers();
+			//void freeCommandBuffers();
+			//void render();
+			//void recreateSwapchain();
 	};
 }
 #endif //VULKANRENDERER_HPP

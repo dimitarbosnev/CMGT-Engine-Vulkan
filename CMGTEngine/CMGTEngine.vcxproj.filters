@@ -128,6 +128,9 @@
     <ClInclude Include="core\VulkanRenderer.hpp">
       <Filter>core</Filter>
     </ClInclude>
+    <ClInclude Include="core\tiny_obj_loader.h">
+      <Filter>core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\BasicVertexShader.vert">

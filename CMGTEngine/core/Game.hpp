@@ -20,10 +20,15 @@
 #include "ObjectManager.hpp"
 #include "SceneManager.hpp"
 #include "config.hpp"
-#include"Mesh.hpp"
+#include "Mesh.hpp"
+#include "VulkanRenderer.hpp"
 using namespace std;
 
 namespace cmgt {
+
+	struct PushConstantData {
+		float offset;
+	};
 
 	class Game
 	{
@@ -32,21 +37,27 @@ namespace cmgt {
 		~Game();
 		void run();
 		void exit();
-
+		float GetDeltaTime() { return _deltaTime; }
 	protected:
 		virtual void OnInit() = 0;
 		virtual void OnStart() = 0;
 		virtual void OnUpdate() = 0;
 		virtual void OnRender() = 0;
 		virtual void OnExit() = 0;
-
+		VkPipelineLayout pipelineLayout;
 		ShaderProgram* shader;
-
+		vector<VkCommandBuffer> commandBuffers;
 		//hard coded mesh
 		//Mesh* mesh;
 	private:
+		float _deltaTime;
 		void initEngine();
-
+		void createPipelineLayout();
+		void createPipeline();
+		void recreateSwapchain();
+		void createCommandBuffers();
+		void freeCommandBuffers();
+		void recordCommandBuffer(int imageIndex);
 		void drawFrame();
 
 		Game(const Game&) = delete;
