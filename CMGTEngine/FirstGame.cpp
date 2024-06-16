@@ -30,6 +30,7 @@ void FirstGame::OnInit() {
 	Camera* camera = new Camera();
 	camerObject->addComponent(camera);
 	camerObject->addComponent(new CameraMovement());
+
 	firstScene->getWorld().setMainCamera(camera);
 	firstScene->getWorld().add(meshObject);
 	firstScene->getWorld().add(camerObject);

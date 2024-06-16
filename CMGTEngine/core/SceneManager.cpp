@@ -68,5 +68,4 @@ namespace cmgt {
 	}
 	Scene& SceneManager::getScene(Scene& sceneID) { return getScene(sceneID.getID()); }
 	Scene& SceneManager::getScene(id_t sceneID) { return *getInstance().scenes.find(sceneID)->second; }
-	Scene& SceneManager::getCurrentScene() { return *getInstance().scenesStack.top(); }
 }

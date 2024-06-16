@@ -13,11 +13,6 @@ namespace cmgt{
         _owner = pOwner;
     }
 
-    const mat4& Component::getTransform()
-    {
-        return _owner->getTransform();
-    }
-
     void Component::update(float pStep) {}
     const glm::mat4& Component::getTransform() { return _owner->getTransform(); }
 }

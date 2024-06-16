@@ -12,8 +12,4 @@ namespace cmgt {
 	void VulkanRenderer::AddMeshToRender(Mesh& mesh) {
 		getInstance().meshesToRender.push_back(&mesh);
 	}
-	Camera& VukanRenderer::getCamera()
-	{
-		return *SceneManager::getInstance().getCurrentScene().getWorld().getMainCamera();
-	}
 }

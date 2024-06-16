@@ -21,7 +21,6 @@ namespace cmgt {
 
 			list<Mesh*> meshesToRender;
 			static void AddMeshToRender(Mesh& mesh);
-			static Camera& getCamera();
 		protected:
 			
 		private:

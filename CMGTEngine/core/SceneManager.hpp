@@ -23,7 +23,6 @@ namespace cmgt
         static Scene& getScene(string name);
         static Scene& getScene(Scene& sceneID);
         static Scene& getScene(id_t sceneID);
-        static Scene& getCurrentScene();
         static id_t assignSceneID();
 
     private:
