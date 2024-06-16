@@ -9,6 +9,7 @@
 #include<list>
 #include "VulkanInstance.hpp"
 #include "Mesh.hpp"
+#include "Camera.hpp"
 using namespace std;
 
 namespace cmgt {
@@ -20,6 +21,7 @@ namespace cmgt {
 
 			list<Mesh*> meshesToRender;
 			static void AddMeshToRender(Mesh& mesh);
+			static Camera& getCamera();
 		protected:
 			
 		private:

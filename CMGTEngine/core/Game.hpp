@@ -23,11 +23,12 @@
 #include "Mesh.hpp"
 #include "VulkanRenderer.hpp"
 using namespace std;
-
+using namespace glm;
 namespace cmgt {
 
 	struct PushConstantData {
-		float offset;
+		mat4 mvpMatirx;
+		alignas(16) float offset;
 	};
 
 	class Game
