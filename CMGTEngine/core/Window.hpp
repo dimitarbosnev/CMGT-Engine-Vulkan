@@ -33,6 +33,7 @@ namespace cmgt
 
 		const string windowName;
 
+		int getKeyState(int keyCode);
 		bool isOpened();
 		bool isWindowResized() { return _resized; }
 		void resetWindowResizeFlag() { _resized = false; }

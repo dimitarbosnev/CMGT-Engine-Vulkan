@@ -53,6 +53,11 @@ namespace cmgt{
         glfwDestroyWindow(window);
     }
 
+    int Window::getKeyState(int keyCode)
+    {
+        return glfwGetKey(window, keyCode);
+    }
+
     void Window::initVKSurface(VkInstance& instance,VkSurfaceKHR& surface) {
         cout << "Initialize Surface...\n";
         if (glfwCreateWindowSurface(instance, window, nullptr, &surface) != VK_SUCCESS) {
