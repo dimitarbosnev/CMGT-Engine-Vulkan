@@ -65,6 +65,12 @@
     <ClCompile Include="core\VulkanRenderer.cpp">
       <Filter>core</Filter>
     </ClCompile>
+    <ClCompile Include="core\InputManager.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="core\CameraMovement.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\Game.hpp">
@@ -129,6 +135,12 @@
       <Filter>core</Filter>
     </ClInclude>
     <ClInclude Include="core\tiny_obj_loader.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\InputManager.hpp">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\CameraMovement.hpp">
       <Filter>core</Filter>
     </ClInclude>
   </ItemGroup>

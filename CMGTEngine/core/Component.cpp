@@ -1,6 +1,6 @@
 #pragma once
 #include "Component.hpp"
-
+#include "GameObject.hpp"
 namespace cmgt{
 
     Component::Component() {
@@ -14,4 +14,5 @@ namespace cmgt{
     }
 
     void Component::update(float pStep) {}
+    const glm::mat4& Component::getTransform() { return _owner->getTransform(); }
 }

@@ -10,7 +10,7 @@ namespace cmgt {
 	Mesh::Mesh(const Mesh::Builder &builder) {
 		createVertexBuffers(builder.vertecies);
 		createIndexBuffers(builder.indices);
-		VukanRenderer::AddMeshToRender(*this);
+		VulkanRenderer::AddMeshToRender(*this);
 	}
 
 	Mesh::~Mesh() {

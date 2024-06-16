@@ -54,11 +54,11 @@ namespace cmgt {
     }
 
 
-    void GameObject::addComponent(Component& pBehaviour)
+    void GameObject::addComponent(Component* pBehaviour)
     {
-        _components.push_back(&pBehaviour);
+        _components.push_back(pBehaviour);
 
-        pBehaviour.setOwner(this);
+        pBehaviour->setOwner(this);
     }
 
     template<class T> T* GameObject::getComponent()

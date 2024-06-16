@@ -1,6 +1,9 @@
 #pragma once
 #include "Game.hpp"
-
+#include "glm.hpp"
+#include "Camera.hpp"
+#include "VulkanRenderer.hpp"
+#include "Scene.hpp"
 namespace cmgt {
 
 	Game::Game(int pWidth, int pHeight, string pName) {
@@ -27,7 +30,7 @@ namespace cmgt {
 		cout << "Initalizing CMGT Engine Utils...\n";
 			ObjectManager::InitializesObjectManager();
 			SceneManager::InitializesSceneManager();
-			VukanRenderer::InitializeRenderer();
+			VulkanRenderer::InitializeRenderer();
 		cout << "Utils Initalized!\n";
 
 		cout << "CMGT Engine Initialized!\n";
@@ -137,18 +140,20 @@ namespace cmgt {
 
 
 		shader->bind(commandBuffers[imageIndex]);
-		for (Mesh* mesh : VukanRenderer::getInstance().meshesToRender) {
+		for (Mesh* mesh : VulkanRenderer::getInstance().meshesToRender) {
 			mesh->bind(commandBuffers[imageIndex]);
 		}
 
 
-		for (Mesh* mesh : VukanRenderer::getInstance().meshesToRender) {
+		for (Mesh* mesh : VulkanRenderer::getInstance().meshesToRender) {
 			PushConstantData data;
-			mesh->render(commandBuffers[imageIndex]);
-			data.offset = (float)glfwGetTime();
+			Camera& camera = *SceneManager::getCurrentScene().getWorld().getMainCamera();
+			data.mvpMatrix = camera.getProjection() * camera.getTransform() * mesh->getTransform();
+			data.time = (float)glfwGetTime();
 			vkCmdPushConstants(commandBuffers[imageIndex], pipelineLayout,
 				VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
 				0, sizeof(PushConstantData), &data);
+			mesh->render(commandBuffers[imageIndex]);
 		}
 		
 
@@ -193,6 +198,7 @@ namespace cmgt {
 			_deltaTime = (float)time - lastTick;
 			lastTick = (float)time;
 			OnUpdate();
+			SceneManager::update(_deltaTime);
 			OnRender();
 			drawFrame();
 		}
@@ -207,12 +213,13 @@ namespace cmgt {
 		OnExit();
 		vkDestroyPipelineLayout(instance.device(), pipelineLayout, nullptr);
 		//delete mesh;
-		delete &SceneManager::getInstance();
-		delete &ObjectManager::getInstance();
-		delete &window;
 		delete shader;
-		delete &swapchain;
-		delete &instance;
+		SceneManager::destroyInstance();
+		ObjectManager::destroyInstance();
+		Window::destroyInstance();
+		VulkanRenderer::destroyInstance();
+		VulkanSwapchain::destroyInstance();
+		VulkanInstance::destroyInstance();
 
 		glfwTerminate();
 		cout << "GLFW Terminated!\n";

@@ -1,13 +1,13 @@
 #pragma once
 #include "VulkanRenderer.hpp"
 namespace cmgt {
-	void VukanRenderer::InitializeRenderer() {
-		assignInstance(new VukanRenderer());
+	void VulkanRenderer::InitializeRenderer() {
+		assignInstance(new VulkanRenderer());
 	}
-	VukanRenderer::VukanRenderer() {
+	VulkanRenderer::VulkanRenderer() {
 
 	}
-	void VukanRenderer::AddMeshToRender(Mesh& mesh) {
+	void VulkanRenderer::AddMeshToRender(Mesh& mesh) {
 		getInstance().meshesToRender.push_back(&mesh);
 	}
 }

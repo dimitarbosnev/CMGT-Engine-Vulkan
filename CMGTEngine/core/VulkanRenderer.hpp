@@ -12,18 +12,18 @@
 using namespace std;
 
 namespace cmgt {
-	class VukanRenderer : public Singleton<VukanRenderer> {
+	class VulkanRenderer : public Singleton<VulkanRenderer> {
 		public:
 			static void InitializeRenderer();
-			VukanRenderer(const VukanRenderer&) = delete;
-			VukanRenderer& operator=(const VukanRenderer&) = delete;
+			VulkanRenderer(const VulkanRenderer&) = delete;
+			VulkanRenderer& operator=(const VulkanRenderer&) = delete;
 
 			list<Mesh*> meshesToRender;
 			static void AddMeshToRender(Mesh& mesh);
 		protected:
 			
 		private:
-			VukanRenderer();
+			VulkanRenderer();
 			//void createCommandBuffers();
 			//void freeCommandBuffers();
 			//void render();

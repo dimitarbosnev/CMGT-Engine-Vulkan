@@ -25,7 +25,7 @@ namespace cmgt {
 	}
 	VulkanSwapchain::VulkanSwapchain(VkExtent2D extent, VulkanSwapchain* pSwapchain) : windowExtent{ extent }, previousSwapchain{ pSwapchain } {
 		initSwapchain();
-		deleteInstance();
+		destroyInstance();
 	}
 
 	void VulkanSwapchain::initSwapchain() {

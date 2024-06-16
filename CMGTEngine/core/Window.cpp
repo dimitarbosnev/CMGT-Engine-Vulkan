@@ -1,6 +1,6 @@
 #pragma once
 #include "Window.hpp"
-
+#include "InputManager.hpp"
 namespace cmgt{
     void Window::InitializeWindow(int pWidth, int pHeight, const string& pName) 
     { assignInstance(new Window(pWidth, pHeight, pName)); }  
@@ -8,6 +8,7 @@ namespace cmgt{
     Window::Window(int pWidth, int pHeight, const string& pName) 
         : _width(pWidth), _height(pHeight), windowName(pName) {
         InitWindow();
+        InputManager::InitializeInputManager(window);
     }
 
 
@@ -48,6 +49,7 @@ namespace cmgt{
     }
 
     void Window::close() {
+        InputManager::destroyInstance();
         glfwDestroyWindow(window);
     }
 

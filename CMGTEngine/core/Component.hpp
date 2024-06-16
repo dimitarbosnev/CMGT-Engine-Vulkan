@@ -1,6 +1,9 @@
 #ifndef COMPONENT_HPP
 #define COMPONENT_HPP
 
+#pragma once
+#include "glm.hpp"
+
 namespace cmgt
 {
 	class GameObject;
@@ -17,6 +20,8 @@ namespace cmgt
 
 		//behaviour should be able to update itself every step and MUST be implemented
 		virtual void update(float pStep);
+
+		const glm::mat4& getTransform();
 	protected:
 
 		GameObject* _owner;

@@ -8,6 +8,8 @@
 #include "core/GameObject.hpp"
 #include "core/Mesh.hpp"
 #include "core/Light.hpp"
+#include "core/Camera.hpp"
+#include "core/CameraMovement.hpp"
 FirstGame::FirstGame(ivec2 resolution, string name) : Game(resolution.x,resolution.y,name) {
 
 }
@@ -21,10 +23,16 @@ void FirstGame::OnInit() {
 	string frag = "frag.spv";
 	Scene* firstScene = new Scene("First Scene");
 
-	GameObject* firstObject = new GameObject("First GameObject");
-	;
-	firstObject->addComponent(*Mesh::createModelFromFile("cube.obj"));
-	firstScene->getWorld().add(firstObject);
+	GameObject* meshObject = new GameObject("First GameObject");
+	meshObject->addComponent(Mesh::createModelFromFile("cube.obj"));
+
+	GameObject* camerObject = new GameObject("Camera Object");
+	Camera* camera = new Camera();
+	camerObject->addComponent(camera);
+	camerObject->addComponent(new CameraMovement());
+	firstScene->getWorld().setMainCamera(camera);
+	firstScene->getWorld().add(meshObject);
+	firstScene->getWorld().add(camerObject);
 	//ShaderProgram* shader = new ShaderProgram(*vulkanAPI, vert, frag, ShaderProgram::defaultShaderProgramInfo(gameWindow->Width, gameWindow->Height));
 	//delete shader;
 }

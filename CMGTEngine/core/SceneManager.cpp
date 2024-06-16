@@ -53,6 +53,13 @@ namespace cmgt {
 
 	void SceneManager::previousScene() { getInstance().scenesStack.pop(); }
 
+	Scene& SceneManager::getCurrentScene()
+	{
+		SceneManager& manager = getInstance();
+		assert(manager.scenesStack.size() != 0 && "There is no scene on the stack!");
+		return *manager.scenesStack.top();
+	}
+
 	Scene& SceneManager::getScene(string name) {
 		SceneManager& manager = getInstance();
 		auto findByName = [name](const pair<id_t, Scene*>& a) { return a.second->getName() == name; };

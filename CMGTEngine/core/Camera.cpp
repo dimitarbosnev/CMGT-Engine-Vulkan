@@ -2,16 +2,7 @@
 #include "Camera.hpp"
 
 namespace cmgt {
-	Camera::Camera(string pName, vec3 pPosition, mat4 pProjectionMatrix) {
-	}
-
-	Camera::~Camera()
-	{
-		//dtor
-	}
-
-	void Camera::update(float pStep)
-	{
+	Camera::Camera(glm::mat4 pProjectionMatrix) {
 	}
 
 	glm::mat4& Camera::getProjection() {

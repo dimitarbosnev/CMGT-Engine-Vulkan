@@ -48,7 +48,7 @@ namespace cmgt
 		void Scale(vec3 pScale);
 
 
-		void addComponent(Component& pBehaviour);
+		void addComponent(Component* pBehaviour);
 		template<class T>  T* getComponent();
 		virtual void update(float pStep);
 

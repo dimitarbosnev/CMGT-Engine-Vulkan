@@ -19,6 +19,7 @@ namespace cmgt
         static void addScene(Scene& scene);
         static void gotoScene(Scene& scene);
         static void previousScene();
+        static Scene& getCurrentScene();
         static Scene& getScene(string name);
         static Scene& getScene(Scene& sceneID);
         static Scene& getScene(id_t sceneID);

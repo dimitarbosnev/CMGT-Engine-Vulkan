@@ -27,7 +27,8 @@ using namespace std;
 namespace cmgt {
 
 	struct PushConstantData {
-		float offset;
+		mat4 mvpMatrix;
+		float time;
 	};
 
 	class Game

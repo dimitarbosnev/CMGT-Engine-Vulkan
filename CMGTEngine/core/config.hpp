@@ -16,17 +16,17 @@ namespace cmgt {
 			assert(_instance != nullptr && format("{} is not initalized!", typeid(T).name()).c_str());
 			return *_instance;
 		}
+		static void destroyInstance() {
+			assert(_instance != nullptr && format("{} is not initalized!", typeid(T).name()).c_str());
+				delete _instance;
+			_instance = nullptr;
+		}
 	protected:
 		Singleton() = default;
 		static void assignInstance(T* pInstance) {
 			assert(_instance == nullptr && format("{} is already initalized!", typeid(T).name()).c_str());
 			_instance = pInstance;
 			cout << typeid(T).name() << " initalized successfuly!" << endl;
-		}
-		static void deleteInstance() {
-			if (_instance != nullptr)
-				delete _instance;
-			_instance = nullptr;
 		}
 	private:
 		inline static T* _instance = nullptr;
