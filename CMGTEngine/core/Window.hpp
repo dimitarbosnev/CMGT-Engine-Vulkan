@@ -38,7 +38,7 @@ namespace cmgt
 		void resetWindowResizeFlag() { _resized = false; }
 		void update();
 		void close();
-		int getKeyState(int keyCode);
+
 		void initVKSurface(VkInstance& instance, VkSurfaceKHR& surface);
 		void GetFrameBuffer(int& width, int& height);
 		VkExtent2D getWindowExtend() { return { static_cast<uint32_t>(_width), static_cast<uint32_t>(_height) }; }
