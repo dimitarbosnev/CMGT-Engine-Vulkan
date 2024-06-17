@@ -27,7 +27,7 @@ namespace cmgt{
         window = glfwCreateWindow(_width, _height, windowName.c_str(), nullptr,nullptr);
         //glfwSetWindowAspectRatio(window, 16, 9);
         glfwSetWindowUserPointer(window, this);
-
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
         glfwSetFramebufferSizeCallback(window, resizeWindowCallBack);
         cout << "Window Initialized!\n";
     }
@@ -45,6 +45,7 @@ namespace cmgt{
     }
 
     void Window::update() {
+            InputManager::updateInputManager();
             glfwPollEvents();
     }
 

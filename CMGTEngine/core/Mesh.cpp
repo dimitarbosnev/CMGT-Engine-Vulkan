@@ -10,7 +10,7 @@ namespace cmgt {
 	Mesh::Mesh(const Mesh::Builder &builder) {
 		createVertexBuffers(builder.vertecies);
 		createIndexBuffers(builder.indices);
-		VulkanRenderer::AddMeshToRender(*this);
+		VulkanRenderer::AddMeshToRender(this);
 	}
 
 	Mesh::~Mesh() {
@@ -22,6 +22,7 @@ namespace cmgt {
 			vkDestroyBuffer(device, _indexBuffer, nullptr);
 			vkFreeMemory(device, _indexBufferMemory, nullptr);
 		}
+		VulkanRenderer::RemoveFromRenderer(this);
 	}
 
 	void Mesh::createVertexBuffers(const vector<Vertex>& vertecies){
@@ -91,6 +92,10 @@ namespace cmgt {
 	}
 	void Mesh::update(float dt) {
 
+	}
+	Mesh::Mesh(const vector<Vertex>& vertecies) {
+		createVertexBuffers(vertecies);
+		VulkanRenderer::AddMeshToRender(this);
 	}
 	Mesh* Mesh::createModelFromFile(const string& fileName)
 	{

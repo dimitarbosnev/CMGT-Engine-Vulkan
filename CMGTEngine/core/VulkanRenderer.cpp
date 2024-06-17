@@ -9,7 +9,11 @@ namespace cmgt {
 	VulkanRenderer::VulkanRenderer() {
 
 	}
-	void VulkanRenderer::AddMeshToRender(Mesh& mesh) {
-		getInstance().meshesToRender.push_back(&mesh);
+	void VulkanRenderer::AddMeshToRender(Mesh* mesh) {
+		getInstance().meshesToRender.push_back(mesh);
+	}
+	void VulkanRenderer::RemoveFromRenderer(Mesh* mesh)
+	{
+		getInstance().meshesToRender.remove(mesh);
 	}
 }

@@ -48,8 +48,6 @@ namespace cmgt {
 		VkPipelineLayout pipelineLayout;
 		ShaderProgram* shader;
 		vector<VkCommandBuffer> commandBuffers;
-		//hard coded mesh
-		//Mesh* mesh;
 	private:
 		float _deltaTime;
 		void initEngine();

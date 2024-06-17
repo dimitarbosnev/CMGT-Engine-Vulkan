@@ -33,12 +33,11 @@ namespace cmgt {
 
 			void loadModel(const string& filePath);
 		};
-		Mesh(const Mesh::Builder &builder);
 		virtual ~Mesh();
 		void bind(VkCommandBuffer commandBuffer);
 		void render(VkCommandBuffer commandBuffer);
 		void update(float dt) override;
-
+		Mesh(const vector<Vertex>&);
 		static Mesh* createModelFromFile(const string& filePath);
 	protected:
 
@@ -54,8 +53,9 @@ namespace cmgt {
 		void createIndexBuffers(const vector<uint32_t>& indices);
 
 	private:
-		Mesh(const Mesh&) = delete;
-		Mesh& operator= (const Mesh&) = delete;
+		Mesh(const Mesh::Builder &builder);
+		Mesh(const Mesh&);
+		Mesh& operator=(const Mesh&);
 	};
 }
 #endif // MESH_HPP

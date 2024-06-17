@@ -26,6 +26,12 @@ void FirstGame::OnInit() {
 	GameObject* meshObject = new GameObject("First GameObject");
 	meshObject->addComponent(Mesh::createModelFromFile("cube.obj"));
 
+	GameObject* meshObject2 = new GameObject("Second GameObject");
+	vector<Mesh::Vertex> vertecies{ {{0.0f,-0.5f,0.0f}, {1,0,0}},
+									{{0.5f,0.5f,0.0f}, {0,1,0}},
+									{{-0.5f,0.5f,0.0f},{0,0,1}} };
+	meshObject2->addComponent(new Mesh(vertecies));
+
 	GameObject* camerObject = new GameObject("Camera Object");
 	Camera* camera = new Camera();
 	camerObject->addComponent(camera);
@@ -33,6 +39,7 @@ void FirstGame::OnInit() {
 
 	firstScene->getWorld().setMainCamera(camera);
 	firstScene->getWorld().add(meshObject);
+	firstScene->getWorld().add(meshObject2);
 	firstScene->getWorld().add(camerObject);
 	//ShaderProgram* shader = new ShaderProgram(*vulkanAPI, vert, frag, ShaderProgram::defaultShaderProgramInfo(gameWindow->Width, gameWindow->Height));
 	//delete shader;

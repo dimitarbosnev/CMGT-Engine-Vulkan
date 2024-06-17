@@ -19,11 +19,6 @@ namespace cmgt {
 		cout << "Initializing CMGT Engine...\n";
 		VulkanInstance::InitializeVulkan();
 		VulkanSwapchain::InitializeSwapchain(Window::getInstance().getWindowExtend());
-		//Hard coded mesh
-		vector<Mesh::Vertex> vertecies{ {{0.0f,-0.5f,0.0f}, {1,0,0}},
-			{{0.5f,0.5f,0.0f}, {0,1,0}},
-			{{-0.5f,0.5f,0.0f},{0,0,1}} };
-		//mesh = new Mesh(vertecies);
 		createPipelineLayout();
 		createPipeline();
 		createCommandBuffers();

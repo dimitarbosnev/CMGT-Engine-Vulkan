@@ -6,10 +6,32 @@ namespace cmgt{
 
     InputManager::~InputManager(){}
 
+    void InputManager::updateInputManager()
+    {
+        getInstance()._previousMousePosition = mousePosition();
+    }
+
     InputManager::InputManager(GLFWwindow* pWindow) : window(pWindow) {}
 
     bool InputManager::isKeyPressed(int key) {
         return glfwGetKey(getInstance().window, key) == GLFW_PRESS;
+    }
+
+    glm::vec2 InputManager::mousePosition()
+    {
+        double x, y;
+       glfwGetCursorPos(getInstance().window, &x, &y);
+       return glm::vec2(x, y);
+    }
+
+    glm::vec2 InputManager::deltaMousePosition()
+    {
+        return  mousePosition() - getInstance()._previousMousePosition;
+    }
+
+    bool InputManager::isMouseMoved()
+    {
+        return glm::length(deltaMousePosition()) > 0;
     }
 
 }

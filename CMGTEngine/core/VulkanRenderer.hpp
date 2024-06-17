@@ -20,7 +20,8 @@ namespace cmgt {
 			VulkanRenderer& operator=(const VulkanRenderer&) = delete;
 
 			list<Mesh*> meshesToRender;
-			static void AddMeshToRender(Mesh& mesh);
+			static void AddMeshToRender(Mesh* mesh);
+			static void RemoveFromRenderer(Mesh* mesh);
 		protected:
 			
 		private:
