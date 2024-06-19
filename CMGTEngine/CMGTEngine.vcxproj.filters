@@ -71,6 +71,9 @@
     <ClCompile Include="core\CameraMovement.cpp">
       <Filter>core</Filter>
     </ClCompile>
+    <ClCompile Include="core\ObjectMovement.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\Game.hpp">
@@ -141,6 +144,9 @@
       <Filter>core</Filter>
     </ClInclude>
     <ClInclude Include="core\CameraMovement.hpp">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\ObjectMovement.hpp">
       <Filter>core</Filter>
     </ClInclude>
   </ItemGroup>

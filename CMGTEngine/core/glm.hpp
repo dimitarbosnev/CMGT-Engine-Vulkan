@@ -53,7 +53,7 @@ inline std::ostream & operator << ( std::ostream & out, const glm::mat4 & m ) {
 	out.precision (1);
 	for ( int r = 0; r < 4; r++ ) {
 		for ( int c = 0; c < 4; c++ ) {
-			out << std::showpos << std::fixed << m[c][r] << " ";
+			out << std::showpos << std::fixed << m[r][c] << ",";
 		}
 		out << std::endl;
 	}

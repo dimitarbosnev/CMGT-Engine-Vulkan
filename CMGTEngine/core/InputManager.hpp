@@ -24,6 +24,7 @@ namespace cmgt
 		~InputManager();
 		static void updateInputManager();
 		static bool isKeyPressed(int);
+		static bool isMousePressed(int);
 		static glm::vec2 mousePosition();
 		static glm::vec2 deltaMousePosition();
 		static bool isMouseMoved();

@@ -10,7 +10,6 @@
 #include <vector>
 
 using namespace std;
-using namespace glm;
 
 namespace cmgt
 {
@@ -30,22 +29,23 @@ namespace cmgt
 
 
 		//contains local rotation, scale, position
-		void setTransform(const mat4& pTransform);
-		const mat4& getTransform() const;
+		void setTransform(const glm::mat4& pTransform);
+		const glm::mat4& getTransform() const;
 
 		//access just the local position
-		void setLocalPosition(vec3 pPosition);
-		void setWorldPosition(vec3 pPosition);
-		vec3 getLocalPosition() const;
-
+		void setLocalPosition(glm::vec3 pPosition);
+		void setWorldPosition(glm::vec3 pPosition);
+		glm::vec3 getLocalPosition() const;
+		glm::vec3 getScale() const;
+		glm::vec3 getEulerRotation() const;
 		//get the objects world position by combining transforms, SLOW use with care
-		vec3 getWorldPosition() const;
-		mat4 getWorldTransform() const;
+		glm::vec3 getWorldPosition() const;
+		glm::mat4 getWorldTransform() const;
 
 		//change LOCAL position, rotation, scaling
-		void Translate(vec3 pTranslation);
-		void Rotate(float pAngle, vec3 pAxis);
-		void Scale(vec3 pScale);
+		void Translate(glm::vec3 pTranslation);
+		void Rotate(float pAngle, glm::vec3 pAxis);
+		void Scale(glm::vec3 pScale);
 
 
 		void addComponent(Component* pBehaviour);
@@ -73,7 +73,7 @@ namespace cmgt
 
 		string _name;
 		id_t id;
-		mat4 _transform;
+		glm::mat4 _transform;
 
 		GameObject* _parent;
 		vector<GameObject*> _children;
@@ -89,8 +89,8 @@ namespace cmgt
 		virtual void _setWorldRecursively(WorldSeed* pWorldSeed);
 
 	private:
-		GameObject(const GameObject&) = delete;
-		GameObject& operator= (const GameObject&) = delete;
+		GameObject(const GameObject&);
+		GameObject& operator= (const GameObject&);
 	};
 }
 #endif // GAMEOBJECT_HPP

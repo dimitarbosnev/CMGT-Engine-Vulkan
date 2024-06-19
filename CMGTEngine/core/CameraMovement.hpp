@@ -11,10 +11,11 @@ namespace cmgt
 	{
 	public:
 
-		CameraMovement();
-		void update(float pStep) override;
+		CameraMovement(float, float);
+		void update(float) override;
 	private:
-
+		float _rotationSpeed;
+		float _moveSpeed;
 		//disallow copy and assignment
 		CameraMovement(const CameraMovement&);
 		CameraMovement& operator=(const CameraMovement&);

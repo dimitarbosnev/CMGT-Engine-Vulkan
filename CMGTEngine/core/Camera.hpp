@@ -17,7 +17,6 @@ namespace cmgt {
     private:
         glm::mat4 _projection;
 
-    private:
         Camera(const Camera&);
         Camera& operator= (const Camera&);
     };

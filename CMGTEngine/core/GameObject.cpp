@@ -27,30 +27,42 @@ namespace cmgt {
         _name = pName;
     }
 
-    void GameObject::setTransform(const mat4& pTransform)
+    void GameObject::setTransform(const glm::mat4& pTransform)
     {
         _transform = pTransform;
     }
 
-    const mat4& GameObject::getTransform() const
+    const glm::mat4& GameObject::getTransform() const
     {
         return _transform;
     }
 
-    void GameObject::setLocalPosition(vec3 pPosition)
+    void GameObject::setLocalPosition(glm::vec3 pPosition)
     {
-        _transform[3] = vec4(pPosition, 1);
+        _transform[3] = glm::vec4(pPosition, 1);
     }
 
-    void GameObject::setWorldPosition(vec3 pPosition)
+    void GameObject::setWorldPosition(glm::vec3 pPosition)
     {
 
-        _transform[3] = vec4(pPosition, 1);
+        _transform[3] = glm::vec4(pPosition, 1);
     }
 
-    vec3 GameObject::getLocalPosition() const
+    glm::vec3 GameObject::getLocalPosition() const
     {
-        return vec3(_transform[3]);
+        return glm::vec3(_transform[3]);
+    }
+
+    glm::vec3 GameObject::getScale() const
+    {
+        return glm::vec3();
+    }
+
+    glm::vec3 GameObject::getEulerRotation() const
+    {
+        glm::vec3 eulerAngles;
+        glm::extractEulerAngleXYZ(_transform, eulerAngles.x, eulerAngles.y, eulerAngles.z);
+        return eulerAngles;
     }
 
 
@@ -132,13 +144,13 @@ namespace cmgt {
     ////////////
 
     //costly operation, use with care
-    vec3 GameObject::getWorldPosition() const
+    glm::vec3 GameObject::getWorldPosition() const
     {
-        return vec3(getWorldTransform()[3]);
+        return glm::vec3(getWorldTransform()[3]);
     }
 
     //costly operation, use with care
-    mat4 GameObject::getWorldTransform() const
+    glm::mat4 GameObject::getWorldTransform() const
     {
         if (_parent == nullptr) return _transform;
         else return _parent->getWorldTransform() * _transform;
@@ -146,16 +158,16 @@ namespace cmgt {
 
     ////////////
 
-    void GameObject::Translate(vec3 pTranslation) {
-        setTransform(translate(_transform, pTranslation));
+    void GameObject::Translate(glm::vec3 pTranslation) {
+        setTransform(glm::translate(_transform, pTranslation));
     }
 
-    void GameObject::Scale(vec3 pScale) {
-        setTransform(scale(_transform, pScale));
+    void GameObject::Scale(glm::vec3 pScale) {
+        setTransform(glm::scale(_transform, pScale));
     }
 
-    void GameObject::Rotate(float pAngle, vec3 pAxis) {
-        setTransform(rotate(_transform, pAngle, pAxis));
+    void GameObject::Rotate(float pAngle, glm::vec3 pAxis) {
+        setTransform(glm::rotate(_transform, pAngle, pAxis));
     }
 
     void GameObject::update(float pStep)

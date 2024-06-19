@@ -137,13 +137,19 @@ namespace cmgt {
 		shader->bind(commandBuffers[imageIndex]);
 		for (Mesh* mesh : VulkanRenderer::getInstance().meshesToRender) {
 			mesh->bind(commandBuffers[imageIndex]);
-		}
-
-
-		for (Mesh* mesh : VulkanRenderer::getInstance().meshesToRender) {
+		
 			PushConstantData data;
 			Camera& camera = *SceneManager::getCurrentScene().getWorld().getMainCamera();
-			data.mvpMatrix = camera.getProjection() * camera.getTransform() * mesh->getTransform();
+			glm::mat4 cameraProj = camera.getProjection();
+			glm::mat4 cameraView = glm::inverse(camera.getTransform());
+			glm::mat4 cameraTrans = camera.getTransform();
+			glm::mat4 meshTrans = mesh->getTransform();
+			//cout << " M MATRIX: \n" << meshTrans << endl;
+			//cout << " V MATRIX: \n" << cameraTrans << endl;
+			//cout << " P MATRIX: \n" << cameraProj << endl;
+			//data.mvpMatrix = camera.getProjection() * glm::inverse(camera.getTransform()) * mesh->getTransform();
+			data.mvpMatrix = cameraProj * cameraView * meshTrans;//camera.getProjection() * glm::inverse(camera.getTransform()) * mesh->getTransform();
+			//cout << " MVP MATRIX: \n" << data.mvpMatrix << endl;
 			data.time = (float)glfwGetTime();
 			vkCmdPushConstants(commandBuffers[imageIndex], pipelineLayout,
 				VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
@@ -192,6 +198,7 @@ namespace cmgt {
 			double time = glfwGetTime();
 			_deltaTime = (float)time - lastTick;
 			lastTick = (float)time;
+			//cout << "FPS: " << 1.0f / _deltaTime << endl;
 			OnUpdate();
 			SceneManager::update(_deltaTime);
 			OnRender();

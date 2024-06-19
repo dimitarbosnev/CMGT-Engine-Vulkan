@@ -184,6 +184,7 @@
     <ClCompile Include="core\Material.cpp" />
     <ClCompile Include="core\Mesh.cpp" />
     <ClCompile Include="core\ObjectManager.cpp" />
+    <ClCompile Include="core\ObjectMovement.cpp" />
     <ClCompile Include="core\Scene.cpp" />
     <ClCompile Include="core\SceneManager.cpp" />
     <ClCompile Include="core\ShaderProgram.cpp" />
@@ -209,6 +210,7 @@
     <ClInclude Include="core\Material.hpp" />
     <ClInclude Include="core\Mesh.hpp" />
     <ClInclude Include="core\ObjectManager.hpp" />
+    <ClInclude Include="core\ObjectMovement.hpp" />
     <ClInclude Include="core\paths.hpp" />
     <ClInclude Include="core\Scene.hpp" />
     <ClInclude Include="core\SceneManager.hpp" />

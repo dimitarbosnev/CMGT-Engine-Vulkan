@@ -17,6 +17,11 @@ namespace cmgt{
         return glfwGetKey(getInstance().window, key) == GLFW_PRESS;
     }
 
+    bool InputManager::isMousePressed(int button)
+    {
+        return glfwGetMouseButton(getInstance().window, button) == GLFW_PRESS;
+    }
+
     glm::vec2 InputManager::mousePosition()
     {
         double x, y;
