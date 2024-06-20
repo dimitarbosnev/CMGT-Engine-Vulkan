@@ -22,6 +22,7 @@ namespace cmgt {
 		createPipelineLayout();
 		createPipeline();
 		createCommandBuffers();
+
 		cout << "Initalizing CMGT Engine Utils...\n";
 			ObjectManager::InitializesObjectManager();
 			SceneManager::InitializesSceneManager();
@@ -29,6 +30,7 @@ namespace cmgt {
 		cout << "Utils Initalized!\n";
 
 		cout << "CMGT Engine Initialized!\n";
+
 	}
 
 	void Game::createPipelineLayout() {
@@ -194,11 +196,22 @@ namespace cmgt {
 		OnInit();
 		OnStart();
 		float lastTick = glfwGetTime();
+		float second = 0;
+		float fps = 0;
 		while (!Window::getInstance().isOpened()) {
 			double time = glfwGetTime();
 			_deltaTime = (float)time - lastTick;
 			lastTick = (float)time;
-			//cout << "FPS: " << 1.0f / _deltaTime << endl;
+			if (second >= 1)
+			{
+				cout << "FPS: " << fps << endl;
+				second = 0;
+				fps = 0;
+			}
+			else {
+				second += _deltaTime;
+				fps++;
+			}
 			OnUpdate();
 			SceneManager::update(_deltaTime);
 			OnRender();

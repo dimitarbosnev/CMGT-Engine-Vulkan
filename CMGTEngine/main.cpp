@@ -6,7 +6,7 @@ using namespace std;
 using namespace glm;
 
     int main() {
-        cmgt::Game* game = new FirstGame(ivec2(800,600),"CMGTEngine");
+        cmgt::Game* game = new FirstGame(ivec2(1600,900),"CMGTEngine");
         try {
             game->run();
         }

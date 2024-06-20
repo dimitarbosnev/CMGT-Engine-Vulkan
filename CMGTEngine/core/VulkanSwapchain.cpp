@@ -417,11 +417,11 @@ namespace cmgt {
 		   }
 		 }*/
 
-		//std::cout << "Present mode: V-Sync" << std::endl;
-		//return VK_PRESENT_MODE_FIFO_KHR;
+		std::cout << "Present mode: V-Sync" << std::endl;
+		return VK_PRESENT_MODE_FIFO_KHR;
 
-		std::cout << "Present mode: MailBox" << std::endl;
-		return VK_PRESENT_MODE_MAILBOX_KHR;
+		//std::cout << "Present mode: MailBox" << std::endl;
+		//return VK_PRESENT_MODE_MAILBOX_KHR;
 	}
 
 	VkExtent2D VulkanSwapchain::chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities) {

@@ -9,11 +9,11 @@ namespace cmgt{
 
     void ObjectMovement::update(float pStep) {
         if (InputManager::isKeyPressed(GLFW_KEY_W)) {
-            _owner->Translate(glm::vec3(0, 0, -_moveSpeed) * pStep);
+            _owner->Translate(glm::vec3(0, 0, _moveSpeed) * pStep);
             cout << _owner->getWorldPosition() << endl;
         }
         if (InputManager::isKeyPressed(GLFW_KEY_S)) {
-            _owner->Translate(glm::vec3(0, 0, _moveSpeed) * pStep);
+            _owner->Translate(glm::vec3(0, 0, -_moveSpeed) * pStep);
             cout << _owner->getWorldPosition() << endl;
         }
         if (InputManager::isKeyPressed(GLFW_KEY_A)) {
@@ -30,6 +30,9 @@ namespace cmgt{
             _owner->Rotate(deltaPos.y * pStep * _rotationSpeed, glm::vec3(1, 0, 0));
             //cout << "Camera Transform: \n" << _owner->getTransform() << endl;
             cout << "Camera Rotation: \n" << _owner->getTransform() << endl;
+        }
+        else {
+            _owner->Rotate(-pStep, glm::vec3(0, 1, 0));
         }
         //cout << "Delta mouse pos: " << InputManager::deltaMousePosition() << " | Current mouse pos: " << InputManager::mousePosition() << endl;
     }

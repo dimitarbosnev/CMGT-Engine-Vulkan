@@ -25,7 +25,7 @@ namespace cmgt{
         glfwWindowHint(GLFW_RESIZABLE,GLFW_TRUE);
 
         window = glfwCreateWindow(_width, _height, windowName.c_str(), nullptr,nullptr);
-        //glfwSetWindowAspectRatio(window, 16, 9);
+        glfwSetWindowAspectRatio(window, 16, 9);
         glfwSetWindowUserPointer(window, this);
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
         glfwSetFramebufferSizeCallback(window, resizeWindowCallBack);
