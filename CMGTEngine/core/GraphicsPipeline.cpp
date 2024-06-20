@@ -18,7 +18,7 @@ namespace cmgt {
 	}
 
 
-	void GraphicsPipeline::CreateGraphicsPipeline(const string& vertexFile, const string& fragmentFile, const GraphicsPipelineInfo& configInfo) {
+	void GraphicsPipeline::CreateGraphicsPipeline(const GraphicsPipelineInfo& configInfo) {
 
 		auto bindingDescriptions = Mesh::Vertex::getBindingDescription();
 		auto atttributeDescriptions = Mesh::Vertex::getAttributeDescription();

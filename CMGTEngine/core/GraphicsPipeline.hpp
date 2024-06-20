@@ -32,14 +32,14 @@ namespace cmgt {
 	};
 	class GraphicsPipeline {
 	public:
-		GraphicsPipeline(const string& vertexFile, const string& fragmentFile, const GraphicsPipelineInfo& info);
+		GraphicsPipeline(const GraphicsPipelineInfo& info,const string& vertexFile, const string& fragmentFile);
 		~GraphicsPipeline();
 
 		void bind(VkCommandBuffer commandBuffer);
 		static void defaultGraphicsPipelineInfo(GraphicsPipelineInfo& configInfo);
 	private:
 
-		void CreateGraphicsPipeline(const string& vertexFile, const string& fragmentFile, const GraphicsPipelineInfo& info);
+		void CreateGraphicsPipeline(const GraphicsPipelineInfo& info);
 		VkPipeline graphicsPipeline;
 		ShaderProgram shaderProgram;
 
