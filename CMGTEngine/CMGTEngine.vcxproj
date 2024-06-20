@@ -179,6 +179,7 @@
     <ClCompile Include="core\Component.cpp" />
     <ClCompile Include="core\Game.cpp" />
     <ClCompile Include="core\GameObject.cpp" />
+    <ClCompile Include="core\GraphicsPipeline.cpp" />
     <ClCompile Include="core\InputManager.cpp" />
     <ClCompile Include="core\Light.cpp" />
     <ClCompile Include="core\Material.cpp" />
@@ -205,6 +206,7 @@
     <ClInclude Include="core\Game.hpp" />
     <ClInclude Include="core\GameObject.hpp" />
     <ClInclude Include="core\glm.hpp" />
+    <ClInclude Include="core\GraphicsPipeline.hpp" />
     <ClInclude Include="core\InputManager.hpp" />
     <ClInclude Include="core\Light.hpp" />
     <ClInclude Include="core\Material.hpp" />
