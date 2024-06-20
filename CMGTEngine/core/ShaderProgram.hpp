@@ -13,7 +13,7 @@ namespace cmgt {
 	public:
 		ShaderProgram(const string& vertexFile, const string& fragmentFile);
 		~ShaderProgram();
-		void CreatePipelineShaderStages(const int stageNumber);
+		void CreatePipelineShaderStages(VkGraphicsPipelineCreateInfo& pipelineInfo);
 	private:
 		static vector<char> readFile(const string& filepath);
 
