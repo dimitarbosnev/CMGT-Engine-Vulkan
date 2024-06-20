@@ -6,9 +6,17 @@
 #include<iostream>
 namespace cmgt {
 
-	ShaderProgram::ShaderProgram(const string& vertexFile,
-		const string& fragmentFile) {
-		CreateShaderProgram(vertexFile, fragmentFile);
+	ShaderProgram::ShaderProgram(const string& vertexFile, const string& fragmentFile,
+		const string& tessellationControlFile, const string& tessellationEvaluationFile, const string& geometryFile) {
+		cout << "Initalizing Shaders...\n";
+		CreateShader(vertexFile, &vertexShaderModule);
+		cout << "\t Vertex Shader Initalized!\n";
+		CreateShader(fragmentFile, &fragmentShaderModule);
+		cout << "\t Fragment Shader Initalized!\n";
+		CreateShader(tessellationControlFile, &tessellationControlShaderModule);
+		CreateShader(tessellationEvaluationFile, &tessellationEvaluationShaderModule);
+		CreateShader(geometryFile, &geometryShaderModule);
+		cout << "Shaders Initalized!\n";
 	}
 
 	ShaderProgram::~ShaderProgram() {
@@ -37,20 +45,11 @@ namespace cmgt {
 		return buffer;
 	}
 
-	void ShaderProgram::CreateShaderProgram(const string& vertexFile, const string& fragmentFile) {
-		cout << "Initalizing Shaders...\n";
-
-		vector<char> vertCode = readFile(paths::CMGT_SHADER_PATH + vertexFile);
-		cout << "\tVertex Shader Initalized!\n";
-		vector<char> fragCode = readFile(paths::CMGT_SHADER_PATH + fragmentFile);
-		cout << "\tFragment Shader Initalized!\n";
-
-		CreateShaderModule(vertCode, &vertexShaderModule);
-		CreateShaderModule(fragCode, &fragmentShaderModule);
-
-		
+	void ShaderProgram::CreateShader(const string& shaderFile, VkShaderModule* module) {
+		if (shaderFile == "") return;
+		vector<char> shaderCode = readFile(paths::CMGT_SHADER_PATH + shaderFile);
+		CreateShaderModule(shaderCode, module);
 	}
-
 	void ShaderProgram::CreatePipelineShaderStages(VkGraphicsPipelineCreateInfo& pipelineInfo)
 	{
 		VkPipelineShaderStageCreateInfo shaderStages[2];
@@ -71,6 +70,7 @@ namespace cmgt {
 		shaderStages[1].pNext = nullptr;
 		shaderStages[1].pSpecializationInfo = nullptr;
 	}
+
 
 	void ShaderProgram::CreateShaderModule(const vector<char>& shader, VkShaderModule* module) {
 
