@@ -22,6 +22,7 @@ namespace cmgt {
 			list<Mesh*> meshesToRender;
 			static void AddMeshToRender(Mesh* mesh);
 			static void RemoveFromRenderer(Mesh* mesh);
+			static void renderObjects();
 		protected:
 			
 		private:

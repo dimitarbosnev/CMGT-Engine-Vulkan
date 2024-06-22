@@ -22,7 +22,7 @@
     <ClCompile Include="core\VulkanInstance.cpp">
       <Filter>core</Filter>
     </ClCompile>
-    <ClCompile Include="core\ShaderProgram.cpp">
+    <ClCompile Include="core\BasicShaderProgram.cpp">
       <Filter>core</Filter>
     </ClCompile>
     <ClCompile Include="core\VulkanSwapchain.cpp">
@@ -77,6 +77,9 @@
     <ClCompile Include="core\GraphicsPipeline.cpp">
       <Filter>core</Filter>
     </ClCompile>
+    <ClCompile Include="core\ShaderProgram.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\Game.hpp">
@@ -88,7 +91,7 @@
     <ClInclude Include="core\VulkanInstance.hpp">
       <Filter>core</Filter>
     </ClInclude>
-    <ClInclude Include="core\ShaderProgram.hpp">
+    <ClInclude Include="core\BasicShaderProgram.hpp">
       <Filter>core</Filter>
     </ClInclude>
     <ClInclude Include="core\config.hpp">
@@ -153,6 +156,9 @@
       <Filter>core</Filter>
     </ClInclude>
     <ClInclude Include="core\GraphicsPipeline.hpp">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\ShaderProgram.hpp">
       <Filter>core</Filter>
     </ClInclude>
   </ItemGroup>

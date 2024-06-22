@@ -11,26 +11,16 @@ using namespace std;
 namespace cmgt {
 	class ShaderProgram {
 	public:
-
-		ShaderProgram(	const string& vertexFile, 
-						const string& fragmentFile, 
-						const string& tessellationControlFile = "", 
-						const string& tessellationEvaluationFile = "", 
-						const string& geometryFile = "");
-		~ShaderProgram();
-		void CreatePipelineShaderStages(VkGraphicsPipelineCreateInfo& pipelineInfo);
-	private:
+		ShaderProgram() = default;
+		~ShaderProgram() = default;
+		virtual void BindPipelineShaderStages(VkGraphicsPipelineCreateInfo& pipelineInfo) = 0;
+		VkPipelineLayout pipelineLayout;
+	protected:
 		static vector<char> readFile(const string& filepath);
 
 		void CreateShader(const string& shaderFile, VkShaderModule* module);
-		void CreateShaderModule(const vector<char>& shader, VkShaderModule* module);
-
-		VkShaderModule vertexShaderModule;
-		VkShaderModule tessellationControlShaderModule;
-		VkShaderModule tessellationEvaluationShaderModule;
-		VkShaderModule geometryShaderModule;
-		VkShaderModule fragmentShaderModule;
-
+		void CreateShader(const vector<char>& shader, VkShaderModule* module);
+		virtual void creatPipelineLayout() = 0;
 		ShaderProgram(const ShaderProgram&);
 		ShaderProgram& operator=(const ShaderProgram&);
 	};

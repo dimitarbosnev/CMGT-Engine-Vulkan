@@ -32,16 +32,22 @@ namespace cmgt {
 	};
 	class GraphicsPipeline {
 	public:
-		GraphicsPipeline(const GraphicsPipelineInfo& info,const string& vertexFile, const string& fragmentFile);
+		GraphicsPipeline(const GraphicsPipelineInfo& info, ShaderProgram* pShaderProgram);
+		GraphicsPipeline(ShaderProgram* pShaderProgram);
 		~GraphicsPipeline();
 
 		void bind(VkCommandBuffer commandBuffer);
 		static void defaultGraphicsPipelineInfo(GraphicsPipelineInfo& configInfo);
+
+		void recordCommandBuffer(int imageIndex);
 	private:
 
-		void CreateGraphicsPipeline(const GraphicsPipelineInfo& info);
+		void createPipeline(const GraphicsPipelineInfo& info);
+		void createCommandBuffers();
+		void freeCommandBuffers();
 		VkPipeline graphicsPipeline;
-		ShaderProgram shaderProgram;
+		ShaderProgram* shaderProgram;
+		vector<VkCommandBuffer> commandBuffers;
 
 		GraphicsPipeline(const GraphicsPipeline&);
 		GraphicsPipeline& operator=(const GraphicsPipeline&);

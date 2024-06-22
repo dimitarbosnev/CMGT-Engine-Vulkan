@@ -16,4 +16,8 @@ namespace cmgt {
 	{
 		getInstance().meshesToRender.remove(mesh);
 	}
+	void VulkanRenderer::renderObjects()
+	{
+
+	}
 }

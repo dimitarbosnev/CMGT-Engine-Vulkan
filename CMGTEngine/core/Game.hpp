@@ -17,20 +17,16 @@
 #include "VulkanInstance.hpp"
 #include "VulkanSwapchain.hpp"
 #include "ShaderProgram.hpp"
+#include "BasicShaderProgram.hpp"
 #include "ObjectManager.hpp"
 #include "SceneManager.hpp"
 #include "config.hpp"
 #include "Mesh.hpp"
 #include "VulkanRenderer.hpp"
+#include "GraphicsPipeline.hpp"
 using namespace std;
 
 namespace cmgt {
-
-	struct PushConstantData {
-		mat4 mvpMatrix;
-		float time;
-	};
-
 	class Game
 	{
 	public:
@@ -45,18 +41,11 @@ namespace cmgt {
 		virtual void OnUpdate() = 0;
 		virtual void OnRender() = 0;
 		virtual void OnExit() = 0;
-		VkPipelineLayout pipelineLayout;
-		ShaderProgram* shader;
-		vector<VkCommandBuffer> commandBuffers;
+		GraphicsPipeline* pipeline;
 	private:
 		float _deltaTime;
 		void initEngine();
-		void createPipelineLayout();
-		void createPipeline();
 		void recreateSwapchain();
-		void createCommandBuffers();
-		void freeCommandBuffers();
-		void recordCommandBuffer(int imageIndex);
 		void drawFrame();
 
 		Game(const Game&) = delete;
