@@ -3,7 +3,7 @@
 
 #pragma once
 #include "glm.hpp"
-
+#include "VulkanInstance.hpp"
 using namespace glm;
 using namespace std;
 
@@ -12,11 +12,12 @@ namespace cmgt {
 	class Mesh;
 	class World;
 
+
 	class Material
 	{
 	public:
-		Material();
-		virtual ~Material();
+		Material() = default;
+		virtual ~Material() = default;
 		void setShineColor(vec3 color) {
 			this->_shininess = vec4(color, _shininess.w);
 		};
@@ -29,7 +30,8 @@ namespace cmgt {
 		/**
 		 * Render the given mesh in the given world using the given mvp matrices. Implement in subclass.
 		 */
-		virtual void render(World* pWorld, Mesh* pMesh, const mat4& pModelMatrix, const mat4& pViewMatrix, const mat4& pPerspectiveMatrix) = 0;
+		virtual void bindPipeline(VkCommandBuffer commandBuffer) = 0;
+		virtual void bindPushConstants(VkCommandBuffer commandBuffer, const mat4& pModelMatrix, const mat4& pViewMatrix, const mat4& pPerspectiveMatrix) = 0;
 	protected:
 		vec4 _shininess = vec4(1);
 	};

@@ -4,6 +4,7 @@
 #include <fstream>
 #include<stdexcept>
 #include<iostream>
+#include<array>
 namespace cmgt {
 
 	BasicShaderProgram::BasicShaderProgram(const string& vertexFile, const string& fragmentFile) {
@@ -25,7 +26,7 @@ namespace cmgt {
 	}
 	void BasicShaderProgram::BindPipelineShaderStages(VkGraphicsPipelineCreateInfo& pipelineInfo)
 	{
-		VkPipelineShaderStageCreateInfo shaderStages[2];
+		VkPipelineShaderStageCreateInfo* shaderStages = new VkPipelineShaderStageCreateInfo[2];
 
 		shaderStages[0].sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
 		shaderStages[0].stage = VK_SHADER_STAGE_VERTEX_BIT;
@@ -46,20 +47,8 @@ namespace cmgt {
 		pipelineInfo.stageCount = 2;
 		pipelineInfo.pStages = shaderStages;
 	}
-
-	void BasicShaderProgram::creatPipelineLayout()
+	uint32_t BasicShaderProgram::pushConstSize()
 	{
-		VkPushConstantRange range;
-		range.stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
-		range.offset = 0;
-		range.size = sizeof(BasicShaderProgram::BasicPushConstData);
-
-		VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
-		pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-		pipelineLayoutInfo.setLayoutCount = 0;
-		pipelineLayoutInfo.pSetLayouts = nullptr;
-		pipelineLayoutInfo.pushConstantRangeCount = 1;
-		pipelineLayoutInfo.pPushConstantRanges = &range;
-		if (vkCreatePipelineLayout(VulkanInstance::getInstance().device(), &pipelineLayoutInfo, nullptr, &pipelineLayout) != VK_SUCCESS)
-			throw runtime_error("failed to create pipelin layout");
+		return sizeof(BasicShaderProgram::BasicPushConstData);
 	}
+}

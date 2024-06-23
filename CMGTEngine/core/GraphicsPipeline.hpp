@@ -6,6 +6,7 @@
 #include "config.hpp"
 #include<string>
 #include<vector>
+#include<list>
 #include "VulkanInstance.hpp"
 #include "ShaderProgram.hpp"
 using namespace std;
@@ -39,15 +40,16 @@ namespace cmgt {
 		void bind(VkCommandBuffer commandBuffer);
 		static void defaultGraphicsPipelineInfo(GraphicsPipelineInfo& configInfo);
 
-		void recordCommandBuffer(int imageIndex);
-	private:
+		void setPushConstants(VkCommandBuffer commandBuffer, const void* pData);
+		void createPipeline();
 
+		//static list<GraphicsPipeline*> pipelines;
+	private:
+		void creatPipelineLayout();
 		void createPipeline(const GraphicsPipelineInfo& info);
-		void createCommandBuffers();
-		void freeCommandBuffers();
 		VkPipeline graphicsPipeline;
+		VkPipelineLayout pipelineLayout;
 		ShaderProgram* shaderProgram;
-		vector<VkCommandBuffer> commandBuffers;
 
 		GraphicsPipeline(const GraphicsPipeline&);
 		GraphicsPipeline& operator=(const GraphicsPipeline&);

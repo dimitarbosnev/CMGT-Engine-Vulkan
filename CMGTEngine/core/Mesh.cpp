@@ -7,7 +7,7 @@
 #define TINYOBJLOADER_IMPLEMENTATION
 #include "tiny_obj_loader.h"
 namespace cmgt {
-	Mesh::Mesh(const Mesh::Builder &builder) {
+	Mesh::Mesh(const Mesh::Builder &builder, Material* pMaterial) : _material(pMaterial) {
 		createVertexBuffers(builder.vertecies);
 		createIndexBuffers(builder.indices);
 		VulkanRenderer::AddMeshToRender(this);
@@ -78,32 +78,33 @@ namespace cmgt {
 		vkDestroyBuffer(instance.device(), stagingBuffer, nullptr);
 		vkFreeMemory(instance.device(), stagingBufferMemory, nullptr);
 	}
-	void Mesh::bind(VkCommandBuffer commandBuffer) {
+
+	void Mesh::render(VkCommandBuffer commandBuffer, const mat4& pViewMatrix, const mat4& pPerspectiveMatrix) {
+		_material->bindPipeline(commandBuffer);
 		VkBuffer buffers[] = { _vertexBuffer };
 		VkDeviceSize offsets[] = { 0 };
-		vkCmdBindVertexBuffers(commandBuffer, 0, 1, buffers,offsets);
-
+		vkCmdBindVertexBuffers(commandBuffer, 0, 1, buffers, offsets);
 		if (hasIndexBuffer) vkCmdBindIndexBuffer(commandBuffer, _indexBuffer, 0, VK_INDEX_TYPE_UINT32);
-	}
+		//glm::mat4 pModelMatrix = getTransform();
+		_material->bindPushConstants(commandBuffer,getTransform(),pViewMatrix,pPerspectiveMatrix);
 
-	void Mesh::render(VkCommandBuffer commandBuffer) {
 		if (hasIndexBuffer) vkCmdDrawIndexed(commandBuffer, indexCount, 1, 0, 0, 0);
 		else vkCmdDraw(commandBuffer, vertexCount, 1, 0, 0);
 	}
 	void Mesh::update(float dt) {
-
+		VulkanRenderer::AddMeshToRender(this);
 	}
-	Mesh::Mesh(const vector<Vertex>& vertecies) {
+	Mesh::Mesh(const vector<Vertex>& vertecies, Material* pMaterial) : _material(pMaterial) {
 		createVertexBuffers(vertecies);
 		VulkanRenderer::AddMeshToRender(this);
 	}
-	Mesh* Mesh::createModelFromFile(const string& fileName)
+	Mesh* Mesh::createModelFromFile(const string& fileName, Material* pMaterial)
 	{
 		string filePath = paths::CMGT_MODEL_PATH + fileName;
 		Builder builder;
 		builder.loadModel(filePath);
 
-		return new Mesh(builder);
+		return new Mesh(builder,pMaterial);
 	}
 	vector<VkVertexInputBindingDescription> Mesh::Vertex::getBindingDescription()
 	{

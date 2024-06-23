@@ -10,30 +10,43 @@ namespace cmgt {
 
 	GraphicsPipeline::GraphicsPipeline(const GraphicsPipelineInfo& info, ShaderProgram* pShaderProgram) : shaderProgram(pShaderProgram){
 		cout << " Creating Graphics Pipeline...\n";
+		creatPipelineLayout();
 		createPipeline(info);
+		//pipelines.push_back(this);
 		cout << "Graphics Pipeline Initalized!\n";
 	}
 
 	GraphicsPipeline::GraphicsPipeline(ShaderProgram* pShaderProgram) : shaderProgram(pShaderProgram) {
-		cout << " Creating Graphics Pipeline...\n";
-		GraphicsPipelineInfo configInfo{};
-		defaultGraphicsPipelineInfo(configInfo);
-		configInfo.renderPass = VulkanSwapchain::getInstance().getRenderPass();
-		configInfo.pipelineLayout = shaderProgram->pipelineLayout;
-		createPipeline(configInfo);
-		cout << "Graphics Pipeline Initalized!\n";
+		creatPipelineLayout();
+		createPipeline();
 	}
 
 	GraphicsPipeline::~GraphicsPipeline() {
 		VulkanInstance& instance = VulkanInstance::getInstance();
+		delete shaderProgram;
+		vkDestroyPipelineLayout(VulkanInstance::getInstance().device(), pipelineLayout, nullptr);
 		vkDestroyPipeline(instance.device(), graphicsPipeline, nullptr);
 		cout << "Pipeline destroyed" << endl;
 	}
 
-	
+	void GraphicsPipeline::creatPipelineLayout()
+	{
+		VkPushConstantRange range;
+		range.stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
+		range.offset = 0;
+		range.size = shaderProgram->pushConstSize();
+
+		VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
+		pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
+		pipelineLayoutInfo.setLayoutCount = 0;
+		pipelineLayoutInfo.pSetLayouts = nullptr;
+		pipelineLayoutInfo.pushConstantRangeCount = 1;
+		pipelineLayoutInfo.pPushConstantRanges = &range;
+		if (vkCreatePipelineLayout(VulkanInstance::getInstance().device(), &pipelineLayoutInfo, nullptr, &pipelineLayout) != VK_SUCCESS)
+			throw runtime_error("failed to create pipelin layout");
+	}
 
 	void GraphicsPipeline::createPipeline(const GraphicsPipelineInfo& configInfo) {
-
 		auto bindingDescriptions = Mesh::Vertex::getBindingDescription();
 		auto atttributeDescriptions = Mesh::Vertex::getAttributeDescription();
 		VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
@@ -68,90 +81,17 @@ namespace cmgt {
 			throw runtime_error("failed to create pipeline");
 	}
 
-	void GraphicsPipeline::createCommandBuffers() {
-		VulkanSwapchain& swapchian = VulkanSwapchain::getInstance();
-		VulkanInstance& instance = VulkanInstance::getInstance();
-		commandBuffers.resize(swapchian.imageCount());
-		VkCommandBufferAllocateInfo allocInfo{};
-		allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-		allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-		allocInfo.commandPool = instance.getCommandPool();
-		allocInfo.commandBufferCount = static_cast<uint32_t>(commandBuffers.size());
-
-		if (vkAllocateCommandBuffers(instance.device(), &allocInfo, commandBuffers.data()) != VK_SUCCESS)
-			throw runtime_error("failed to allocate command buffers!");
+	void GraphicsPipeline::createPipeline()
+	{
+		cout << " Creating Graphics Pipeline...\n";
+		GraphicsPipelineInfo configInfo{};
+		defaultGraphicsPipelineInfo(configInfo);
+		configInfo.renderPass = VulkanSwapchain::getInstance().getRenderPass();
+		configInfo.pipelineLayout = pipelineLayout;
+		createPipeline(configInfo);
+		cout << "Graphics Pipeline Initalized!\n";
 	}
 
-	void GraphicsPipeline::freeCommandBuffers() {
-		VulkanInstance& instance = VulkanInstance::getInstance();
-		vkFreeCommandBuffers(instance.device(), instance.getCommandPool(),
-			static_cast<uint32_t>(commandBuffers.size()), commandBuffers.data());
-		commandBuffers.clear();
-	}
-
-	void GraphicsPipeline::recordCommandBuffer(int imageIndex) {
-		VulkanSwapchain& swapchain = VulkanSwapchain::getInstance();
-		VkCommandBufferBeginInfo beginInfo{};
-		beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-
-		if (vkBeginCommandBuffer(commandBuffers[imageIndex], &beginInfo) != VK_SUCCESS)
-			throw runtime_error("failed to begin recording command buffer!");
-
-		VkRenderPassBeginInfo renderPassInfo{};
-		renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-		renderPassInfo.renderPass = swapchain.getRenderPass();
-		renderPassInfo.framebuffer = swapchain.getFrameBuffer(imageIndex);
-		renderPassInfo.renderArea.offset = { 0,0 };
-		renderPassInfo.renderArea.extent = swapchain.getSwapChainExtent();
-
-		array<VkClearValue, 2> clearValues{};
-		clearValues[0].color = { 0.1f, 0.1f, 0.1f, 1.0f };
-		clearValues[1].depthStencil = { 1.0f,0 };
-		renderPassInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
-		renderPassInfo.pClearValues = clearValues.data();
-		vkCmdBeginRenderPass(commandBuffers[imageIndex], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
-
-		VkViewport viewport{};
-
-		viewport.x = 0.0f;
-		viewport.y = 0.0f;
-		viewport.width = static_cast<float>(swapchain.width());
-		viewport.height = static_cast<float>(swapchain.height());
-		viewport.minDepth = 0.0f;
-		viewport.maxDepth = 1.0f;
-		VkRect2D scissor{ {0, 0}, swapchain.getSwapChainExtent() };
-		vkCmdSetViewport(commandBuffers[imageIndex], 0, 1, &viewport);
-		vkCmdSetScissor(commandBuffers[imageIndex], 0, 1, &scissor);
-
-
-		bind(commandBuffers[imageIndex]);
-		for (Mesh* mesh : VulkanRenderer::getInstance().meshesToRender) {
-			mesh->bind(commandBuffers[imageIndex]);
-
-			PushConstantData data;
-			Camera& camera = *SceneManager::getCurrentScene().getWorld().getMainCamera();
-			glm::mat4 cameraProj = camera.getProjection();
-			glm::mat4 cameraView = glm::inverse(camera.getTransform());
-			glm::mat4 cameraTrans = camera.getTransform();
-			glm::mat4 meshTrans = mesh->getTransform();
-			//cout << " M MATRIX: \n" << meshTrans << endl;
-			//cout << " V MATRIX: \n" << cameraTrans << endl;
-			//cout << " P MATRIX: \n" << cameraProj << endl;
-			//data.mvpMatrix = camera.getProjection() * glm::inverse(camera.getTransform()) * mesh->getTransform();
-			data.mvpMatrix = cameraProj * cameraView * meshTrans;//camera.getProjection() * glm::inverse(camera.getTransform()) * mesh->getTransform();
-			//cout << " MVP MATRIX: \n" << data.mvpMatrix << endl;
-			data.time = (float)glfwGetTime();
-			vkCmdPushConstants(commandBuffers[imageIndex], pipelineLayout,
-				VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
-				0, sizeof(PushConstantData), &data);
-			mesh->render(commandBuffers[imageIndex]);
-		}
-
-
-		vkCmdEndRenderPass(commandBuffers[imageIndex]);
-		if (vkEndCommandBuffer(commandBuffers[imageIndex]) != VK_SUCCESS)
-			throw runtime_error("failed to record command buffer!");
-	}
 	void GraphicsPipeline::bind(VkCommandBuffer commandBuffer) {
 		vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS,graphicsPipeline);
 	}
@@ -226,5 +166,11 @@ namespace cmgt {
 		configInfo.dynamicStateInfo.dynamicStateCount =
 			static_cast<uint32_t>(configInfo.dynamicStateEnables.size());
 		configInfo.dynamicStateInfo.flags = 0;
+	}
+	void GraphicsPipeline::setPushConstants(VkCommandBuffer commandBuffer, const void* pData)
+	{
+		vkCmdPushConstants(commandBuffer, pipelineLayout,
+			VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
+			0, shaderProgram->pushConstSize(), pData);
 	}
 }

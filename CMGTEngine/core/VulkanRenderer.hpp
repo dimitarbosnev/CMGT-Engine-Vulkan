@@ -16,21 +16,25 @@ namespace cmgt {
 	class VulkanRenderer : public Singleton<VulkanRenderer> {
 		public:
 			static void InitializeRenderer();
-			VulkanRenderer(const VulkanRenderer&) = delete;
-			VulkanRenderer& operator=(const VulkanRenderer&) = delete;
+			~VulkanRenderer();
 
 			list<Mesh*> meshesToRender;
 			static void AddMeshToRender(Mesh* mesh);
 			static void RemoveFromRenderer(Mesh* mesh);
-			static void renderObjects();
+			static void render();
 		protected:
 			
 		private:
 			VulkanRenderer();
-			//void createCommandBuffers();
-			//void freeCommandBuffers();
-			//void render();
-			//void recreateSwapchain();
+
+			vector<VkCommandBuffer> commandBuffers;
+			void recordCommandBuffer(int imageIndex);
+			void createCommandBuffers();
+			void freeCommandBuffers();
+			void drawFrame();
+			void recreateSwapchain();
+			VulkanRenderer(const VulkanRenderer&);
+			VulkanRenderer& operator=(const VulkanRenderer&);
 	};
 }
 #endif //VULKANRENDERER_HPP

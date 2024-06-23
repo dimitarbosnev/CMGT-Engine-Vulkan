@@ -1,11 +1,15 @@
 #pragma once
 #include "ShaderProgram.hpp"
+#include "VulkanInstance.hpp"
 #include "Mesh.hpp"
 #include <fstream>
 #include<stdexcept>
 #include<iostream>
 namespace cmgt {
-
+	ShaderProgram::~ShaderProgram()
+	{
+		
+	}
 	vector<char> ShaderProgram::readFile(const string& filename) {
 		std::ifstream file(filename, ios::ate | ios::binary);
 

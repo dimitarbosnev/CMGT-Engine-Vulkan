@@ -41,12 +41,9 @@ namespace cmgt {
 		virtual void OnUpdate() = 0;
 		virtual void OnRender() = 0;
 		virtual void OnExit() = 0;
-		GraphicsPipeline* pipeline;
 	private:
 		float _deltaTime;
 		void initEngine();
-		void recreateSwapchain();
-		void drawFrame();
 
 		Game(const Game&) = delete;
 		Game& operator=(const Game&) = delete;

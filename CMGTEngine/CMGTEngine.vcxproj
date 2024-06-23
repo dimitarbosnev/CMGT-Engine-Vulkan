@@ -190,6 +190,7 @@
     <ClCompile Include="core\SceneManager.cpp" />
     <ClCompile Include="core\BasicShaderProgram.cpp" />
     <ClCompile Include="core\ShaderProgram.cpp" />
+    <ClCompile Include="core\TestMaterial.cpp" />
     <ClCompile Include="core\Texture.cpp" />
     <ClCompile Include="core\VulkanInstance.cpp" />
     <ClCompile Include="core\VulkanRenderer.cpp" />
@@ -219,6 +220,7 @@
     <ClInclude Include="core\SceneManager.hpp" />
     <ClInclude Include="core\BasicShaderProgram.hpp" />
     <ClInclude Include="core\ShaderProgram.hpp" />
+    <ClInclude Include="core\TestMaterial.hpp" />
     <ClInclude Include="core\Texture.hpp" />
     <ClInclude Include="core\tiny_obj_loader.h" />
     <ClInclude Include="core\VulkanInstance.hpp" />

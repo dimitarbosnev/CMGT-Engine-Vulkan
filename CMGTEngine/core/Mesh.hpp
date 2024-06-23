@@ -7,7 +7,8 @@
 #include <vector>
 #include "Component.hpp"
 #include "glm.hpp"
-
+#include "Material.hpp"
+#include "TestMaterial.hpp"
 using namespace glm;
 using namespace std;
 
@@ -34,13 +35,12 @@ namespace cmgt {
 			void loadModel(const string& filePath);
 		};
 		virtual ~Mesh();
-		void bind(VkCommandBuffer commandBuffer);
-		void render(VkCommandBuffer commandBuffer);
+		void render(VkCommandBuffer commandBuffer, const mat4& pViewMatrix, const mat4& pPerspectiveMatrix);
 		void update(float dt) override;
-		Mesh(const vector<Vertex>&);
-		static Mesh* createModelFromFile(const string& filePath);
+		Mesh(const vector<Vertex>&, Material* pMaterial = new TestMaterial());
+		static Mesh* createModelFromFile(const string& filePath, Material* pMaterial = new TestMaterial());
 	protected:
-
+		Material* _material;
 		VkBuffer _vertexBuffer;
 		VkDeviceMemory _vertexBufferMemory;
 		uint32_t vertexCount;
@@ -53,7 +53,7 @@ namespace cmgt {
 		void createIndexBuffers(const vector<uint32_t>& indices);
 
 	private:
-		Mesh(const Mesh::Builder &builder);
+		Mesh(const Mesh::Builder &builder, Material* pMaterial);
 		Mesh(const Mesh&);
 		Mesh& operator=(const Mesh&);
 	};

@@ -19,9 +19,6 @@ namespace cmgt {
 		cout << "Initializing CMGT Engine...\n";
 		VulkanInstance::InitializeVulkan();
 		VulkanSwapchain::InitializeSwapchain(Window::getInstance().getWindowExtend());
-		//createPipelineLayout();
-		//createPipeline();
-		//createCommandBuffers();
 
 		cout << "Initalizing CMGT Engine Utils...\n";
 			ObjectManager::InitializesObjectManager();
@@ -32,51 +29,6 @@ namespace cmgt {
 		cout << "CMGT Engine Initialized!\n";
 
 	}
-
-	void Game::recreateSwapchain() {
-		Window& window = Window::getInstance();
-		auto extent = window.getWindowExtend();
-		while (extent.width == 0 || extent.height == 0) {
-			extent = window.getWindowExtend();
-			glfwWaitEvents();
-		}
-
-		vkDeviceWaitIdle(VulkanInstance::getInstance().device());
-
-
-		VulkanSwapchain::RecreateSwapchain(extent);
-		if (VulkanSwapchain::getInstance().imageCount() != commandBuffers.size()) {
-			freeCommandBuffers();
-			createCommandBuffers();
-		}
-		createPipeline();
-	}
-
-
-	void Game::drawFrame() {
-		VulkanSwapchain& swapchian = VulkanSwapchain::getInstance();
-		uint32_t imageIndex;
-		VkResult result = swapchian.acquireNextImage(&imageIndex);
-
-		if (result == VK_ERROR_OUT_OF_DATE_KHR) {
-			recreateSwapchain();
-			return;
-		}
-		if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR)
-			throw runtime_error("failed to accure swap chain image");
-
-		recordCommandBuffer(imageIndex);
-		result = swapchian.submitCommandBuffers(&commandBuffers[imageIndex], &imageIndex);
-
-		if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || Window::getInstance().isWindowResized()) {
-			Window::getInstance().resetWindowResizeFlag();
-			recreateSwapchain();
-			return;
-		}
-		if (result != VK_SUCCESS)
-			throw runtime_error("failed to present swap chian image!");
-	}
-
 
 	void Game::run() {
 
@@ -103,7 +55,7 @@ namespace cmgt {
 			OnUpdate();
 			SceneManager::update(_deltaTime);
 			OnRender();
-			drawFrame();
+			VulkanRenderer::render();
 		}
 		exit();
 	}
@@ -114,9 +66,6 @@ namespace cmgt {
 		VulkanSwapchain& swapchain = VulkanSwapchain::getInstance();
 		vkDeviceWaitIdle(instance.device());
 		OnExit();
-		vkDestroyPipelineLayout(instance.device(), pipelineLayout, nullptr);
-		//delete mesh;
-		delete pipeline;
 		SceneManager::destroyInstance();
 		ObjectManager::destroyInstance();
 		Window::destroyInstance();

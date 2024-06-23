@@ -7,6 +7,7 @@
 #include<vector>
 #include "VulkanInstance.hpp"
 #include "ShaderProgram.hpp"
+#include "glm.hpp"
 using namespace std;
 
 namespace cmgt {
@@ -14,13 +15,13 @@ namespace cmgt {
 	public:
 		struct BasicPushConstData
 		{
-			mat4 mvpMatrix;
+			glm::mat4 mvpMatrix;
 			float time;
 		};
 		BasicShaderProgram(const string& vertexFile, const string& fragmentFile);
 		~BasicShaderProgram();
 		void BindPipelineShaderStages(VkGraphicsPipelineCreateInfo& pipelineInfo) override;
-		void creatPipelineLayout() override;
+		uint32_t pushConstSize() override;
 	private:
 
 		VkShaderModule vertexShaderModule;
