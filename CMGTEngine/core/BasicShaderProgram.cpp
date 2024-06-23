@@ -24,10 +24,8 @@ namespace cmgt {
 		vkDestroyShaderModule(instance.device(), fragmentShaderModule, nullptr);
 		cout << "Shader destroyed" << endl;
 	}
-	void BasicShaderProgram::BindPipelineShaderStages(VkGraphicsPipelineCreateInfo& pipelineInfo)
+	void BasicShaderProgram::BindPipelineShaderStages(VkPipelineShaderStageCreateInfo* shaderStages)
 	{
-		VkPipelineShaderStageCreateInfo* shaderStages = new VkPipelineShaderStageCreateInfo[2];
-
 		shaderStages[0].sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
 		shaderStages[0].stage = VK_SHADER_STAGE_VERTEX_BIT;
 		shaderStages[0].module = vertexShaderModule;
@@ -43,12 +41,13 @@ namespace cmgt {
 		shaderStages[1].flags = 0;
 		shaderStages[1].pNext = nullptr;
 		shaderStages[1].pSpecializationInfo = nullptr;
-
-		pipelineInfo.stageCount = 2;
-		pipelineInfo.pStages = shaderStages;
 	}
 	uint32_t BasicShaderProgram::pushConstSize()
 	{
 		return sizeof(BasicShaderProgram::BasicPushConstData);
+	}
+	int BasicShaderProgram::stageSize()
+	{
+		return 2;
 	}
 }

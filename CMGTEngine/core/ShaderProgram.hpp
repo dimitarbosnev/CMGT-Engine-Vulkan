@@ -13,12 +13,12 @@ namespace cmgt {
 	public:
 		ShaderProgram() = default;
 		~ShaderProgram();
-		virtual void BindPipelineShaderStages(VkGraphicsPipelineCreateInfo& pipelineInfo) = 0;
+		virtual void BindPipelineShaderStages(VkPipelineShaderStageCreateInfo* shaderStages) = 0;
 		virtual uint32_t pushConstSize() = 0;
-
+		virtual int stageSize() = 0;
 	protected:
+		
 		static vector<char> readFile(const string& filepath);
-
 		void CreateShader(const string& shaderFile, VkShaderModule* module);
 		void CreateShader(const vector<char>& shader, VkShaderModule* module);
 

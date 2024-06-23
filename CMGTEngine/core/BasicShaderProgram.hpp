@@ -20,8 +20,9 @@ namespace cmgt {
 		};
 		BasicShaderProgram(const string& vertexFile, const string& fragmentFile);
 		~BasicShaderProgram();
-		void BindPipelineShaderStages(VkGraphicsPipelineCreateInfo& pipelineInfo) override;
+		void BindPipelineShaderStages(VkPipelineShaderStageCreateInfo* shaderStages) override;
 		uint32_t pushConstSize() override;
+		int stageSize() override;
 	private:
 
 		VkShaderModule vertexShaderModule;

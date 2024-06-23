@@ -13,6 +13,9 @@ namespace cmgt {
 		createCommandBuffers();
 	}
 	VulkanRenderer::~VulkanRenderer() {
+		for (GraphicsPipeline* pipeline : GraphicsPipeline::pipelines)
+			delete pipeline;
+
 		freeCommandBuffers();
 	}
 	void VulkanRenderer::AddMeshToRender(Mesh* mesh) {
@@ -83,12 +86,13 @@ namespace cmgt {
 		vkCmdSetScissor(commandBuffers[imageIndex], 0, 1, &scissor);
 
 
-		for (Mesh* mesh : meshesToRender) {
+		Camera& camera = *SceneManager::getCurrentScene().getWorld().getMainCamera();
+		glm::mat4 V = camera.getTransform();
+		glm::mat4 P = camera.getProjection();
 
-			Camera& camera = *SceneManager::getCurrentScene().getWorld().getMainCamera();
-
-			mesh->render(commandBuffers[imageIndex],camera.getTransform(),camera.getProjection());
-		}
+		for (Mesh* mesh : meshesToRender)
+			mesh->render(commandBuffers[imageIndex],V,P);
+		
 
 
 		vkCmdEndRenderPass(commandBuffers[imageIndex]);
@@ -137,7 +141,7 @@ namespace cmgt {
 			freeCommandBuffers();
 			createCommandBuffers();
 		}
-		//for (GraphicsPipeline* pipeline : GraphicsPipeline::pipelines)
-			//pipeline->createPipeline();
+		for (GraphicsPipeline* pipeline : GraphicsPipeline::pipelines)
+			pipeline->createPipeline();
 	}
 }

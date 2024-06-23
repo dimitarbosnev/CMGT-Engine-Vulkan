@@ -43,7 +43,7 @@ namespace cmgt {
 		void setPushConstants(VkCommandBuffer commandBuffer, const void* pData);
 		void createPipeline();
 
-		//static list<GraphicsPipeline*> pipelines;
+		inline static list<GraphicsPipeline*> pipelines = {};
 	private:
 		void creatPipelineLayout();
 		void createPipeline(const GraphicsPipelineInfo& info);

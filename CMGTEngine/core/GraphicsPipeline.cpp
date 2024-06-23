@@ -12,13 +12,14 @@ namespace cmgt {
 		cout << " Creating Graphics Pipeline...\n";
 		creatPipelineLayout();
 		createPipeline(info);
-		//pipelines.push_back(this);
+		pipelines.push_back(this);
 		cout << "Graphics Pipeline Initalized!\n";
 	}
 
 	GraphicsPipeline::GraphicsPipeline(ShaderProgram* pShaderProgram) : shaderProgram(pShaderProgram) {
 		creatPipelineLayout();
 		createPipeline();
+		pipelines.push_back(this);
 	}
 
 	GraphicsPipeline::~GraphicsPipeline() {
@@ -58,9 +59,12 @@ namespace cmgt {
 
 		VkGraphicsPipelineCreateInfo pipelineInfo{};
 		pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
-		//pipelineInfo.stageCount = 2;
-		//pipelineInfo.pStages = shaderStages;
-		shaderProgram->BindPipelineShaderStages(pipelineInfo);
+		//Change the number at some point
+		int i = shaderProgram->stageSize();
+		VkPipelineShaderStageCreateInfo* shaderStages = new VkPipelineShaderStageCreateInfo[i];
+		shaderProgram->BindPipelineShaderStages(shaderStages);
+		pipelineInfo.stageCount = i;
+		pipelineInfo.pStages = shaderStages;
 		pipelineInfo.pVertexInputState = &vertexInputInfo;
 		pipelineInfo.pInputAssemblyState = &configInfo.inputAssemblyInfo;
 		pipelineInfo.pViewportState = &configInfo.viewportInfo;

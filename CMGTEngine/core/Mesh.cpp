@@ -81,11 +81,13 @@ namespace cmgt {
 
 	void Mesh::render(VkCommandBuffer commandBuffer, const mat4& pViewMatrix, const mat4& pPerspectiveMatrix) {
 		_material->bindPipeline(commandBuffer);
+
 		VkBuffer buffers[] = { _vertexBuffer };
 		VkDeviceSize offsets[] = { 0 };
 		vkCmdBindVertexBuffers(commandBuffer, 0, 1, buffers, offsets);
 		if (hasIndexBuffer) vkCmdBindIndexBuffer(commandBuffer, _indexBuffer, 0, VK_INDEX_TYPE_UINT32);
 		//glm::mat4 pModelMatrix = getTransform();
+
 		_material->bindPushConstants(commandBuffer,getTransform(),pViewMatrix,pPerspectiveMatrix);
 
 		if (hasIndexBuffer) vkCmdDrawIndexed(commandBuffer, indexCount, 1, 0, 0, 0);
