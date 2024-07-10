@@ -26,7 +26,7 @@ namespace cmgt
 		//disallow copy and assignment
 		PhysicsEngine(const PhysicsEngine&);
 		PhysicsEngine& operator=(const PhysicsEngine&);
-		vector<PhysicsBody&> physicsBodies = {};
+		vector<PhysicsBody*> physicsBodies = {};
 	};
 } 
 #endif // PHYSICSENGINE_HPP

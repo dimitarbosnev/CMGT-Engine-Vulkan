@@ -32,7 +32,7 @@ void FirstGame::OnInit() {
 
 	GameObject* meshObject = new GameObject("First GameObject");
 	meshObject->Scale(glm::vec3(1, -1, 1));
-	meshObject->addComponent(Mesh::createModelFromFile("suzanna_flat.obj"));
+	meshObject->addComponent(Mesh::createModelFromFile("suzanna_smooth.obj"));
 	meshObject->addComponent(new ObjectMovement(1, 1));
 	firstScene->getWorld().add(meshObject);
 
@@ -47,7 +47,7 @@ void FirstGame::OnInit() {
 	GameObject* childObject = new GameObject("Child GameObject");
 	childObject->Translate(glm::vec3(2, 1, 0));
 	childObject->Scale(glm::vec3(.5f));
-	childObject->addComponent(Mesh::createModelFromFile("cube.obj"));
+	childObject->addComponent(Mesh::createModelFromFile("cube_smooth.obj"));
 	firstScene->getWorld().add(childObject);
 	meshObject->add(childObject);
 

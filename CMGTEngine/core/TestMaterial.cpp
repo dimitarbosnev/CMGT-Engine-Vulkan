@@ -13,7 +13,7 @@ namespace cmgt {
 
 		TestPushConstData data;
 		data.mvpMatrix = pPerspectiveMatrix * glm::inverse(pViewMatrix) * pModelMatrix;
-		data.time = (float)glfwGetTime();
+		data.modelMatrix = glm::transpose(glm::inverse(pModelMatrix));
 		_pipeline->setPushConstants(commandBuffer, &data);
 	}
 	void TestMaterial::bindPipeline(VkCommandBuffer commandBuffer)

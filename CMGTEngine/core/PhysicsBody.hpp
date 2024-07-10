@@ -14,7 +14,7 @@ namespace cmgt
 		//behaviour should be able to update itself every step and MUST be implemented
 		void update(float pStep) override;
 		void physicsStep(float pStep);
-		Collider* getCollider() { return _collider };
+		Collider* getCollider() { return _collider; }
 	private:
 		Collider* _collider;
 		//disallow copy and assignment

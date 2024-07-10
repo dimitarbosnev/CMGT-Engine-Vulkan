@@ -19,7 +19,7 @@ namespace cmgt {
 		struct TestPushConstData
 		{
 			glm::mat4 mvpMatrix; 
-			float time;
+			glm::mat4 modelMatrix;
 		};
 		TestMaterial();
 		/**
