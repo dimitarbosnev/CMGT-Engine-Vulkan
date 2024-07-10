@@ -15,6 +15,7 @@ namespace cmgt {
 
 	Mesh::~Mesh() {
 		VkDevice device = VulkanInstance::getInstance().device();
+		delete _material;
 		vkDestroyBuffer(device, _vertexBuffer, nullptr);
 		vkFreeMemory(device, _vertexBufferMemory, nullptr);
 
@@ -102,7 +103,7 @@ namespace cmgt {
 	}
 	Mesh* Mesh::createModelFromFile(const string& fileName, Material* pMaterial)
 	{
-		string filePath = paths::CMGT_MODEL_PATH + fileName;
+		string filePath = CMGT_MODEL_PATH + fileName;
 		Builder builder;
 		builder.loadModel(filePath);
 

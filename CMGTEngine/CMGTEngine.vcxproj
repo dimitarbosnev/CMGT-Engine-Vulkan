@@ -176,6 +176,7 @@
   <ItemGroup>
     <ClCompile Include="core\Camera.cpp" />
     <ClCompile Include="core\CameraMovement.cpp" />
+    <ClCompile Include="core\Collider.cpp" />
     <ClCompile Include="core\Component.cpp" />
     <ClCompile Include="core\Game.cpp" />
     <ClCompile Include="core\GameObject.cpp" />
@@ -186,10 +187,14 @@
     <ClCompile Include="core\Mesh.cpp" />
     <ClCompile Include="core\ObjectManager.cpp" />
     <ClCompile Include="core\ObjectMovement.cpp" />
+    <ClCompile Include="core\PhysicsBody.cpp" />
+    <ClCompile Include="core\PhysicsEngine.cpp" />
+    <ClCompile Include="core\PlaneCollider.cpp" />
     <ClCompile Include="core\Scene.cpp" />
     <ClCompile Include="core\SceneManager.cpp" />
     <ClCompile Include="core\BasicShaderProgram.cpp" />
     <ClCompile Include="core\ShaderProgram.cpp" />
+    <ClCompile Include="core\SphereCollider.cpp" />
     <ClCompile Include="core\TestMaterial.cpp" />
     <ClCompile Include="core\Texture.cpp" />
     <ClCompile Include="core\VulkanInstance.cpp" />
@@ -203,6 +208,7 @@
   <ItemGroup>
     <ClInclude Include="core\Camera.hpp" />
     <ClInclude Include="core\CameraMovement.hpp" />
+    <ClInclude Include="core\Collider.hpp" />
     <ClInclude Include="core\Component.hpp" />
     <ClInclude Include="core\config.hpp" />
     <ClInclude Include="core\Game.hpp" />
@@ -216,10 +222,14 @@
     <ClInclude Include="core\ObjectManager.hpp" />
     <ClInclude Include="core\ObjectMovement.hpp" />
     <ClInclude Include="core\paths.hpp" />
+    <ClInclude Include="core\PhysicsBody.hpp" />
+    <ClInclude Include="core\PhysicsEngine.hpp" />
+    <ClInclude Include="core\PlaneCollider.hpp" />
     <ClInclude Include="core\Scene.hpp" />
     <ClInclude Include="core\SceneManager.hpp" />
     <ClInclude Include="core\BasicShaderProgram.hpp" />
     <ClInclude Include="core\ShaderProgram.hpp" />
+    <ClInclude Include="core\SphereCollider.hpp" />
     <ClInclude Include="core\TestMaterial.hpp" />
     <ClInclude Include="core\Texture.hpp" />
     <ClInclude Include="core\tiny_obj_loader.h" />

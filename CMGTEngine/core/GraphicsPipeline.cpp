@@ -6,20 +6,21 @@
 #include<iostream>
 #include <array>
 #include "VulkanSwapchain.hpp"
+#include "VulkanRenderer.hpp"
 namespace cmgt {
 
-	GraphicsPipeline::GraphicsPipeline(const GraphicsPipelineInfo& info, ShaderProgram* pShaderProgram) : shaderProgram(pShaderProgram){
+	GraphicsPipeline::GraphicsPipeline(const GraphicsPipelineInfo& info,uint8_t pPushConstSize, ShaderProgram* pShaderProgram) : shaderProgram(pShaderProgram), pushConstSize(pPushConstSize){
 		cout << " Creating Graphics Pipeline...\n";
 		creatPipelineLayout();
 		createPipeline(info);
-		pipelines.push_back(this);
+		VulkanRenderer::AddGraphicsPipelines(this);
 		cout << "Graphics Pipeline Initalized!\n";
 	}
 
-	GraphicsPipeline::GraphicsPipeline(ShaderProgram* pShaderProgram) : shaderProgram(pShaderProgram) {
+	GraphicsPipeline::GraphicsPipeline(uint8_t pPushConstSize, ShaderProgram* pShaderProgram) : shaderProgram(pShaderProgram), pushConstSize(pPushConstSize) {
 		creatPipelineLayout();
 		createPipeline();
-		pipelines.push_back(this);
+		VulkanRenderer::AddGraphicsPipelines(this);
 	}
 
 	GraphicsPipeline::~GraphicsPipeline() {
@@ -35,7 +36,7 @@ namespace cmgt {
 		VkPushConstantRange range;
 		range.stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
 		range.offset = 0;
-		range.size = shaderProgram->pushConstSize();
+		range.size = pushConstSize;
 
 		VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
 		pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
@@ -83,6 +84,7 @@ namespace cmgt {
 
 		if (vkCreateGraphicsPipelines(VulkanInstance::getInstance().device(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &graphicsPipeline) != VK_SUCCESS)
 			throw runtime_error("failed to create pipeline");
+		delete shaderStages;
 	}
 
 	void GraphicsPipeline::createPipeline()
@@ -175,6 +177,6 @@ namespace cmgt {
 	{
 		vkCmdPushConstants(commandBuffer, pipelineLayout,
 			VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
-			0, shaderProgram->pushConstSize(), pData);
+			0, pushConstSize, pData);
 	}
 }

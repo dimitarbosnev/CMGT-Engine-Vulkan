@@ -83,6 +83,21 @@
     <ClCompile Include="core\TestMaterial.cpp">
       <Filter>core</Filter>
     </ClCompile>
+    <ClCompile Include="core\PhysicsBody.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="core\Collider.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="core\PhysicsEngine.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="core\PlaneCollider.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="core\SphereCollider.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\Game.hpp">
@@ -165,6 +180,21 @@
       <Filter>core</Filter>
     </ClInclude>
     <ClInclude Include="core\TestMaterial.hpp">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\PhysicsBody.hpp">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\PhysicsEngine.hpp">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\Collider.hpp">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\PlaneCollider.hpp">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\SphereCollider.hpp">
       <Filter>core</Filter>
     </ClInclude>
   </ItemGroup>

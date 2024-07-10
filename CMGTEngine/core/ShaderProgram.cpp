@@ -29,7 +29,7 @@ namespace cmgt {
 	}
 
 	void ShaderProgram::CreateShader(const string& shaderFile, VkShaderModule* module) {
-		vector<char> shaderCode = readFile(paths::CMGT_SHADER_PATH + shaderFile);
+		vector<char> shaderCode = readFile(CMGT_SHADER_PATH + shaderFile);
 		CreateShader(shaderCode, module);
 	}
 

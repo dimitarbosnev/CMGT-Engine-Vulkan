@@ -12,9 +12,8 @@ namespace cmgt {
 	class ShaderProgram {
 	public:
 		ShaderProgram() = default;
-		~ShaderProgram();
+		virtual ~ShaderProgram();
 		virtual void BindPipelineShaderStages(VkPipelineShaderStageCreateInfo* shaderStages) = 0;
-		virtual uint32_t pushConstSize() = 0;
 		virtual int stageSize() = 0;
 	protected:
 		

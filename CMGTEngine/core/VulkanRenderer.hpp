@@ -20,6 +20,7 @@ namespace cmgt {
 
 			list<Mesh*> meshesToRender;
 			static void AddMeshToRender(Mesh* mesh);
+			static void AddGraphicsPipelines(GraphicsPipeline* pPipeline);
 			static void RemoveFromRenderer(Mesh* mesh);
 			static void render();
 		protected:
@@ -33,6 +34,7 @@ namespace cmgt {
 			void freeCommandBuffers();
 			void drawFrame();
 			void recreateSwapchain();
+			list<GraphicsPipeline*> pipelines = {};
 			VulkanRenderer(const VulkanRenderer&);
 			VulkanRenderer& operator=(const VulkanRenderer&);
 	};

@@ -16,6 +16,11 @@ namespace cmgt {
 	class TestMaterial : public Material
 	{
 	public:
+		struct TestPushConstData
+		{
+			glm::mat4 mvpMatrix; 
+			float time;
+		};
 		TestMaterial();
 		/**
 		 * Render the given mesh in the given world using the given mvp matrices. Implement in subclass.

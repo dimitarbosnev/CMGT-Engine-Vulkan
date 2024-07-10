@@ -29,7 +29,7 @@ namespace cmgt{
             _owner->Rotate(deltaPos.x * pStep * _rotationSpeed, glm::vec3(0, -1, 0));
             _owner->Rotate(deltaPos.y * pStep * _rotationSpeed, glm::vec3(1, 0, 0));
             //cout << "Camera Transform: \n" << _owner->getTransform() << endl;
-            cout << "Camera Rotation: \n" << _owner->getTransform() << endl;
+            //cout << "Camera Rotation: \n" << _owner->getTransform() << endl;
         }
         else {
             _owner->Rotate(-pStep, glm::vec3(0, 1, 0));

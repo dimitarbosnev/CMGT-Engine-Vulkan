@@ -13,15 +13,9 @@ using namespace std;
 namespace cmgt {
 	class BasicShaderProgram : public ShaderProgram{
 	public:
-		struct BasicPushConstData
-		{
-			glm::mat4 mvpMatrix;
-			float time;
-		};
 		BasicShaderProgram(const string& vertexFile, const string& fragmentFile);
-		~BasicShaderProgram();
+		virtual ~BasicShaderProgram() override;
 		void BindPipelineShaderStages(VkPipelineShaderStageCreateInfo* shaderStages) override;
-		uint32_t pushConstSize() override;
 		int stageSize() override;
 	private:
 

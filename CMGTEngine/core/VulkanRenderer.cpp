@@ -13,13 +13,17 @@ namespace cmgt {
 		createCommandBuffers();
 	}
 	VulkanRenderer::~VulkanRenderer() {
-		for (GraphicsPipeline* pipeline : GraphicsPipeline::pipelines)
+		for (GraphicsPipeline* pipeline : pipelines)
 			delete pipeline;
-
+		pipelines.clear();
 		freeCommandBuffers();
 	}
 	void VulkanRenderer::AddMeshToRender(Mesh* mesh) {
 		getInstance().meshesToRender.push_back(mesh);
+	}
+	void VulkanRenderer::AddGraphicsPipelines(GraphicsPipeline* pPipeline)
+	{
+		getInstance().pipelines.push_back(pPipeline);
 	}
 	void VulkanRenderer::RemoveFromRenderer(Mesh* mesh)
 	{
@@ -141,7 +145,7 @@ namespace cmgt {
 			freeCommandBuffers();
 			createCommandBuffers();
 		}
-		for (GraphicsPipeline* pipeline : GraphicsPipeline::pipelines)
+		for (GraphicsPipeline* pipeline : pipelines)
 			pipeline->createPipeline();
 	}
 }

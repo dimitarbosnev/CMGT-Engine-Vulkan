@@ -33,8 +33,8 @@ namespace cmgt {
 	};
 	class GraphicsPipeline {
 	public:
-		GraphicsPipeline(const GraphicsPipelineInfo& info, ShaderProgram* pShaderProgram);
-		GraphicsPipeline(ShaderProgram* pShaderProgram);
+		GraphicsPipeline(const GraphicsPipelineInfo& info, uint8_t pPushConstSize, ShaderProgram* pShaderProgram);
+		GraphicsPipeline(uint8_t pPushConstSize,ShaderProgram* pShaderProgram);
 		~GraphicsPipeline();
 
 		void bind(VkCommandBuffer commandBuffer);
@@ -43,14 +43,13 @@ namespace cmgt {
 		void setPushConstants(VkCommandBuffer commandBuffer, const void* pData);
 		void createPipeline();
 
-		inline static list<GraphicsPipeline*> pipelines = {};
 	private:
 		void creatPipelineLayout();
 		void createPipeline(const GraphicsPipelineInfo& info);
 		VkPipeline graphicsPipeline;
 		VkPipelineLayout pipelineLayout;
 		ShaderProgram* shaderProgram;
-
+		uint8_t pushConstSize;
 		GraphicsPipeline(const GraphicsPipeline&);
 		GraphicsPipeline& operator=(const GraphicsPipeline&);
 	};

@@ -60,4 +60,15 @@ inline std::ostream & operator << ( std::ostream & out, const glm::mat4 & m ) {
 	return out;
 }
 
+inline std::ostream& operator << (std::ostream& out, const glm::mat3& m) {
+	out.precision(1);
+	for (int r = 0; r < 3; r++) {
+		for (int c = 0; c < 3; c++) {
+			out << std::showpos << std::fixed << m[r][c] << ",";
+		}
+		out << std::endl;
+	}
+	return out;
+}
+
 #endif // MYGLM_HPP

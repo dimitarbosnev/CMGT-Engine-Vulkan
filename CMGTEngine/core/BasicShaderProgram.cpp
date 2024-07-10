@@ -42,10 +42,6 @@ namespace cmgt {
 		shaderStages[1].pNext = nullptr;
 		shaderStages[1].pSpecializationInfo = nullptr;
 	}
-	uint32_t BasicShaderProgram::pushConstSize()
-	{
-		return sizeof(BasicShaderProgram::BasicPushConstData);
-	}
 	int BasicShaderProgram::stageSize()
 	{
 		return 2;
