@@ -7,87 +7,49 @@
 #define TINYOBJLOADER_IMPLEMENTATION
 #include "tiny_obj_loader.h"
 namespace cmgt {
-	Mesh::Mesh(const Mesh::Builder &builder, Material* pMaterial) : _material(pMaterial) {
+	Mesh::Mesh(const Mesh::Builder &builder, Material* pMaterial) : _material(pMaterial){
 		createVertexBuffers(builder.vertecies);
 		createIndexBuffers(builder.indices);
-		VulkanRenderer::AddMeshToRender(this);
 	}
 
 	Mesh::~Mesh() {
 		VkDevice device = VulkanInstance::getInstance().device();
 		delete _material;
-		vkDestroyBuffer(device, _vertexBuffer, nullptr);
-		vkFreeMemory(device, _vertexBufferMemory, nullptr);
-
-		if (hasIndexBuffer) {
-			vkDestroyBuffer(device, _indexBuffer, nullptr);
-			vkFreeMemory(device, _indexBufferMemory, nullptr);
-		}
-		VulkanRenderer::RemoveFromRenderer(this);
+		delete vertexBuffer;
+		delete indexBuffer;
 	}
 
 	void Mesh::createVertexBuffers(const vector<Vertex>& vertecies){
 		VulkanInstance& instance = VulkanInstance::getInstance();
-		vertexCount = static_cast<uint32_t>(vertecies.size());
-		assert(vertexCount >= 3 && "Vertex count must be atleast 3!");
-		VkDeviceSize bufferSize = sizeof(Vertex) * vertexCount;
-		VkBuffer stagingBuffer;
-		VkDeviceMemory stagingBufferMemory;
-		instance.createBuffer(bufferSize, 
-			VK_BUFFER_USAGE_TRANSFER_SRC_BIT,VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-			stagingBuffer, stagingBufferMemory);
+		vertexCount = vertecies.size();
+		assert(vertexCount >= 3 && "Mesh Vertex count must be atleast 3!");
+		VulkanBuffer stagingBuffer(sizeof(Vertex), vertexCount, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+		stagingBuffer.map();
+		stagingBuffer.writeToBuffer((void*)vertecies.data());
 
-
-
-		void* data;
-		vkMapMemory(instance.device(), stagingBufferMemory, 0, bufferSize, 0, &data);
-		memcpy(data,vertecies.data(), static_cast<size_t>(bufferSize));
-		vkUnmapMemory(instance.device(), stagingBufferMemory);
-
-		instance.createBuffer(bufferSize,
-			VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-			_vertexBuffer, _vertexBufferMemory);
-		instance.copyBuffer(stagingBuffer, _vertexBuffer, bufferSize);
-
-		vkDestroyBuffer(instance.device(), stagingBuffer, nullptr);
-		vkFreeMemory(instance.device(), stagingBufferMemory, nullptr);
+		vertexBuffer = new VulkanBuffer(sizeof(Vertex), vertexCount, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+		instance.copyBuffer(stagingBuffer.getBuffer(), vertexBuffer->getBuffer(), sizeof(Vertex)*vertexCount);
 	}
-	void Mesh::createIndexBuffers(const vector<uint32_t>& indices)
-	{
+	void Mesh::createIndexBuffers(const vector<uint32_t>& indices){
 		VulkanInstance& instance = VulkanInstance::getInstance();
-		indexCount = static_cast<uint32_t>(indices.size());
+		indexCount = indices.size();
 		hasIndexBuffer = indexCount > 0;
 		if (!hasIndexBuffer) return;
-		VkDeviceSize bufferSize = sizeof(indices[0]) * indexCount;
-		VkBuffer stagingBuffer;
-		VkDeviceMemory stagingBufferMemory;
-		instance.createBuffer(bufferSize,
-			VK_BUFFER_USAGE_INDEX_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-			stagingBuffer, stagingBufferMemory);
 
-		void* data;
-		vkMapMemory(instance.device(), _indexBufferMemory, 0, bufferSize, 0, &data);
-		memcpy(data, indices.data(), static_cast<size_t>(bufferSize));
-		vkUnmapMemory(instance.device(), _indexBufferMemory);
+		VulkanBuffer stagingBuffer(sizeof(uint32_t), indexCount, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+		stagingBuffer.map();
+		stagingBuffer.writeToBuffer((void*)indices.data());
 
-		instance.createBuffer(bufferSize,
-			VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT , VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-			_indexBuffer, _indexBufferMemory);
-
-		instance.copyBuffer(stagingBuffer, _indexBuffer, bufferSize);
-
-		vkDestroyBuffer(instance.device(), stagingBuffer, nullptr);
-		vkFreeMemory(instance.device(), stagingBufferMemory, nullptr);
+		indexBuffer = new VulkanBuffer(sizeof(uint32_t), indexCount, VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+		instance.copyBuffer(stagingBuffer.getBuffer(), indexBuffer->getBuffer(), sizeof(uint32_t)*indexCount);
 	}
 
 	void Mesh::render(VkCommandBuffer commandBuffer, const mat4& pViewMatrix, const mat4& pPerspectiveMatrix) {
-		_material->bindPipeline(commandBuffer);
 
-		VkBuffer buffers[] = { _vertexBuffer };
+		VkBuffer buffers[] = { vertexBuffer->getBuffer() };
 		VkDeviceSize offsets[] = { 0 };
 		vkCmdBindVertexBuffers(commandBuffer, 0, 1, buffers, offsets);
-		if (hasIndexBuffer) vkCmdBindIndexBuffer(commandBuffer, _indexBuffer, 0, VK_INDEX_TYPE_UINT32);
-		//glm::mat4 pModelMatrix = getTransform();
+		if (hasIndexBuffer) vkCmdBindIndexBuffer(commandBuffer, indexBuffer->getBuffer(), 0, VK_INDEX_TYPE_UINT32);
 
 		_material->bindPushConstants(commandBuffer,getTransform(),pViewMatrix,pPerspectiveMatrix);
 
@@ -95,11 +57,10 @@ namespace cmgt {
 		else vkCmdDraw(commandBuffer, vertexCount, 1, 0, 0);
 	}
 	void Mesh::update(float dt) {
-		VulkanRenderer::AddMeshToRender(this);
+		_material->getPipeline()->AddMeshToRender(this);
 	}
 	Mesh::Mesh(const vector<Vertex>& vertecies, Material* pMaterial) : _material(pMaterial) {
 		createVertexBuffers(vertecies);
-		VulkanRenderer::AddMeshToRender(this);
 	}
 	Mesh* Mesh::createModelFromFile(const string& fileName, Material* pMaterial)
 	{

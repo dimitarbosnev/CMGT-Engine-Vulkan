@@ -8,8 +8,10 @@
 #include<vector>
 #include<list>
 #include "VulkanInstance.hpp"
+#include "VulkanSwapchain.hpp"
 #include "Mesh.hpp"
 #include "Camera.hpp"
+#include "VulkanDescriptor.hpp"
 using namespace std;
 
 namespace cmgt {
@@ -18,16 +20,14 @@ namespace cmgt {
 			static void InitializeRenderer();
 			~VulkanRenderer();
 
-			list<Mesh*> meshesToRender;
-			static void AddMeshToRender(Mesh* mesh);
+
+
 			static void AddGraphicsPipelines(GraphicsPipeline* pPipeline);
-			static void RemoveFromRenderer(Mesh* mesh);
 			static void render();
 		protected:
 			
 		private:
 			VulkanRenderer();
-
 			vector<VkCommandBuffer> commandBuffers;
 			void recordCommandBuffer(int imageIndex);
 			void createCommandBuffers();

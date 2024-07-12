@@ -9,9 +9,6 @@ using namespace glm;
 using namespace std;
 
 namespace cmgt {
-	class GameObject;
-	class Mesh;
-	class World;
 
 	class TestMaterial : public Material
 	{
@@ -19,15 +16,16 @@ namespace cmgt {
 		struct TestPushConstData
 		{
 			glm::mat4 mvpMatrix; 
-			glm::mat4 modelMatrix;
+			glm::mat4 normalMatrix;
 		};
 		TestMaterial();
 		/**
 		 * Render the given mesh in the given world using the given mvp matrices. Implement in subclass.
 		 */
+	private:
 		virtual void bindPushConstants(VkCommandBuffer commandBuffer, const mat4& pModelMatrix, const mat4& pViewMatrix, const mat4& pPerspectiveMatrix) override;
 		void bindPipeline(VkCommandBuffer commandBuffer) override;
-	private:
+		virtual GraphicsPipeline* getPipeline() override { return _pipeline; }
 		inline static GraphicsPipeline* _pipeline = nullptr;
 		static void _lazyInitializeShader();
 	};

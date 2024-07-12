@@ -98,6 +98,12 @@
     <ClCompile Include="core\SphereCollider.cpp">
       <Filter>core</Filter>
     </ClCompile>
+    <ClCompile Include="core\VulkanBuffer.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="core\VulkanDescriptor.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\Game.hpp">
@@ -195,6 +201,12 @@
       <Filter>core</Filter>
     </ClInclude>
     <ClInclude Include="core\SphereCollider.hpp">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\VulkanBuffer.hpp">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\VulkanDescriptor.hpp">
       <Filter>core</Filter>
     </ClInclude>
   </ItemGroup>

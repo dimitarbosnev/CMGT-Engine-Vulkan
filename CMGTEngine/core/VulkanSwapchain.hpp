@@ -11,7 +11,7 @@ namespace cmgt {
 
 	class VulkanSwapchain : public Singleton<VulkanSwapchain>{
 	public:
-		static constexpr int MAX_FRAMES_IN_FLIGHT = 3;
+		#define MAX_FRAMES_IN_FLIGHT 3
 
 		static void InitializeSwapchain(VkExtent2D windowExtent);
 		static void RecreateSwapchain(VkExtent2D windowExtent);

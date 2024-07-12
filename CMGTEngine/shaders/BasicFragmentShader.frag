@@ -11,10 +11,13 @@ layout(push_constant) uniform Push {
     mat4 modelMatrix;
 } push;
 
-//Light direction and light intensity
-const vec4 dirLight = vec4(normalize(vec3(1,-1,1)),1);
-//Light color and light intensity
-const vec4 ambientLight = vec4(1,1,1,.2); 
+layout(set = 0, binding = 0) uniform UBOS{
+	mat4 cameraMatrix;
+	mat4 projMatrix;
+	vec4 ambientLight;
+	vec4 dirLight;
+}ubo;
+
 void main() {
-    outColor = vec4(.3,.6,.6,1) * vec4(max(dot(dirLight.xyz,fragNormal),0)*dirLight.w + ambientLight.xyz*ambientLight.w,1);
+    outColor = vec4(.3,.6,.6,1) * vec4(max(dot(ubo.dirLight.xyz,fragNormal),0)*ubo.dirLight.w + ubo.ambientLight.xyz*ubo.ambientLight.w,1);
 }

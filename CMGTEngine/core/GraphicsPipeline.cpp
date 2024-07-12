@@ -2,14 +2,16 @@
 #include "GraphicsPipeline.hpp"
 #include "Mesh.hpp"
 #include <fstream>
-#include<stdexcept>
-#include<iostream>
+#include <stdexcept>
+#include <iostream>
 #include <array>
+#include <vector>
 #include "VulkanSwapchain.hpp"
 #include "VulkanRenderer.hpp"
 namespace cmgt {
 
-	GraphicsPipeline::GraphicsPipeline(const GraphicsPipelineInfo& info,uint8_t pPushConstSize, ShaderProgram* pShaderProgram) : shaderProgram(pShaderProgram), pushConstSize(pPushConstSize){
+	GraphicsPipeline::GraphicsPipeline(const GraphicsPipelineInfo& info,uint8_t pPushConstSize, ShaderProgram* pShaderProgram) : shaderProgram(pShaderProgram), pushConstSize(pPushConstSize),
+		descriptorPool(VulkanDescriptorPool::Builder().setMaxSets(MAX_FRAMES_IN_FLIGHT) .addPoolSize(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, MAX_FRAMES_IN_FLIGHT).build()) {
 		cout << " Creating Graphics Pipeline...\n";
 		creatPipelineLayout();
 		createPipeline(info);
@@ -17,14 +19,20 @@ namespace cmgt {
 		cout << "Graphics Pipeline Initalized!\n";
 	}
 
-	GraphicsPipeline::GraphicsPipeline(uint8_t pPushConstSize, ShaderProgram* pShaderProgram) : shaderProgram(pShaderProgram), pushConstSize(pPushConstSize) {
+	GraphicsPipeline::GraphicsPipeline(uint8_t pPushConstSize, ShaderProgram* pShaderProgram) : shaderProgram(pShaderProgram), pushConstSize(pPushConstSize),
+		descriptorPool(VulkanDescriptorPool::Builder().setMaxSets(MAX_FRAMES_IN_FLIGHT) .addPoolSize(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, MAX_FRAMES_IN_FLIGHT).build()) {
+		cout << " Creating Graphics Pipeline...\n";
 		creatPipelineLayout();
 		createPipeline();
 		VulkanRenderer::AddGraphicsPipelines(this);
+		cout << "Graphics Pipeline Initalized!\n";
 	}
 
 	GraphicsPipeline::~GraphicsPipeline() {
 		VulkanInstance& instance = VulkanInstance::getInstance();
+		for (VulkanBuffer* buffer : uniformBuffers)
+			delete buffer;
+		uniformBuffers.clear();
 		delete shaderProgram;
 		vkDestroyPipelineLayout(VulkanInstance::getInstance().device(), pipelineLayout, nullptr);
 		vkDestroyPipeline(instance.device(), graphicsPipeline, nullptr);
@@ -33,15 +41,32 @@ namespace cmgt {
 
 	void GraphicsPipeline::creatPipelineLayout()
 	{
+		for (int i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
+			VulkanBuffer* buffer = new VulkanBuffer(sizeof(UniformData), 1,
+				VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
+			uniformBuffers.push_back(buffer);
+			buffer->map();
+		}
+		VulkanDescriptorSetLayout descriptorSetLayout = VulkanDescriptorSetLayout::Builder()
+			.addBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT).build();
+
+
+		descriptorSets.resize(MAX_FRAMES_IN_FLIGHT);
+		for (int i = 0; i < descriptorSets.size(); i++) {
+			VkDescriptorBufferInfo bufferInfo = uniformBuffers[i]->descriptorInfo();
+			VulkanDescriptorWriter(descriptorSetLayout, descriptorPool).writeBuffer(0, &bufferInfo).build(descriptorSets[i]);
+		}
+
 		VkPushConstantRange range;
 		range.stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
 		range.offset = 0;
 		range.size = pushConstSize;
 
+		vector<VkDescriptorSetLayout> descriptorSetLayouts{ descriptorSetLayout.getDescriptorSetLayout() };
 		VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
 		pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-		pipelineLayoutInfo.setLayoutCount = 0;
-		pipelineLayoutInfo.pSetLayouts = nullptr;
+		pipelineLayoutInfo.setLayoutCount = static_cast<uint32_t>(descriptorSetLayouts.size());
+		pipelineLayoutInfo.pSetLayouts = descriptorSetLayouts.data();
 		pipelineLayoutInfo.pushConstantRangeCount = 1;
 		pipelineLayoutInfo.pPushConstantRanges = &range;
 		if (vkCreatePipelineLayout(VulkanInstance::getInstance().device(), &pipelineLayoutInfo, nullptr, &pipelineLayout) != VK_SUCCESS)
@@ -96,6 +121,34 @@ namespace cmgt {
 		configInfo.pipelineLayout = pipelineLayout;
 		createPipeline(configInfo);
 		cout << "Graphics Pipeline Initalized!\n";
+	}
+
+	void GraphicsPipeline::renderMeshes(int imageIndex, VkCommandBuffer commandBuffer, const glm::mat4& pViewMatrix, const glm::mat4& pPerspectiveMatrix)
+	{
+		bind(commandBuffer);
+
+		UniformData uniformData;
+		uniformData.cameraMatrix = pViewMatrix;
+		uniformData.projMatrix = pPerspectiveMatrix;
+		uniformData.dirLight = glm::vec4(glm::normalize(glm::vec3(1, -1, 1)), 1);
+		uniformData.ambientLight = glm::vec4(1, 1, 1, .2f);
+		uniformBuffers[imageIndex]->writeToBuffer(&uniformData);
+		uniformBuffers[imageIndex]->flush();
+
+		vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &descriptorSets[imageIndex], 0, nullptr);
+
+		for (Mesh* mesh : meshesToRender)
+			mesh->render(commandBuffer, pViewMatrix, pPerspectiveMatrix);
+
+		meshesToRender.clear();
+	}
+
+	void GraphicsPipeline::AddMeshToRender(Mesh* mesh) {
+		meshesToRender.push_back(mesh);
+	}
+	void GraphicsPipeline::RemoveFromRenderer(Mesh* mesh)
+	{
+		meshesToRender.remove(mesh);
 	}
 
 	void GraphicsPipeline::bind(VkCommandBuffer commandBuffer) {

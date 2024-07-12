@@ -4,6 +4,7 @@
 #pragma once
 #include "glm.hpp"
 #include "VulkanInstance.hpp"
+#include "GraphicsPipeline.hpp"
 using namespace glm;
 using namespace std;
 
@@ -30,10 +31,12 @@ namespace cmgt {
 		/**
 		 * Render the given mesh in the given world using the given mvp matrices. Implement in subclass.
 		 */
-		virtual void bindPipeline(VkCommandBuffer commandBuffer) = 0;
-		virtual void bindPushConstants(VkCommandBuffer commandBuffer, const mat4& pModelMatrix, const mat4& pViewMatrix, const mat4& pPerspectiveMatrix) = 0;
 	protected:
 		vec4 _shininess = vec4(1);
+		virtual void bindPipeline(VkCommandBuffer commandBuffer) = 0;
+		virtual void bindPushConstants(VkCommandBuffer commandBuffer, const mat4& pModelMatrix, const mat4& pViewMatrix, const mat4& pPerspectiveMatrix) = 0;
+		virtual GraphicsPipeline* getPipeline() = 0;
+		friend class Mesh;
 	};
 }
 #endif // MATERIAL_HPP

@@ -197,6 +197,8 @@
     <ClCompile Include="core\SphereCollider.cpp" />
     <ClCompile Include="core\TestMaterial.cpp" />
     <ClCompile Include="core\Texture.cpp" />
+    <ClCompile Include="core\VulkanBuffer.cpp" />
+    <ClCompile Include="core\VulkanDescriptor.cpp" />
     <ClCompile Include="core\VulkanInstance.cpp" />
     <ClCompile Include="core\VulkanRenderer.cpp" />
     <ClCompile Include="core\VulkanSwapchain.cpp" />
@@ -233,6 +235,8 @@
     <ClInclude Include="core\TestMaterial.hpp" />
     <ClInclude Include="core\Texture.hpp" />
     <ClInclude Include="core\tiny_obj_loader.h" />
+    <ClInclude Include="core\VulkanBuffer.hpp" />
+    <ClInclude Include="core\VulkanDescriptor.hpp" />
     <ClInclude Include="core\VulkanInstance.hpp" />
     <ClInclude Include="core\VulkanRenderer.hpp" />
     <ClInclude Include="core\VulkanSwapchain.hpp" />

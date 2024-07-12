@@ -2,8 +2,8 @@
 #include "VulkanRenderer.hpp"
 #include "SceneManager.hpp"
 #include "VulkanSwapchain.hpp"
+#include "VulkanBuffer.hpp"
 #include "Scene.hpp"
-#include "Mesh.hpp"
 #include<array>
 namespace cmgt {
 	void VulkanRenderer::InitializeRenderer() {
@@ -18,17 +18,11 @@ namespace cmgt {
 		pipelines.clear();
 		freeCommandBuffers();
 	}
-	void VulkanRenderer::AddMeshToRender(Mesh* mesh) {
-		getInstance().meshesToRender.push_back(mesh);
-	}
 	void VulkanRenderer::AddGraphicsPipelines(GraphicsPipeline* pPipeline)
 	{
 		getInstance().pipelines.push_back(pPipeline);
 	}
-	void VulkanRenderer::RemoveFromRenderer(Mesh* mesh)
-	{
-		getInstance().meshesToRender.remove(mesh);
-	}
+
 	void VulkanRenderer::render()
 	{
 		getInstance().drawFrame();
@@ -93,9 +87,8 @@ namespace cmgt {
 		Camera& camera = *SceneManager::getCurrentScene().getWorld().getMainCamera();
 		glm::mat4 V = camera.getTransform();
 		glm::mat4 P = camera.getProjection();
-
-		for (Mesh* mesh : meshesToRender)
-			mesh->render(commandBuffers[imageIndex],V,P);
+		for (GraphicsPipeline* pipeline : pipelines)
+			pipeline->renderMeshes(imageIndex,commandBuffers[imageIndex],V,P);
 		
 
 
@@ -126,7 +119,6 @@ namespace cmgt {
 		}
 		if (result != VK_SUCCESS)
 			throw runtime_error("failed to present swap chian image!");
-		meshesToRender.clear();
 	}
 
 	void VulkanRenderer::recreateSwapchain() {

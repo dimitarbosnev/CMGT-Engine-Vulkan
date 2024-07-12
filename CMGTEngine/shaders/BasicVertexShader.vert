@@ -11,6 +11,13 @@ layout(push_constant) uniform Push {
     mat4 modelMatrix;
 } push;
 
+layout(set = 0, binding = 0) uniform UBOS{
+	mat4 cameraMatrix;
+	mat4 projMatrix;
+	vec4 ambientLight;
+	vec4 dirLight;
+}ubo;
+
 void main() {
     gl_Position = push.mvpMatrix * vec4(position,1.0);
     fragNormal = mat3(push.modelMatrix) * normal;
