@@ -9,13 +9,14 @@
 #include<vector>
 #include<list>
 #include "VulkanInstance.hpp"
-#include "ShaderProgram.hpp"
 #include "VulkanDescriptor.hpp"
+#include "VulkanRenderer.hpp"
 using namespace std;
 
 namespace cmgt {
 	class Mesh;
 	class VulkanBuffer;
+	class ShaderProgram;
 	struct GraphicsPipelineInfo
 	{
 		GraphicsPipelineInfo() = default;
@@ -35,37 +36,31 @@ namespace cmgt {
 		VkRenderPass renderPass = nullptr;
 		uint32_t subpass = 0;
 	};
-	struct UniformData {
-		glm::mat4 cameraMatrix;
-		glm::mat4 projMatrix;
-		glm::vec4 ambientLight;
-		glm::vec4 dirLight;
-	};
+
 
 	class GraphicsPipeline {
 	public:
-		GraphicsPipeline(const GraphicsPipelineInfo& info, uint8_t pPushConstSize, ShaderProgram* pShaderProgram);
-		GraphicsPipeline(uint8_t pPushConstSize, ShaderProgram* pShaderProgram);
+		GraphicsPipeline(const GraphicsPipelineInfo& info, ShaderProgram* pShaderProgram);
+		GraphicsPipeline(ShaderProgram* pShaderProgram);
 		~GraphicsPipeline();
 
 		void bind(VkCommandBuffer commandBuffer);
 		static void defaultGraphicsPipelineInfo(GraphicsPipelineInfo& configInfo);
 
-		void setPushConstants(VkCommandBuffer commandBuffer, const void* pData);
+
 		void createPipeline();
-		void renderMeshes(int imageIndex, VkCommandBuffer commandBuffer, const glm::mat4& pViewMatrix, const glm::mat4& pPerspectiveMatrix);
+		void renderMeshes(const VulkanFrameData& frameData);
 		void AddMeshToRender(Mesh* mesh);
 		void RemoveFromRenderer(Mesh* mesh);
+		void setPushConstants(VkCommandBuffer commandBuffer, const void* pData);
 	private:
-		void creatPipelineLayout();
+
 		void createPipeline(const GraphicsPipelineInfo& info);
-		VulkanDescriptorPool descriptorPool;
-		vector<VulkanBuffer*> uniformBuffers;
-		vector<VkDescriptorSet> descriptorSets;
+		//MOVE TO SHADER PROGRAM
+
+		//
 		VkPipeline graphicsPipeline;
-		VkPipelineLayout pipelineLayout;
 		ShaderProgram* shaderProgram;
-		uint8_t pushConstSize;
 		list<Mesh*> meshesToRender;
 		GraphicsPipeline(const GraphicsPipeline&);
 		GraphicsPipeline& operator=(const GraphicsPipeline&);

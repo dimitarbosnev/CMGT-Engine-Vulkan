@@ -13,17 +13,13 @@ namespace cmgt {
 	class TestMaterial : public Material
 	{
 	public:
-		struct TestPushConstData
-		{
-			glm::mat4 mvpMatrix; 
-			glm::mat4 normalMatrix;
-		};
+
 		TestMaterial();
 		/**
 		 * Render the given mesh in the given world using the given mvp matrices. Implement in subclass.
 		 */
 	private:
-		virtual void bindPushConstants(VkCommandBuffer commandBuffer, const mat4& pModelMatrix, const mat4& pViewMatrix, const mat4& pPerspectiveMatrix) override;
+		virtual void bindPushConstants(const VulkanFrameData& frameData, const glm::mat4 pModelMatrix) override;
 		void bindPipeline(VkCommandBuffer commandBuffer) override;
 		virtual GraphicsPipeline* getPipeline() override { return _pipeline; }
 		inline static GraphicsPipeline* _pipeline = nullptr;

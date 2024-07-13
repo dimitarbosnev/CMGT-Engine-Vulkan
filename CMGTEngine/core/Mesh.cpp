@@ -44,17 +44,17 @@ namespace cmgt {
 		instance.copyBuffer(stagingBuffer.getBuffer(), indexBuffer->getBuffer(), sizeof(uint32_t)*indexCount);
 	}
 
-	void Mesh::render(VkCommandBuffer commandBuffer, const mat4& pViewMatrix, const mat4& pPerspectiveMatrix) {
+	void Mesh::render(const VulkanFrameData& frameData) {
 
 		VkBuffer buffers[] = { vertexBuffer->getBuffer() };
 		VkDeviceSize offsets[] = { 0 };
-		vkCmdBindVertexBuffers(commandBuffer, 0, 1, buffers, offsets);
-		if (hasIndexBuffer) vkCmdBindIndexBuffer(commandBuffer, indexBuffer->getBuffer(), 0, VK_INDEX_TYPE_UINT32);
+		vkCmdBindVertexBuffers(frameData.commandBuffer, 0, 1, buffers, offsets);
+		if (hasIndexBuffer) vkCmdBindIndexBuffer(frameData.commandBuffer, indexBuffer->getBuffer(), 0, VK_INDEX_TYPE_UINT32);
 
-		_material->bindPushConstants(commandBuffer,getTransform(),pViewMatrix,pPerspectiveMatrix);
+		_material->bindPushConstants(frameData, getTransform());
 
-		if (hasIndexBuffer) vkCmdDrawIndexed(commandBuffer, indexCount, 1, 0, 0, 0);
-		else vkCmdDraw(commandBuffer, vertexCount, 1, 0, 0);
+		if (hasIndexBuffer) vkCmdDrawIndexed(frameData.commandBuffer, indexCount, 1, 0, 0, 0);
+		else vkCmdDraw(frameData.commandBuffer, vertexCount, 1, 0, 0);
 	}
 	void Mesh::update(float dt) {
 		_material->getPipeline()->AddMeshToRender(this);

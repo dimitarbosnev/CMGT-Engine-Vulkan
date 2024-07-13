@@ -5,6 +5,7 @@
 #include "glm.hpp"
 #include "VulkanInstance.hpp"
 #include "GraphicsPipeline.hpp"
+#include "VulkanRenderer.hpp"
 using namespace glm;
 using namespace std;
 
@@ -34,7 +35,7 @@ namespace cmgt {
 	protected:
 		vec4 _shininess = vec4(1);
 		virtual void bindPipeline(VkCommandBuffer commandBuffer) = 0;
-		virtual void bindPushConstants(VkCommandBuffer commandBuffer, const mat4& pModelMatrix, const mat4& pViewMatrix, const mat4& pPerspectiveMatrix) = 0;
+		virtual void bindPushConstants(const VulkanFrameData& frameData, const glm::mat4 pModelMatrix) = 0;
 		virtual GraphicsPipeline* getPipeline() = 0;
 		friend class Mesh;
 	};

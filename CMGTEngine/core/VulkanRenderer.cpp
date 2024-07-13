@@ -3,6 +3,7 @@
 #include "SceneManager.hpp"
 #include "VulkanSwapchain.hpp"
 #include "VulkanBuffer.hpp"
+#include "GraphicsPipeline.hpp"
 #include "Scene.hpp"
 #include<array>
 namespace cmgt {
@@ -85,10 +86,11 @@ namespace cmgt {
 
 
 		Camera& camera = *SceneManager::getCurrentScene().getWorld().getMainCamera();
-		glm::mat4 V = camera.getTransform();
-		glm::mat4 P = camera.getProjection();
+		glm::mat4 viewMatrix = camera.getTransform();
+		glm::mat4 projectionMatrix = camera.getProjection();
+		VulkanFrameData frameData(commandBuffers[imageIndex],imageIndex, viewMatrix, projectionMatrix);
 		for (GraphicsPipeline* pipeline : pipelines)
-			pipeline->renderMeshes(imageIndex,commandBuffers[imageIndex],V,P);
+			pipeline->renderMeshes(frameData);
 		
 
 

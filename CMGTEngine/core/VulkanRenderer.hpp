@@ -9,12 +9,22 @@
 #include<list>
 #include "VulkanInstance.hpp"
 #include "VulkanSwapchain.hpp"
-#include "Mesh.hpp"
 #include "Camera.hpp"
 #include "VulkanDescriptor.hpp"
 using namespace std;
 
 namespace cmgt {
+	class GraphicsPipeline;
+	struct VulkanFrameData {
+	public:
+		VulkanFrameData(const VkCommandBuffer& pCommandBuffer, const short& pImageIndex, const glm::mat4& pViewMatrix, const glm::mat4& pProjectionMatrix)
+			: commandBuffer(pCommandBuffer), imageIndex(pImageIndex), viewMatrix(pViewMatrix), projectionMatrix(pProjectionMatrix) {}
+		const VkCommandBuffer& commandBuffer;
+		const short& imageIndex;
+		const glm::mat4& viewMatrix;
+		const glm::mat4& projectionMatrix;
+
+	};
 	class VulkanRenderer : public Singleton<VulkanRenderer> {
 		public:
 			static void InitializeRenderer();

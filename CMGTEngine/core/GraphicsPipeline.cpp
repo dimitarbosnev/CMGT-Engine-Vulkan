@@ -8,70 +8,32 @@
 #include <vector>
 #include "VulkanSwapchain.hpp"
 #include "VulkanRenderer.hpp"
+#include "ShaderProgram.hpp"
 namespace cmgt {
 
-	GraphicsPipeline::GraphicsPipeline(const GraphicsPipelineInfo& info,uint8_t pPushConstSize, ShaderProgram* pShaderProgram) : shaderProgram(pShaderProgram), pushConstSize(pPushConstSize),
-		descriptorPool(VulkanDescriptorPool::Builder().setMaxSets(MAX_FRAMES_IN_FLIGHT) .addPoolSize(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, MAX_FRAMES_IN_FLIGHT).build()) {
+	GraphicsPipeline::GraphicsPipeline(const GraphicsPipelineInfo& info, ShaderProgram* pShaderProgram) :
+		shaderProgram(pShaderProgram) {
 		cout << " Creating Graphics Pipeline...\n";
-		creatPipelineLayout();
 		createPipeline(info);
 		VulkanRenderer::AddGraphicsPipelines(this);
 		cout << "Graphics Pipeline Initalized!\n";
 	}
 
-	GraphicsPipeline::GraphicsPipeline(uint8_t pPushConstSize, ShaderProgram* pShaderProgram) : shaderProgram(pShaderProgram), pushConstSize(pPushConstSize),
-		descriptorPool(VulkanDescriptorPool::Builder().setMaxSets(MAX_FRAMES_IN_FLIGHT) .addPoolSize(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, MAX_FRAMES_IN_FLIGHT).build()) {
+	GraphicsPipeline::GraphicsPipeline(ShaderProgram* pShaderProgram) : 
+		shaderProgram(pShaderProgram) {
 		cout << " Creating Graphics Pipeline...\n";
-		creatPipelineLayout();
 		createPipeline();
 		VulkanRenderer::AddGraphicsPipelines(this);
 		cout << "Graphics Pipeline Initalized!\n";
 	}
 
 	GraphicsPipeline::~GraphicsPipeline() {
-		VulkanInstance& instance = VulkanInstance::getInstance();
-		for (VulkanBuffer* buffer : uniformBuffers)
-			delete buffer;
-		uniformBuffers.clear();
 		delete shaderProgram;
-		vkDestroyPipelineLayout(VulkanInstance::getInstance().device(), pipelineLayout, nullptr);
-		vkDestroyPipeline(instance.device(), graphicsPipeline, nullptr);
+		vkDestroyPipeline(VulkanInstance::getInstance().device(), graphicsPipeline, nullptr);
 		cout << "Pipeline destroyed" << endl;
 	}
 
-	void GraphicsPipeline::creatPipelineLayout()
-	{
-		for (int i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
-			VulkanBuffer* buffer = new VulkanBuffer(sizeof(UniformData), 1,
-				VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
-			uniformBuffers.push_back(buffer);
-			buffer->map();
-		}
-		VulkanDescriptorSetLayout descriptorSetLayout = VulkanDescriptorSetLayout::Builder()
-			.addBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT).build();
-
-
-		descriptorSets.resize(MAX_FRAMES_IN_FLIGHT);
-		for (int i = 0; i < descriptorSets.size(); i++) {
-			VkDescriptorBufferInfo bufferInfo = uniformBuffers[i]->descriptorInfo();
-			VulkanDescriptorWriter(descriptorSetLayout, descriptorPool).writeBuffer(0, &bufferInfo).build(descriptorSets[i]);
-		}
-
-		VkPushConstantRange range;
-		range.stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
-		range.offset = 0;
-		range.size = pushConstSize;
-
-		vector<VkDescriptorSetLayout> descriptorSetLayouts{ descriptorSetLayout.getDescriptorSetLayout() };
-		VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
-		pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-		pipelineLayoutInfo.setLayoutCount = static_cast<uint32_t>(descriptorSetLayouts.size());
-		pipelineLayoutInfo.pSetLayouts = descriptorSetLayouts.data();
-		pipelineLayoutInfo.pushConstantRangeCount = 1;
-		pipelineLayoutInfo.pPushConstantRanges = &range;
-		if (vkCreatePipelineLayout(VulkanInstance::getInstance().device(), &pipelineLayoutInfo, nullptr, &pipelineLayout) != VK_SUCCESS)
-			throw runtime_error("failed to create pipelin layout");
-	}
+	
 
 	void GraphicsPipeline::createPipeline(const GraphicsPipelineInfo& configInfo) {
 		auto bindingDescriptions = Mesh::Vertex::getBindingDescription();
@@ -114,31 +76,21 @@ namespace cmgt {
 
 	void GraphicsPipeline::createPipeline()
 	{
-		cout << " Creating Graphics Pipeline...\n";
 		GraphicsPipelineInfo configInfo{};
 		defaultGraphicsPipelineInfo(configInfo);
 		configInfo.renderPass = VulkanSwapchain::getInstance().getRenderPass();
-		configInfo.pipelineLayout = pipelineLayout;
+		configInfo.pipelineLayout = shaderProgram->getPipelineLayout();
 		createPipeline(configInfo);
-		cout << "Graphics Pipeline Initalized!\n";
 	}
 
-	void GraphicsPipeline::renderMeshes(int imageIndex, VkCommandBuffer commandBuffer, const glm::mat4& pViewMatrix, const glm::mat4& pPerspectiveMatrix)
+	void GraphicsPipeline::renderMeshes(const VulkanFrameData& frameData)
 	{
-		bind(commandBuffer);
+		bind(frameData.commandBuffer);
 
-		UniformData uniformData;
-		uniformData.cameraMatrix = pViewMatrix;
-		uniformData.projMatrix = pPerspectiveMatrix;
-		uniformData.dirLight = glm::vec4(glm::normalize(glm::vec3(1, -1, 1)), 1);
-		uniformData.ambientLight = glm::vec4(1, 1, 1, .2f);
-		uniformBuffers[imageIndex]->writeToBuffer(&uniformData);
-		uniformBuffers[imageIndex]->flush();
-
-		vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &descriptorSets[imageIndex], 0, nullptr);
+		shaderProgram->setUniformBuffers(frameData);
 
 		for (Mesh* mesh : meshesToRender)
-			mesh->render(commandBuffer, pViewMatrix, pPerspectiveMatrix);
+			mesh->render(frameData);
 
 		meshesToRender.clear();
 	}
@@ -149,6 +101,11 @@ namespace cmgt {
 	void GraphicsPipeline::RemoveFromRenderer(Mesh* mesh)
 	{
 		meshesToRender.remove(mesh);
+	}
+
+	void GraphicsPipeline::setPushConstants(VkCommandBuffer commandBuffer, const void* pData)
+	{
+		shaderProgram->setPushConstants(commandBuffer, pData);
 	}
 
 	void GraphicsPipeline::bind(VkCommandBuffer commandBuffer) {
@@ -225,11 +182,5 @@ namespace cmgt {
 		configInfo.dynamicStateInfo.dynamicStateCount =
 			static_cast<uint32_t>(configInfo.dynamicStateEnables.size());
 		configInfo.dynamicStateInfo.flags = 0;
-	}
-	void GraphicsPipeline::setPushConstants(VkCommandBuffer commandBuffer, const void* pData)
-	{
-		vkCmdPushConstants(commandBuffer, pipelineLayout,
-			VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
-			0, pushConstSize, pData);
 	}
 }

@@ -7,6 +7,7 @@
 #include <vector>
 #include "Component.hpp"
 #include "VulkanBuffer.hpp"
+#include "VulkanRenderer.hpp"
 #include "glm.hpp"
 #include "Material.hpp"
 #include "TestMaterial.hpp"
@@ -34,7 +35,7 @@ namespace cmgt {
 			void loadModel(const string& filePath);
 		};
 		virtual ~Mesh();
-		void render(VkCommandBuffer commandBuffer, const mat4& pViewMatrix, const mat4& pPerspectiveMatrix);
+		void render(const VulkanFrameData& frameData);
 		void update(float dt) override;
 		Mesh(const vector<Vertex>&, Material* pMaterial = new TestMaterial());
 		static Mesh* createModelFromFile(const string& filePath, Material* pMaterial = new TestMaterial());
