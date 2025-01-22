@@ -1,0 +1,17 @@
+    // Position Camera along sphere (For some zero angles this is invalid (singularity) -> Use another approach)
+    float x = m_target.x() + m_distance * cosf(m_elevation) * sinf(m_azimuth);
+    float y = m_target.y() + m_distance * sinf(m_elevation);
+    float z = m_target.z() + m_distance * cosf(m_elevation) * cosf(m_azimuth);
+    Vec3f position(x, y, z);
+
+    // LookAt: Rotate camera towards target
+    Vec3f orbit_up(0, 1, 0); // y-up
+
+    Vec3f direction = (m_target - position).normalized();
+    Vec3f right = orbit_up.cross(direction).normalized();
+    Vec3f up = direction.cross(right);
+
+    Mat3f rotation;
+    rotation.row(0) = right;
+    rotation.row(1) = up;
+    rotation.row(2) = direction;

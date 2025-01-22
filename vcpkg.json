@@ -1,0 +1,10 @@
+{
+  "dependencies": [
+    "vulkan-sdk-components",
+    "glm",
+    "tinyobjloader",
+    "glfw3",
+    "tinygltf",
+    "libpng"
+  ]
+}

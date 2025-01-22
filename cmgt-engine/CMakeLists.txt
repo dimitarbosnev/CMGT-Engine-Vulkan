@@ -1,0 +1,4 @@
+add_subdirectory(core)
+add_subdirectory(physics-engine)
+add_subdirectory(utils)
+add_subdirectory(render-engine)
