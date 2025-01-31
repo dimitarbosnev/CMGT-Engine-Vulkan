@@ -1,6 +1,6 @@
 #ifndef SPHERECOLLIDER_H
 #define SPHERECOLLIDER_H
-#include "core/glm.h"
+#include "minimal/glm.h"
 #include "physics-engine/Collider.h"
 using namespace glm;
 namespace cmgt

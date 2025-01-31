@@ -4,8 +4,8 @@
 
 
 #pragma once
-#include "core/glm.h"
-#include "core/config.h"
+#include "minimal/glm.h"
+#include "minimal/types.h"
 #include <string>
 #include <vector>
 
@@ -14,13 +14,11 @@ using namespace std;
 namespace cmgt
 {
 	class WorldSeed;
-	class Light;
 	class Component;
 
 	class GameObject
 	{
 	public:
-		GameObject(const string& pName);
 		id_t getID() { return id; }
 		virtual ~GameObject();
 
@@ -70,6 +68,8 @@ namespace cmgt
 		WorldSeed* getWorld() const;
 
 	protected:
+		//Used to spawn objects from world seed
+		GameObject(const string& pName);
 
 		string _name;
 		id_t id;

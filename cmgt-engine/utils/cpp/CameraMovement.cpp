@@ -1,7 +1,7 @@
 
 #include "utils/CameraMovement.h"
 #include "core/GameObject.h"
-#include "utils/InputManager.h"
+#include "core/InputManager.h"
 namespace cmgt{
 
     CameraMovement::CameraMovement(float pMoveSpeed, float pRotationSpeed) : _moveSpeed(pMoveSpeed), _rotationSpeed(pRotationSpeed){

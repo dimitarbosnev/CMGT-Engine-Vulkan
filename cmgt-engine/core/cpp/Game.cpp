@@ -2,12 +2,12 @@
 #include "core/Game.h"
 #include "core/glm.h"
 #include "utils/Camera.h"
-#include "render-engine/VulkanRenderer.h"
+#include "core/VulkanRenderer.h"
 #include "core/Scene.h"
 namespace cmgt {
 
 	Game::Game(int pWidth, int pHeight, string pName) {
-		Window::InitializeWindow(pWidth, pHeight, pName);
+		//Window::InitializeWindow(pWidth, pHeight, pName);
 	}
 
 	Game::~Game() {
@@ -17,11 +17,11 @@ namespace cmgt {
 
 	void Game::initEngine() {
 		cout << "Initializing CMGT Engine...\n";
-		VulkanInstance::InitializeVulkan();
-		VulkanSwapchain::InitializeSwapchain(Window::getInstance().getWindowExtend());
+		//VulkanInstance::InitializeVulkan();
+		//VulkanSwapchain::InitializeSwapchain(Window::get().getWindowExtend());
 
 		cout << "Initalizing CMGT Engine Utils...\n";
-			ObjectManager::InitializesObjectManager();
+			//ObjectManager::InitializesObjectManager();
 			SceneManager::InitializesSceneManager();
 			VulkanRenderer::InitializeRenderer();
 		cout << "Utils Initalized!\n";

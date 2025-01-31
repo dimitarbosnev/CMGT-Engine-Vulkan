@@ -2,8 +2,8 @@
 #include "core/SceneManager.h"
 #include "core/Scene.h"
 namespace cmgt {
-	void SceneManager::InitializesSceneManager() {
-		assignInstance(new SceneManager());
+
+	SceneManager::SceneManager() {
 	}
 
 	SceneManager::~SceneManager() {
@@ -17,55 +17,48 @@ namespace cmgt {
 	}
 
 	void SceneManager::update(float dt) {
-		SceneManager& manager = getInstance();
-		if (manager.scenesStack.size() != 0) {
-			manager.scenesStack.top()->update(dt);
+		if (scenesStack.size() != 0) {
+			scenesStack.top()->update(dt);
 		}
 		else
 			cout << "There is no scene on the stack!" << endl;
 	}
 
 	void SceneManager::addScene(Scene& scene) {
-		SceneManager& manager = getInstance();
-		manager.scenes.emplace(scene.getID(), &scene);
-		if (manager.scenes.size() == 1) {
-			manager.gotoScene(scene);
+		scenes.emplace(scene.getID(), &scene);
+		if (scenes.size() == 1) {
+			gotoScene(scene);
 		}
 	}
 
 	id_t SceneManager::assignSceneID()
 	{
-		SceneManager& sceneManager = getInstance();
 		id_t i = 0;
-		while (sceneManager.scenes.contains(i)) {
+		while (scenes.contains(i)) {
 			i++;
 		}
 		return i;
 	}
 
 	void SceneManager::gotoScene(Scene& scene) {
-		SceneManager& manager = getInstance();
-		if (manager.scenes.contains(scene.getID()))
-			manager.scenesStack.push(manager.scenes[scene.getID()]);
+		if (scenes.contains(scene.getID()))
+			scenesStack.push(scenes[scene.getID()]);
 		else
 			cout << "Scene does not exist on the stack!" << endl;;
 	}
 
-	void SceneManager::previousScene() { getInstance().scenesStack.pop(); }
+	void SceneManager::previousScene() { scenesStack.pop(); }
 
-	Scene& SceneManager::getCurrentScene()
+	Scene* SceneManager::getCurrentScene()
 	{
-		SceneManager& manager = getInstance();
-		assert(manager.scenesStack.size() != 0 && "There is no scene on the stack!");
-		return *manager.scenesStack.top();
+		assert(scenesStack.size() != 0 && "There is no scene on the stack!");
+		return scenesStack.top();
 	}
 
-	Scene& SceneManager::getScene(string name) {
-		SceneManager& manager = getInstance();
+	Scene* SceneManager::getScene(string name) {
 		auto findByName = [name](const pair<id_t, Scene*>& a) { return a.second->getName() == name; };
-		auto it = find_if(manager.scenes.begin(), manager.scenes.end(), findByName);
-		return *it->second;
+		auto it = find_if(scenes.begin(), scenes.end(), findByName);
+		return it->second;
 	}
-	Scene& SceneManager::getScene(Scene& sceneID) { return getScene(sceneID.getID()); }
-	Scene& SceneManager::getScene(id_t sceneID) { return *getInstance().scenes.find(sceneID)->second; }
+	Scene* SceneManager::getScene(id_t sceneID) { return scenes.find(sceneID)->second; }
 }

@@ -8,8 +8,8 @@ add_library(core STATIC ${CPP_Files})
 target_include_directories(core PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/header)
 target_link_libraries(core  
     PUBLIC 
-    render-engine
-    utils
+    vulkan-api
     glm::glm
+    minimal
 )
 #target_compile_definitions(core PUBLIC _USE_MATH_DEFINES)

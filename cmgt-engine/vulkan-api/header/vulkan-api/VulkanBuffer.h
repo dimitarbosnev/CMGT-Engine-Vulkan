@@ -1,0 +1,62 @@
+#ifndef VULKANBUFFER_H
+#define VULKANBUFFER_H
+#pragma once
+#include "vulkan-api/VulkanInstance.h"
+
+namespace cmgt {
+
+    class VulkanBuffer {
+    public:
+        VulkanBuffer(
+            VulkanInstance& instnace,
+            VkDeviceSize instanceSize,
+            uint32_t instanceCount,
+            VkBufferUsageFlags usageFlags,
+            VkMemoryPropertyFlags memoryPropertyFlags,
+            VkDeviceSize minOffsetAlignment = 1);
+        ~VulkanBuffer();
+
+        VulkanBuffer(const VulkanBuffer&) = delete;
+        VulkanBuffer& operator=(const VulkanBuffer&) = delete;
+
+        VkResult map(VkDeviceSize size = VK_WHOLE_SIZE, VkDeviceSize offset = 0);
+        void unmap();
+
+        void writeToBuffer(const void* data, VkDeviceSize size = VK_WHOLE_SIZE, VkDeviceSize offset = 0);
+        VkResult flush(VkDeviceSize size = VK_WHOLE_SIZE, VkDeviceSize offset = 0);
+        VkDescriptorBufferInfo descriptorInfo(VkDeviceSize size = VK_WHOLE_SIZE, VkDeviceSize offset = 0);
+        VkResult invalidate(VkDeviceSize size = VK_WHOLE_SIZE, VkDeviceSize offset = 0);
+
+        void writeToIndex(void* data, int index);
+        VkResult flushIndex(int index);
+        VkDescriptorBufferInfo descriptorInfoForIndex(int index);
+        VkResult invalidateIndex(int index);
+
+        VkBuffer getBuffer() const { return buffer; }
+        void* getMappedMemory() const { return mapped; }
+        uint32_t getInstanceCount() const { return instanceCount; }
+        VkDeviceSize getInstanceSize() const { return instanceSize; }
+        VkDeviceSize getAlignmentSize() const { return instanceSize; }
+        VkBufferUsageFlags getUsageFlags() const { return usageFlags; }
+        VkMemoryPropertyFlags getMemoryPropertyFlags() const { return memoryPropertyFlags; }
+        VkDeviceSize getBufferSize() const { return bufferSize; }
+
+    private:
+        static VkDeviceSize getAlignment(VkDeviceSize instanceSize, VkDeviceSize minOffsetAlignment);
+
+        void* mapped = nullptr;
+        VkBuffer buffer = VK_NULL_HANDLE;
+        VkDeviceMemory memory = VK_NULL_HANDLE;
+
+        VkDeviceSize bufferSize;
+        uint32_t instanceCount;
+        VkDeviceSize instanceSize;
+        VkDeviceSize alignmentSize;
+        VkBufferUsageFlags usageFlags;
+        VkMemoryPropertyFlags memoryPropertyFlags;
+
+        VulkanInstance& vkInstance;
+    };
+
+}  // namespace cmgt
+#endif //VULKANBUFFER_H

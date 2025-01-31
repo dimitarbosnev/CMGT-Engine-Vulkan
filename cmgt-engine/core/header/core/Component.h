@@ -2,7 +2,7 @@
 #define COMPONENT_H
 
 #pragma once
-#include "glm.h"
+#include "minimal/glm.h"
 
 namespace cmgt
 {

@@ -9,5 +9,6 @@ target_include_directories(physics-engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/hea
 target_link_libraries(physics-engine  
     PUBLIC 
     core
+    minimal
 )
 #target_compile_definitions(core PUBLIC _USE_MATH_DEFINES)

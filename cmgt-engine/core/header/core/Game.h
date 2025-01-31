@@ -14,16 +14,13 @@
 #include<map>
 #include<array>
 #include "core/Window.h"
-#include "render-engine/VulkanInstance.h"
-#include "render-engine/VulkanSwapchain.h"
-#include "core/ShaderProgram.h"
-#include "core/BasicShaderProgram.h"
+#include "vulkan-api/VulkanInstance.h"
+#include "vulkan-api/VulkanSwapchain.h"
+#include "vulkan-api/ShaderProgram.h"
 #include "core/ObjectManager.h"
 #include "core/SceneManager.h"
-#include "core/config.h"
-#include "utils/Mesh.h"
-#include "render-engine/VulkanRenderer.h"
-#include "core/GraphicsPipeline.h"
+#include "core/VulkanRenderer.h"
+#include "vulkan-api/GraphicsPipeline.h"
 using namespace std;
 
 namespace cmgt {

@@ -9,7 +9,7 @@ target_include_directories(utils PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/header)
 target_link_libraries(utils 
     PUBLIC 
     core
-    render-engine
+    vulkan-api
     glfw
 )
 #target_compile_definitions(core PUBLIC _USE_MATH_DEFINES)

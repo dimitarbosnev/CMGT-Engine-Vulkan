@@ -2,33 +2,31 @@
 #define SCENEMANAGER_H
 
 #pragma once
-#include "core/config.h"
 #include <string>
 #include<map>
 #include<stack>
+#include "minimal/types.h"
 using namespace std;
 
 namespace cmgt
 {
     class Scene;
-    class SceneManager : public Singleton<SceneManager>{
+    class SceneManager {
     public:
-        static void InitializesSceneManager();
+        SceneManager();
         ~SceneManager();
-        static void update(float dt);
-        static void addScene(Scene& scene);
-        static void gotoScene(Scene& scene);
-        static void previousScene();
-        static Scene& getCurrentScene();
-        static Scene& getScene(string name);
-        static Scene& getScene(Scene& sceneID);
-        static Scene& getScene(id_t sceneID);
-        static id_t assignSceneID();
+        void update(float dt);
+        void addScene(Scene& scene);
+        void gotoScene(Scene& scene);
+        void previousScene();
+        Scene* getCurrentScene();
+        Scene* getScene(string name);
+        Scene* getScene(id_t sceneID);
 
     private:
+        id_t assignSceneID();
         map<id_t, Scene*> scenes;
         stack<Scene*> scenesStack;
-        SceneManager() = default;
 
         SceneManager(const SceneManager&) = delete;
         SceneManager operator=(const SceneManager&) = delete;

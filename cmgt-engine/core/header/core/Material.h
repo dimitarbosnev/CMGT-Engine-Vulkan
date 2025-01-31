@@ -2,10 +2,11 @@
 #define MATERIAL_H
 
 #pragma once
-#include "core/glm.h"
-#include "render-engine/VulkanInstance.h"
-#include "core/GraphicsPipeline.h"
-#include "render-engine/VulkanRenderer.h"
+#include "minimal/glm.h"
+#include "vulkan-api/VulkanInstance.h"
+#include "vulkan-api/GraphicsPipeline.h"
+#include "core/VulkanRenderer.h"
+#include "vulkan-api/VulkanFrameData.h"
 using namespace glm;
 using namespace std;
 

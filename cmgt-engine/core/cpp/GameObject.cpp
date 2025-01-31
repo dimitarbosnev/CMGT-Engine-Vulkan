@@ -1,12 +1,10 @@
 
 #include "core/GameObject.h"
 #include "core/Component.h"
-#include "core/ObjectManager.h"
 namespace cmgt {
 
-    GameObject::GameObject(const string& pName) : id{ ObjectManager::assignGameObjectID() }, _name{ pName },
+    GameObject::GameObject(const string& pName) : _name{ pName },
         _parent{ nullptr }, _transform{ glm::mat4(1) }, _world{ nullptr } {
-        ObjectManager::addGameObject(*this);
 
     }
     GameObject::~GameObject()

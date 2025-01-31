@@ -1,18 +1,15 @@
 #ifndef PHYSICSENGINE_H
 #define PHYSICSENGINE_H
-#include "core/glm.h"
-#include "core/config.h"
+#include "minimal/glm.h"
 #include <vector>
-using namespace glm;
 namespace cmgt
 {
 	class PhysicsBody;
 	class SphereCollider;
 	class PlaneCollider;
-	class PhysicsEngine : public Singleton<PhysicsEngine>
+	class PhysicsEngine
 	{
 	public:
-		static void InitializePhysics();
 		PhysicsEngine();
 		~PhysicsEngine();
 		//behaviour should be able to update itself every step and MUST be implemented
@@ -26,7 +23,7 @@ namespace cmgt
 		//disallow copy and assignment
 		PhysicsEngine(const PhysicsEngine&);
 		PhysicsEngine& operator=(const PhysicsEngine&);
-		vector<PhysicsBody*> physicsBodies = {};
+		std::vector<PhysicsBody*> physicsBodies = {};
 	};
 } 
 #endif // PHYSICSENGINE_H

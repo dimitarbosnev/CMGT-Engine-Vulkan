@@ -1,7 +1,7 @@
 
 #include "utils/ObjectMovement.h"
 #include "core/GameObject.h"
-#include "utils/InputManager.h"
+#include "core/InputManager.h"
 namespace cmgt{
 
     ObjectMovement::ObjectMovement(float pMoveSpeed, float pRotationSpeed) : _moveSpeed(pMoveSpeed), _rotationSpeed(pRotationSpeed){

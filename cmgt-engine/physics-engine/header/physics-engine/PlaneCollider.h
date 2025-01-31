@@ -1,6 +1,6 @@
 #ifndef PLANECOLLIDER_H
 #define PLANECOLLIDER_H
-#include "core/glm.h"
+#include "minimal/glm.h"
 #include "physics-engine/Collider.h"
 using namespace glm;
 namespace cmgt

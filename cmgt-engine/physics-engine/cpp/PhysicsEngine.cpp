@@ -3,8 +3,6 @@
 #include "physics-engine/PhysicsBody.h"
 namespace cmgt{
 
-    void PhysicsEngine::InitializePhysics() { assignInstance(new PhysicsEngine()); }
-
 	PhysicsEngine::PhysicsEngine() {
     }
 

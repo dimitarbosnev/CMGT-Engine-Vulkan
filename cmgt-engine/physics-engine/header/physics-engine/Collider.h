@@ -1,6 +1,6 @@
 #ifndef COLLIDER_H
 #define COLLIDER_H
-#include "core/glm.h"
+#include "minimal/glm.h"
 #include "core/Component.h"
 using namespace glm;
 namespace cmgt

@@ -1,6 +1,6 @@
 #ifndef PHYSICSBODY_H
 #define PHYSICSBODY_H
-#include "core/glm.h"
+#include "minimal/glm.h"
 #include "core/Component.h"
 using namespace glm;
 namespace cmgt
