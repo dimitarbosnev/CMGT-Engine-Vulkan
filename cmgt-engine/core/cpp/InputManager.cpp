@@ -1,9 +1,8 @@
 
 #include "core/InputManager.h"
-
 namespace cmgt{
     
-    InputManager::InputManager(GLFWwindow* pWindow) : window(pWindow) {}
+    InputManager::InputManager(Window& pWindow) : window(pWindow.window) {}
 
     InputManager::~InputManager(){}
 

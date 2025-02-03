@@ -3,7 +3,7 @@
 #include "core/SceneManager.h"
 namespace cmgt{
 
-	Scene::Scene(string pName) : name{ pName }, id{  } {
+	Scene::Scene(std::string pName) : name{ pName }, id{  } {
 	}
 
 	Scene::~Scene(){

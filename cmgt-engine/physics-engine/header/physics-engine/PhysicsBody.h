@@ -2,7 +2,7 @@
 #define PHYSICSBODY_H
 #include "minimal/glm.h"
 #include "core/Component.h"
-using namespace glm;
+
 namespace cmgt
 {
 	class GameObject;

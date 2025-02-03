@@ -2,7 +2,7 @@
 #define SPHERECOLLIDER_H
 #include "minimal/glm.h"
 #include "physics-engine/Collider.h"
-using namespace glm;
+
 namespace cmgt
 {
 	class SphereCollider : public Collider

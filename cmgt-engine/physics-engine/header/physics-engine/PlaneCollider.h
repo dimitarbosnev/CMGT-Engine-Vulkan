@@ -2,7 +2,7 @@
 #define PLANECOLLIDER_H
 #include "minimal/glm.h"
 #include "physics-engine/Collider.h"
-using namespace glm;
+
 namespace cmgt
 {
 	class PlaneCollider : public Collider

@@ -21,7 +21,7 @@ namespace cmgt {
 			scenesStack.top()->update(dt);
 		}
 		else
-			cout << "There is no scene on the stack!" << endl;
+			std::cout << "There is no scene on the stack!" << std::endl;
 	}
 
 	void SceneManager::addScene(Scene& scene) {
@@ -44,7 +44,7 @@ namespace cmgt {
 		if (scenes.contains(scene.getID()))
 			scenesStack.push(scenes[scene.getID()]);
 		else
-			cout << "Scene does not exist on the stack!" << endl;;
+			std::cout << "Scene does not exist on the stack!" << std::endl;;
 	}
 
 	void SceneManager::previousScene() { scenesStack.pop(); }
@@ -55,8 +55,8 @@ namespace cmgt {
 		return scenesStack.top();
 	}
 
-	Scene* SceneManager::getScene(string name) {
-		auto findByName = [name](const pair<id_t, Scene*>& a) { return a.second->getName() == name; };
+	Scene* SceneManager::getScene(std::string name) {
+		auto findByName = [name](const std::pair<id_t, Scene*>& a) { return a.second->getName() == name; };
 		auto it = find_if(scenes.begin(), scenes.end(), findByName);
 		return it->second;
 	}

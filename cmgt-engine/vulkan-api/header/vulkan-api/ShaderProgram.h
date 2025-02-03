@@ -9,7 +9,6 @@
 #include "vulkan-api/VulkanBuffer.h"
 #include "vulkan-api/VulkanFrameData.h"
 #include "vulkan-api/VulkanDescriptor.h"
-#include "vulkan-api/GraphicsPipeline.h"
 
 namespace cmgt {
 	class ShaderProgram {
@@ -29,7 +28,7 @@ namespace cmgt {
 		void CreateShader(const std::string& shaderFile, VkShaderModule* module);
 		void CreateShader(const std::vector<char>& shader, VkShaderModule* module);
 
-		virtual void bindUniformBuffers(const void* pData);
+		virtual void bindUniformBuffers(uint32_t imageindex, const void* pData);
 
 		VulkanInstance& vkInstance;
 		VulkanDescriptorPool descriptorPool;
@@ -38,8 +37,6 @@ namespace cmgt {
 		VkShaderModule vertexShaderModule;
 		VkShaderModule fragmentShaderModule;
 
-		ShaderProgram(const ShaderProgram&);
-		ShaderProgram& operator=(const ShaderProgram&);
 	};
 }
 

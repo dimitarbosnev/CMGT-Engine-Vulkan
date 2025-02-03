@@ -5,7 +5,7 @@ target_include_directories(main PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/header)
 target_link_libraries(main 
     PUBLIC 
     core 
-    render-engine
+    vulkan-api
     utils
     physics-engine
 )

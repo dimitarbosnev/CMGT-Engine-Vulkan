@@ -10,7 +10,7 @@
 
 namespace cmgt {
 
-	VulkanSwapchain::VulkanSwapchain(VulkanInstance& vkInstance,VkExtent2D extent) : windowExtent(extent), instance(vkInstance){
+	VulkanSwapchain::VulkanSwapchain(VulkanInstance& instance,VkExtent2D extent) : windowExtent(extent), vkInstance(instance){
 		createSwapChain();
 		createImageViews();
 		createRenderPass();
@@ -21,32 +21,32 @@ namespace cmgt {
 
 	void VulkanSwapchain::destroySwapchain(){
 		for (auto imageView : swapChainImageViews) {
-			vkDestroyImageView(instance.device(), imageView, nullptr);
+			vkDestroyImageView(vkInstance.device(), imageView, nullptr);
 		}
 		swapChainImageViews.clear();
 
 		if (swapChain != nullptr) {
-			vkDestroySwapchainKHR(instance.device(), swapChain, nullptr);
+			vkDestroySwapchainKHR(vkInstance.device(), swapChain, nullptr);
 			swapChain = nullptr;
 		}
 
 		for (int i = 0; i < depthImages.size(); i++) {
-			vkDestroyImageView(instance.device(), depthImageViews[i], nullptr);
-			vkDestroyImage(instance.device(), depthImages[i], nullptr);
-			vkFreeMemory(instance.device(), depthImageMemorys[i], nullptr);
+			vkDestroyImageView(vkInstance.device(), depthImageViews[i], nullptr);
+			vkDestroyImage(vkInstance.device(), depthImages[i], nullptr);
+			vkFreeMemory(vkInstance.device(), depthImageMemorys[i], nullptr);
 		}
 
 		for (auto framebuffer : swapChainFramebuffers) {
-			vkDestroyFramebuffer(instance.device(), framebuffer, nullptr);
+			vkDestroyFramebuffer(vkInstance.device(), framebuffer, nullptr);
 		}
 
-		vkDestroyRenderPass(instance.device(), renderPass, nullptr);
+		vkDestroyRenderPass(vkInstance.device(), renderPass, nullptr);
 
 		// cleanup synchronization objects
 		for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
-			vkDestroySemaphore(instance.device(), renderFinishedSemaphores[i], nullptr);
-			vkDestroySemaphore(instance.device(), imageAvailableSemaphores[i], nullptr);
-			vkDestroyFence(instance.device(), inFlightFences[i], nullptr);
+			vkDestroySemaphore(vkInstance.device(), renderFinishedSemaphores[i], nullptr);
+			vkDestroySemaphore(vkInstance.device(), imageAvailableSemaphores[i], nullptr);
+			vkDestroyFence(vkInstance.device(), inFlightFences[i], nullptr);
 		}
 	}
 
@@ -55,30 +55,30 @@ namespace cmgt {
 		std::cout << "Swapchain deleted!" << std::endl;
 	}
 
-	VkResult VulkanSwapchain::acquireNextImage(uint32_t* imageIndex) {
+	VkResult VulkanSwapchain::acquireNextImage(uint32_t& imageIndex) {
 		vkWaitForFences(
-			instance.device(),
+			vkInstance.device(),
 			1,
 			&inFlightFences[currentFrame],
 			VK_TRUE,
 			std::numeric_limits<uint64_t>::max());
 
 		VkResult result = vkAcquireNextImageKHR(
-			instance.device(),
+			vkInstance.device(),
 			swapChain,
 			std::numeric_limits<uint64_t>::max(),
 			imageAvailableSemaphores[currentFrame],  // must be a not signaled semaphore
 			VK_NULL_HANDLE,
-			imageIndex);
+			&imageIndex);
 
 		return result;
 	}
 
-	VkResult VulkanSwapchain::submitCommandBuffers(const VkCommandBuffer* buffers, uint32_t* imageIndex) {
-		if (imagesInFlight[*imageIndex] != VK_NULL_HANDLE) {
-			vkWaitForFences(instance.device(), 1, &imagesInFlight[*imageIndex], VK_TRUE, UINT64_MAX);
+	VkResult VulkanSwapchain::submitCommandBuffers(const VkCommandBuffer& buffers, uint32_t& imageIndex) {
+		if (imagesInFlight[imageIndex] != VK_NULL_HANDLE) {
+			vkWaitForFences(vkInstance.device(), 1, &imagesInFlight[imageIndex], VK_TRUE, UINT64_MAX);
 		}
-		imagesInFlight[*imageIndex] = inFlightFences[currentFrame];
+		imagesInFlight[imageIndex] = inFlightFences[currentFrame];
 
 		VkSubmitInfo submitInfo = {};
 		submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
@@ -90,14 +90,14 @@ namespace cmgt {
 		submitInfo.pWaitDstStageMask = waitStages;
 
 		submitInfo.commandBufferCount = 1;
-		submitInfo.pCommandBuffers = buffers;
+		submitInfo.pCommandBuffers = &buffers;
 
 		VkSemaphore signalSemaphores[] = { renderFinishedSemaphores[currentFrame] };
 		submitInfo.signalSemaphoreCount = 1;
 		submitInfo.pSignalSemaphores = signalSemaphores;
 
-		vkResetFences(instance.device(), 1, &inFlightFences[currentFrame]);
-		if (vkQueueSubmit(instance.graphicsQueue(), 1, &submitInfo, inFlightFences[currentFrame]) !=
+		vkResetFences(vkInstance.device(), 1, &inFlightFences[currentFrame]);
+		if (vkQueueSubmit(vkInstance.graphicsQueue(), 1, &submitInfo, inFlightFences[currentFrame]) !=
 			VK_SUCCESS) {
 			throw std::runtime_error("failed to submit draw command buffer!");
 		}
@@ -112,9 +112,9 @@ namespace cmgt {
 		presentInfo.swapchainCount = 1;
 		presentInfo.pSwapchains = swapChains;
 
-		presentInfo.pImageIndices = imageIndex;
+		presentInfo.pImageIndices = &imageIndex;
 
-		auto result = vkQueuePresentKHR(instance.presentQueue(), &presentInfo);
+		auto result = vkQueuePresentKHR(vkInstance.presentQueue(), &presentInfo);
 
 		currentFrame = (currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
 
@@ -122,7 +122,7 @@ namespace cmgt {
 	}
 
 	void VulkanSwapchain::createSwapChain() {
-		SwapChainSupportDetails swapChainSupport = instance.getSwapChainSupport();
+		SwapChainSupportDetails swapChainSupport = vkInstance.getSwapChainSupport();
 
 		VkSurfaceFormatKHR surfaceFormat = chooseSwapSurfaceFormat(swapChainSupport.formats);
 		VkPresentModeKHR presentMode = chooseSwapPresentMode(swapChainSupport.presentModes);
@@ -136,7 +136,7 @@ namespace cmgt {
 
 		VkSwapchainCreateInfoKHR createInfo = {};
 		createInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
-		createInfo.surface = instance.surface();
+		createInfo.surface = vkInstance.surface();
 
 		createInfo.minImageCount = imageCount;
 		createInfo.imageFormat = surfaceFormat.format;
@@ -145,7 +145,7 @@ namespace cmgt {
 		createInfo.imageArrayLayers = 1;
 		createInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
 
-		QueueFamilyIndices indices = instance.findPhysicalQueueFamilies();
+		QueueFamilyIndices indices = vkInstance.findPhysicalQueueFamilies();
 		uint32_t queueFamilyIndices[] = { indices.graphicsFamily, indices.presentFamily };
 
 		if (indices.graphicsFamily != indices.presentFamily) {
@@ -165,7 +165,7 @@ namespace cmgt {
 		createInfo.presentMode = presentMode;
 		createInfo.clipped = VK_TRUE;
 
-		if (vkCreateSwapchainKHR(instance.device(), &createInfo, nullptr, &swapChain) != VK_SUCCESS) {
+		if (vkCreateSwapchainKHR(vkInstance.device(), &createInfo, nullptr, &swapChain) != VK_SUCCESS) {
 			throw std::runtime_error("failed to create swap chain!");
 		}
 
@@ -173,9 +173,9 @@ namespace cmgt {
 		// allowed to create a swap chain with more. That's why we'll first query the final number of
 		// images with vkGetSwapchainImagesKHR, then resize the container and finally call it again to
 		// retrieve the handles.
-		vkGetSwapchainImagesKHR(instance.device(), swapChain, &imageCount, nullptr);
+		vkGetSwapchainImagesKHR(vkInstance.device(), swapChain, &imageCount, nullptr);
 		swapChainImages.resize(imageCount);
-		vkGetSwapchainImagesKHR(instance.device(), swapChain, &imageCount, swapChainImages.data());
+		vkGetSwapchainImagesKHR(vkInstance.device(), swapChain, &imageCount, swapChainImages.data());
 
 		swapChainImageFormat = surfaceFormat.format;
 		swapChainExtent = extent;
@@ -195,7 +195,7 @@ namespace cmgt {
 			viewInfo.subresourceRange.baseArrayLayer = 0;
 			viewInfo.subresourceRange.layerCount = 1;
 
-			if (vkCreateImageView(instance.device(), &viewInfo, nullptr, &swapChainImageViews[i]) !=
+			if (vkCreateImageView(vkInstance.device(), &viewInfo, nullptr, &swapChainImageViews[i]) !=
 				VK_SUCCESS) {
 				throw std::runtime_error("failed to create texture image view!");
 			}
@@ -258,7 +258,7 @@ namespace cmgt {
 		renderPassInfo.dependencyCount = 1;
 		renderPassInfo.pDependencies = &dependency;
 
-		if (vkCreateRenderPass(instance.device(), &renderPassInfo, nullptr, &renderPass) != VK_SUCCESS) {
+		if (vkCreateRenderPass(vkInstance.device(), &renderPassInfo, nullptr, &renderPass) != VK_SUCCESS) {
 			throw std::runtime_error("failed to create render pass!");
 		}
 	}
@@ -279,7 +279,7 @@ namespace cmgt {
 			framebufferInfo.layers = 1;
 
 			if (vkCreateFramebuffer(
-				instance.device(),
+				vkInstance.device(),
 				&framebufferInfo,
 				nullptr,
 				&swapChainFramebuffers[i]) != VK_SUCCESS) {
@@ -313,7 +313,7 @@ namespace cmgt {
 			imageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 			imageInfo.flags = 0;
 
-			instance.createImageWithInfo(
+			vkInstance.createImageWithInfo(
 				imageInfo,
 				VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
 				depthImages[i],
@@ -330,7 +330,7 @@ namespace cmgt {
 			viewInfo.subresourceRange.baseArrayLayer = 0;
 			viewInfo.subresourceRange.layerCount = 1;
 
-			if (vkCreateImageView(instance.device(), &viewInfo, nullptr, &depthImageViews[i]) != VK_SUCCESS) {
+			if (vkCreateImageView(vkInstance.device(), &viewInfo, nullptr, &depthImageViews[i]) != VK_SUCCESS) {
 				throw std::runtime_error("failed to create texture image view!");
 			}
 		}
@@ -350,11 +350,11 @@ namespace cmgt {
 		fenceInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
 
 		for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
-			if (vkCreateSemaphore(instance.device(), &semaphoreInfo, nullptr, &imageAvailableSemaphores[i]) !=
+			if (vkCreateSemaphore(vkInstance.device(), &semaphoreInfo, nullptr, &imageAvailableSemaphores[i]) !=
 				VK_SUCCESS ||
-				vkCreateSemaphore(instance.device(), &semaphoreInfo, nullptr, &renderFinishedSemaphores[i]) !=
+				vkCreateSemaphore(vkInstance.device(), &semaphoreInfo, nullptr, &renderFinishedSemaphores[i]) !=
 				VK_SUCCESS ||
-				vkCreateFence(instance.device(), &fenceInfo, nullptr, &inFlightFences[i]) != VK_SUCCESS) {
+				vkCreateFence(vkInstance.device(), &fenceInfo, nullptr, &inFlightFences[i]) != VK_SUCCESS) {
 				throw std::runtime_error("failed to create synchronization objects for a frame!");
 			}
 		}
@@ -419,7 +419,7 @@ namespace cmgt {
 	}
 
 	VkFormat VulkanSwapchain::findDepthFormat() {
-		return instance.findSupportedFormat(
+		return vkInstance.findSupportedFormat(
 			{ VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT },
 			VK_IMAGE_TILING_OPTIMAL,
 			VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT);

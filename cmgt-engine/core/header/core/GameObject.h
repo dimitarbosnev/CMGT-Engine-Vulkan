@@ -9,8 +9,6 @@
 #include <string>
 #include <vector>
 
-using namespace std;
-
 namespace cmgt
 {
 	class WorldSeed;
@@ -22,8 +20,8 @@ namespace cmgt
 		id_t getID() { return id; }
 		virtual ~GameObject();
 
-		void setName(const string& pName);
-		string getName() { return _name; }
+		void setName(const std::string& pName);
+		 std::string getName() { return _name; }
 
 
 		//contains local rotation, scale, position
@@ -69,16 +67,16 @@ namespace cmgt
 
 	protected:
 		//Used to spawn objects from world seed
-		GameObject(const string& pName);
+		GameObject(const  std::string& pName);
 
-		string _name;
+		 std::string _name;
 		id_t id;
 		glm::mat4 _transform;
 
 		GameObject* _parent;
-		vector<GameObject*> _children;
+		std::vector<GameObject*> _children;
 
-		vector<Component*> _components;
+		std::vector<Component*> _components;
 		WorldSeed* _world;
 
 		//update children list administration

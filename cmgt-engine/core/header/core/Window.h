@@ -12,12 +12,13 @@ namespace cmgt
 {
 	class Window
 	{
+		friend class InputManager;
 	private:
 		Window(const Window&);
 		Window& operator=(const Window&);
 
 		GLFWwindow* window;
-
+		VulkanInstance& vkInstnace;
 		void InitWindow();
 		static void resizeWindowCallBack(GLFWwindow* pWindow, int pWidth, int pHeight);
 
@@ -36,7 +37,6 @@ namespace cmgt
 		void resetWindowResizeFlag() { _resized = false; }
 		void update();
 		void close();
-
 		void initVKSurface(VkInstance instance, VkSurfaceKHR surface);
 		void GetFrameBuffer(int& width, int& height);
 		VkExtent2D getWindowExtend() { return { static_cast<uint32_t>(_width), static_cast<uint32_t>(_height) }; }

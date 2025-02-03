@@ -8,23 +8,20 @@
 #include "core/GameObject.h"
 #include "core/WorldSeed.h"
 
-using namespace std;
-using namespace glm;
-
 namespace cmgt
 {
     class Scene {
     public:
-        Scene(string pName);
+        Scene(std::string pName);
         ~Scene();
         void update(float dt);
         void renderScene(VkCommandBuffer commandBuffer);
-        string getName() { return name; }
+        std::string getName() { return name; }
         id_t getID() { return id; }
         WorldSeed& getWorld() { return *_world; }
     private:
         id_t id;
-        string name;
+        std::string name;
         WorldSeed* _world = new WorldSeed();
 
         Scene(const Scene&) = delete;

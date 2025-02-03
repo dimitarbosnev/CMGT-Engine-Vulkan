@@ -108,9 +108,9 @@ namespace cmgt {
 
 	
 
-	void ShaderProgram::bindUniformBuffers(const void* data)
+	void ShaderProgram::bindUniformBuffers(uint32_t imageIndex, const void* pData)
 	{
-		uniformBuffers[frameData.imageIndex]->writeToBuffer(data);
-		uniformBuffers[frameData.imageIndex]->flush();
+		uniformBuffers[imageIndex]->writeToBuffer(pData);
+		uniformBuffers[imageIndex]->flush();
 	}
 }

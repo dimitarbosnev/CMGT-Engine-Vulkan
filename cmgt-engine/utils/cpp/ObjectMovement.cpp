@@ -1,31 +1,31 @@
 
 #include "utils/ObjectMovement.h"
 #include "core/GameObject.h"
-#include "core/InputManager.h"
+#include "core/Globals.h"
 namespace cmgt{
 
     ObjectMovement::ObjectMovement(float pMoveSpeed, float pRotationSpeed) : _moveSpeed(pMoveSpeed), _rotationSpeed(pRotationSpeed){
     }
 
     void ObjectMovement::update(float pStep) {
-        if (InputManager::isKeyPressed(GLFW_KEY_W)) {
+        if (inputManager.isKeyPressed(GLFW_KEY_W)) {
             _owner->Translate(glm::vec3(0, 0, _moveSpeed) * pStep);
-            cout << _owner->getWorldPosition() << endl;
+            std::cout << _owner->getWorldPosition() << std::endl;
         }
-        if (InputManager::isKeyPressed(GLFW_KEY_S)) {
+        if (inputManager.isKeyPressed(GLFW_KEY_S)) {
             _owner->Translate(glm::vec3(0, 0, -_moveSpeed) * pStep);
-            cout << _owner->getWorldPosition() << endl;
+            std::cout << _owner->getWorldPosition() << std::endl;
         }
-        if (InputManager::isKeyPressed(GLFW_KEY_A)) {
+        if (inputManager.isKeyPressed(GLFW_KEY_A)) {
             _owner->Translate(glm::vec3(-_moveSpeed, 0, 0) * pStep);
-            cout << _owner->getWorldPosition() << endl;
+            std::cout << _owner->getWorldPosition() << std::endl;
         }
-        if (InputManager::isKeyPressed(GLFW_KEY_D)) {
+        if (inputManager.isKeyPressed(GLFW_KEY_D)) {
             _owner->Translate(glm::vec3(_moveSpeed, 0, 0) * pStep);
-            cout << _owner->getWorldPosition() << endl;
+            std::cout << _owner->getWorldPosition() << std::endl;
         }
-        if (InputManager::isMousePressed(GLFW_MOUSE_BUTTON_LEFT)) {
-            glm::vec2 deltaPos = InputManager::deltaMousePosition();
+        if (inputManager.isMousePressed(GLFW_MOUSE_BUTTON_LEFT)) {
+            glm::vec2 deltaPos = inputManager.deltaMousePosition();
             _owner->Rotate(deltaPos.x * pStep * _rotationSpeed, glm::vec3(0, -1, 0));
             _owner->Rotate(deltaPos.y * pStep * _rotationSpeed, glm::vec3(1, 0, 0));
             //cout << "Camera Transform: \n" << _owner->getTransform() << endl;

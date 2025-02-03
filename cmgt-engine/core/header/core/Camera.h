@@ -6,7 +6,6 @@
 #include "core/Component.h"
 #include "minimal/glm.h"
 
-using namespace std;
 namespace cmgt {
     class Camera : public Component
     {

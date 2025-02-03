@@ -6,15 +6,17 @@
 #include "core/ObjectManager.h"
 #include "core/SceneManager.h"
 #include "core/VulkanRenderer.h"
-#include "vulkan-api/VulkanInstnace.h"
+#include "core/InputManager.h"
+#include "vulkan-api/VulkanInstance.h"
 #include "vulkan-api/VulkanSwapchain.h"
 namespace cmgt {
 
-	Window gameWindow(1600,900,"CMGT-Engnie");
-    VulkanInstance vulkanInstance(&gameWindow);
+    VulkanInstance vulkanInstance;
+	Window gameWindow(1600,900,"CMGT-Engnie",vulkanInstance);
     VulkanSwapchain vulkanSwapchain(vulkanInstance,gameWindow.getWindowExtend());
-    VulkanRenderer vulkanRenderer;
+    VulkanRenderer vulkanRenderer(vulkanInstance, vulkanSwapchain, gameWindow);
     ObjectManager objectManager;
     SceneManager sceneManager;
+    InputManager inputManager(gameWindow);
 }
 #endif //GLOBALS_H

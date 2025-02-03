@@ -3,7 +3,7 @@
 #include "core/Component.h"
 namespace cmgt {
 
-    GameObject::GameObject(const string& pName) : _name{ pName },
+    GameObject::GameObject(const  std::string& pName) : _name{ pName },
         _parent{ nullptr }, _transform{ glm::mat4(1) }, _world{ nullptr } {
 
     }
@@ -20,7 +20,7 @@ namespace cmgt {
         //do not forget to delete behaviour, material, mesh, collider manually if required!
     }
 
-    void GameObject::setName(const string& pName)
+    void GameObject::setName(const  std::string& pName)
     {
         _name = pName;
     }
@@ -73,13 +73,15 @@ namespace cmgt {
 
     template<class T> T* GameObject::getComponent()
     {
-        static_assert(is_base_of<Component, T>::value, "type parameter of this class must derive from Component");
-        const auto findType = [](const Component* a) {
-            return typeid(T) == typeid(a);
-            };
-        T* component = static_cast<T*>(*find(_components.begin(), _components.end(), findType));
-
-        return component;
+        static_assert(std::is_base_of<Component, T>::value, "type parameter of this class must derive from Component");
+        //use dynamic_cast to find the right component
+        for(Component* child : _components)
+        {
+            if(T* component = dynamic_cast<T>(child)){
+                return component;
+            }
+        }
+        return nullptr;
     }
     void GameObject::setParent(GameObject* pParent) {
         //remove from previous parent

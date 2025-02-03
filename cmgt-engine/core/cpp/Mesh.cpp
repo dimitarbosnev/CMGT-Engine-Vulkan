@@ -1,6 +1,7 @@
 
 #include <iostream>
 #include <string>
+#include <exception>
 #include "core/Mesh.h"
 #include "vulkan-api/VulkanInstance.h"
 #include "core/VulkanRenderer.h"
@@ -8,41 +9,47 @@
 #define TINYOBJLOADER_IMPLEMENTATION
 #include "tiny_obj_loader.h"
 namespace cmgt {
-	Mesh::Mesh(VulkanInstance& vulkanInstance, Mesh::Builder &builder, Material* pMaterial) : _material(pMaterial), instnace(vulkanInstance){
+	Mesh::Mesh(const std::string& fileName, Material* pMaterial, VulkanInstance& instance) : _material(pMaterial), vkInstnace(instance){
+
+		std::string filePath = CMGT_MODEL_PATH + fileName;
+		Builder builder;
+		builder.loadModel(filePath);
+
 		createVertexBuffers(builder.vertecies);
 		createIndexBuffers(builder.indices);
+	}
+	Mesh::Mesh(const std::vector<Vertex>& vertecies, Material* pMaterial, VulkanInstance& instance) : _material(pMaterial), vkInstnace(instance) {
+		createVertexBuffers(vertecies);
 	}
 
 	Mesh::~Mesh() {
 		//VkDevice device = vulkanInstance.device();
-		delete _material;
+		//delete _material;
 		delete vertexBuffer;
 		delete indexBuffer;
 	}
 
-	void Mesh::createVertexBuffers(const vector<Vertex>& vertecies){
-		VulkanInstance& instance = VulkanInstance::getInstance();
+	void Mesh::createVertexBuffers(const std::vector<Vertex>& vertecies){
 		vertexCount = vertecies.size();
 		assert(vertexCount >= 3 && "Mesh Vertex count must be atleast 3!");
-		VulkanBuffer stagingBuffer(sizeof(Vertex), vertexCount, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+		VulkanBuffer stagingBuffer(vkInstnace, sizeof(Vertex), vertexCount, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 		stagingBuffer.map();
 		stagingBuffer.writeToBuffer((void*)vertecies.data());
 
-		vertexBuffer = new VulkanBuffer(sizeof(Vertex), vertexCount, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
-		instance.copyBuffer(stagingBuffer.getBuffer(), vertexBuffer->getBuffer(), sizeof(Vertex)*vertexCount);
+		vertexBuffer = new VulkanBuffer(vkInstnace, sizeof(Vertex), vertexCount, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+		vkInstnace.copyBuffer(stagingBuffer.getBuffer(), vertexBuffer->getBuffer(), sizeof(Vertex)*vertexCount);
 	}
-	void Mesh::createIndexBuffers(const vector<uint32_t>& indices){
-		VulkanInstance& instance = VulkanInstance::getInstance();
+	void Mesh::createIndexBuffers(const std::vector<uint32_t>& indices){
 		indexCount = indices.size();
 		hasIndexBuffer = indexCount > 0;
 		if (!hasIndexBuffer) return;
 
-		VulkanBuffer stagingBuffer(sizeof(uint32_t), indexCount, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+		VulkanBuffer stagingBuffer(vkInstnace,sizeof(uint32_t), indexCount, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 		stagingBuffer.map();
 		stagingBuffer.writeToBuffer((void*)indices.data());
 
-		indexBuffer = new VulkanBuffer(sizeof(uint32_t), indexCount, VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
-		instance.copyBuffer(stagingBuffer.getBuffer(), indexBuffer->getBuffer(), sizeof(uint32_t)*indexCount);
+		indexBuffer = new VulkanBuffer(vkInstnace,sizeof(uint32_t), indexCount, VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+		vkInstnace.copyBuffer(stagingBuffer.getBuffer(), indexBuffer->getBuffer(), sizeof(uint32_t)*indexCount);
 	}
 
 	void Mesh::render(const VulkanFrameData& frameData) {
@@ -58,29 +65,17 @@ namespace cmgt {
 		else vkCmdDraw(frameData.commandBuffer, vertexCount, 1, 0, 0);
 	}
 	void Mesh::update(float dt) {
-		_material->getPipeline()->AddMeshToRender(this);
-	}
-	Mesh::Mesh(const vector<Vertex>& vertecies, Material* pMaterial) : _material(pMaterial) {
-		createVertexBuffers(vertecies);
-	}
-	Mesh* Mesh::createModelFromFile(const string& fileName, Material* pMaterial)
-	{
-		string filePath = CMGT_MODEL_PATH + fileName;
-		Builder builder;
-		builder.loadModel(filePath);
-
-		return new Mesh(builder,pMaterial);
+		//_material->getPipeline()->AddMeshToRender(this);
 	}
 	
-
-	void Mesh::Builder::loadModel(const string& filePath) {
+	void Mesh::Builder::loadModel(const std::string& filePath) {
 		tinyobj::attrib_t attrib;
-		vector<tinyobj::shape_t> shapes;
-		vector<tinyobj::material_t> materials;
-		string warn, err;
+		std::vector<tinyobj::shape_t> shapes;
+		std::vector<tinyobj::material_t> materials;
+		std::string warn, err;
 
 		if (!tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, filePath.c_str())) {
-			throw runtime_error(warn + err);
+			throw std::runtime_error(warn + err);
 		}
 		vertecies.clear();
 		indices.clear();

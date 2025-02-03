@@ -6,7 +6,6 @@
 #include<map>
 #include<stack>
 #include "minimal/types.h"
-using namespace std;
 
 namespace cmgt
 {
@@ -20,13 +19,13 @@ namespace cmgt
         void gotoScene(Scene& scene);
         void previousScene();
         Scene* getCurrentScene();
-        Scene* getScene(string name);
+        Scene* getScene(std::string name);
         Scene* getScene(id_t sceneID);
 
     private:
         id_t assignSceneID();
-        map<id_t, Scene*> scenes;
-        stack<Scene*> scenesStack;
+        std::map<id_t, Scene*> scenes;
+        std::stack<Scene*> scenesStack;
 
         SceneManager(const SceneManager&) = delete;
         SceneManager operator=(const SceneManager&) = delete;

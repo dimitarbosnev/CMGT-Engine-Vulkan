@@ -7,8 +7,6 @@
 #include "vulkan-api/GraphicsPipeline.h"
 #include "core/VulkanRenderer.h"
 #include "vulkan-api/VulkanFrameData.h"
-using namespace glm;
-using namespace std;
 
 namespace cmgt {
 	class GameObject;
@@ -21,11 +19,11 @@ namespace cmgt {
 	public:
 		Material() = default;
 		virtual ~Material() = default;
-		void setShineColor(vec3 color) {
-			this->_shininess = vec4(color, _shininess.w);
+		void setShineColor(glm::vec3 color) {
+			this->_shininess = glm::vec4(color, _shininess.w);
 		};
 		void setShineColor(float r, float g, float b) {
-			this->setShineColor(vec3(r, g, b));
+			this->setShineColor(glm::vec3(r, g, b));
 		};
 		void setShinines(float shininess) {
 			this->_shininess.w = shininess;
@@ -34,7 +32,7 @@ namespace cmgt {
 		 * Render the given mesh in the given world using the given mvp matrices. Implement in subclass.
 		 */
 	protected:
-		vec4 _shininess = vec4(1);
+		glm::vec4 _shininess = glm::vec4(1);
 		virtual void bindPipeline(VkCommandBuffer commandBuffer) = 0;
 		virtual void bindPushConstants(const VulkanFrameData& frameData, const glm::mat4 pModelMatrix) = 0;
 		virtual GraphicsPipeline* getPipeline() = 0;

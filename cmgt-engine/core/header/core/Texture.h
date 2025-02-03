@@ -4,12 +4,12 @@
 #pragma once
 #include <map>
 #include <string>
-using namespace std;
+
 namespace cmgt {
 	class Texture
 	{
 	public:
-		static Texture* load(const string& pTexturePath);
+		static Texture* load(const std::string& pTexturePath);
 
 		//GLuint getId();
 
@@ -17,7 +17,7 @@ namespace cmgt {
 		Texture();
 		virtual ~Texture();
 
-		static Texture* _loadFromFile(const string pTexturePath);
+		static Texture* _loadFromFile(const std::string pTexturePath);
 
 		//OpenGL id for texture buffer
 		//GLuint _id;

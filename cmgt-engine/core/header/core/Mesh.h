@@ -19,17 +19,17 @@ namespace cmgt {
 		struct Builder {
 		public:
 			std::vector<Vertex> vertecies;
-			vector<uint32_t> indices;
+			std::vector<uint32_t> indices;
 
-			void loadModel(const string& filePath);
+			void loadModel(const std::string& filePath);
 		};
+		Mesh(const std::string& fileName, Material* pMaterial, VulkanInstance& instance);
+		Mesh(const std::vector<Vertex>& vertecies, Material* pMaterial, VulkanInstance& instance);
 		virtual ~Mesh();
 		void render(const VulkanFrameData& frameData);
 		void update(float dt) override;
-		Mesh(const vector<Vertex>&, Material* pMaterial);
-		static Mesh* createModelFromFile(const string& filePath, Material* pMaterial);
 	protected:
-		VulkanInstance& instnace;
+		VulkanInstance& vkInstnace;
 		Material* _material;
 		VulkanBuffer* vertexBuffer;
 		uint32_t vertexCount;
@@ -37,11 +37,10 @@ namespace cmgt {
 		bool hasIndexBuffer;
 		VulkanBuffer* indexBuffer;
 		uint32_t indexCount;
-		void createVertexBuffers(const vector<Vertex>& vertecies);
-		void createIndexBuffers(const vector<uint32_t>& indices);
+		void createVertexBuffers(const std::vector<Vertex>& vertecies);
+		void createIndexBuffers(const std::vector<uint32_t>& indices);
 
 	private:
-		Mesh(const Mesh::Builder &builder, Material* pMaterial);
 		Mesh(const Mesh&);
 		Mesh& operator=(const Mesh&);
 	};

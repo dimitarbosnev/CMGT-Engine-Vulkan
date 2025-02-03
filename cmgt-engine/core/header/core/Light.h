@@ -6,8 +6,6 @@
 #include "minimal/glm.h"
 #include "core/Component.h"
 
-using namespace glm;
-using namespace std;
 namespace cmgt {
 
 	class GameObject;
@@ -26,11 +24,11 @@ namespace cmgt {
 		virtual void setOwner(GameObject* pOwner) override;
 		virtual void update(float pStep) override;
 
-		void setLightColor(vec3 color) {
-			this->_color = vec4(color, _color.w);
+		void setLightColor(glm::vec3 color) {
+			this->_color = glm::vec4(color, _color.w);
 		};
 		void setLightColor(float r, float g, float b) {
-			this->setLightColor(vec3(r, g, b));
+			this->setLightColor(glm::vec3(r, g, b));
 		};
 		void setIntencity(float intencity) {
 			_color.w = intencity;
@@ -38,15 +36,15 @@ namespace cmgt {
 		void setRange(float range) {
 			_range = range;
 		};
-		void setDirection(vec3 direction) {
+		void setDirection(glm::vec3 direction) {
 			this->_direction = direction;
 		};
 		void setDirection(float x, float y, float z) {
-			setDirection(vec3(x, y, z));
+			setDirection(glm::vec3(x, y, z));
 		};
 
-		void setDirection(mat3 transform) {
-			setDirection(transform * vec3(1));
+		void setDirection(glm::mat3 transform) {
+			setDirection(transform * glm::vec3(1));
 		};
 
 		//override set parent to register/deregister light...
@@ -60,8 +58,8 @@ namespace cmgt {
 		*				[position,  range]
 		*/
 	protected:
-		vec4 _color = vec4(1);
-		vec3 _direction = vec3(1);
+		glm::vec4 _color = glm::vec4(1);
+		glm::vec3 _direction = glm::vec3(1);
 		float _range;
 		LightType _type;
 

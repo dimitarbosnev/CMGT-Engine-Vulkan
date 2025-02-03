@@ -1,6 +1,7 @@
 {
   "dependencies": [
     "vulkan-sdk-components",
+    "vulkan-validationlayers",
     "glm",
     "tinyobjloader",
     "glfw3",

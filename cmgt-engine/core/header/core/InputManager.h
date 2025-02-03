@@ -2,8 +2,7 @@
 #define INPUTMANAGER_H
 
 #pragma once
-
-#include <GLFW/glfw3.h>
+#include "core/Window.h"
 #include "minimal/glm.h"
 namespace cmgt
 {
@@ -16,7 +15,7 @@ namespace cmgt
 		GLFWwindow* window;
 		glm::vec2 _previousMousePosition;
 	public:
-		InputManager(GLFWwindow* window);
+		InputManager(Window& window);
 		~InputManager();
 		void updateInputManager();
 		bool isKeyPressed(int);

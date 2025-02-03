@@ -16,20 +16,22 @@ namespace cmgt {
 
 	class VulkanRenderer {
 		public:
-			VulkanRenderer(VulkanSwapchain& swapchian,VulkanInstance& instance);
+			VulkanRenderer(VulkanInstance& instance, VulkanSwapchain& swapchian, Window& windnow);
 			~VulkanRenderer();
+			void recordCommandBuffer(int imageIndex);
+			void drawFrame();
 
 			
 		private:
-
-			Event OnSwapchainRecreate;
-			Event OnCommandBufferRecord;
+			VulkanInstance& vkInstance;
+			VulkanSwapchain& vkSwapchian;
+			Window& gameWindnow;
+			//Event OnSwapchainRecreate;
+			//Event OnCommandBufferRecord;
 			std::vector<VkCommandBuffer> commandBuffers;
-			void recordCommandBuffer(VulkanSwapchain& swapchian, int imageIndex);
-			void createCommandBuffers(VulkanSwapchain& swapchian,VulkanInstance& instance);
-			void freeCommandBuffers(VulkanInstance& instance);
-			void drawFrame(Window& windnow, VulkanSwapchain& swapchain, VulkanInstance& instance);
-			void recreateSwapchain(VulkanInstance& instance, Window& windnow, VulkanSwapchain& swapchain);
+			void createCommandBuffers();
+			void freeCommandBuffers();
+			void recreateSwapchain();
 			VulkanRenderer(const VulkanRenderer&);
 			VulkanRenderer& operator=(const VulkanRenderer&);
 	};

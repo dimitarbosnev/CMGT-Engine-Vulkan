@@ -4,9 +4,6 @@
 #pragma once
 #include "core/GameObject.h"
 
-using namespace std;
-using namespace glm;
-
 namespace cmgt
 {
 	class Camera;
@@ -28,7 +25,7 @@ namespace cmgt
 
 	private:
 		Camera* _mainCamera;
-		vector<Light*> _lights;
+		std::vector<Light*> _lights;
 		WorldSeed& operator=(const WorldSeed&);
 		WorldSeed(const WorldSeed&);
 	};

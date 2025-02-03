@@ -2,12 +2,11 @@
 #include "core/Window.h"
 namespace cmgt{
     Window::Window(int pWidth, int pHeight, const std::string& pName, VulkanInstance& instance) 
-        : _width(pWidth), _height(pHeight), windowName(pName) {
+        : _width(pWidth), _height(pHeight), windowName(pName), vkInstnace(instance) {
         InitWindow();
-        initVKSurface(instance.instance(),instance.surface());
+        initVKSurface(vkInstnace.instance(),vkInstnace.surface());
         //InputManager::InitializeInputManager(window);
     }
-
 
     Window::~Window() {
         close();

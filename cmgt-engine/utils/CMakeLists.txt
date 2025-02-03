@@ -10,6 +10,7 @@ target_link_libraries(utils
     PUBLIC 
     core
     vulkan-api
+    minimal
     glfw
 )
 #target_compile_definitions(core PUBLIC _USE_MATH_DEFINES)

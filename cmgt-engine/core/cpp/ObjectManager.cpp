@@ -17,9 +17,9 @@ namespace cmgt {
 	void ObjectManager::addGameObject(GameObject& obj) {
 		gameObjects.emplace(obj.getID(), &obj);
 	}
-	GameObject& ObjectManager::getGameObject(string name)
+	GameObject& ObjectManager::getGameObject(std::string name)
 	{
-		auto findByName = [name](const pair<id_t, GameObject*>& a) { return a.second->getName() == name; };
+		auto findByName = [name](const std::pair<id_t, GameObject*>& a) { return a.second->getName() == name; };
 		auto it = find_if(gameObjects.begin(), gameObjects.end(), findByName);
 		return *it->second;
 	}

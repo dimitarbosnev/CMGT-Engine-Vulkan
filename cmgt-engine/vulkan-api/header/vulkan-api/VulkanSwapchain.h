@@ -29,8 +29,8 @@ namespace cmgt {
 		}
 		VkFormat findDepthFormat();
 
-		VkResult acquireNextImage(uint32_t* imageIndex);
-		VkResult submitCommandBuffers(const VkCommandBuffer* buffers, uint32_t* imageIndex);
+		VkResult acquireNextImage(uint32_t& imageIndex);
+		VkResult submitCommandBuffers(const VkCommandBuffer& buffers, uint32_t& imageIndex);
 		void createSwapChain();
 
 	private:
@@ -49,7 +49,7 @@ namespace cmgt {
 
 		VkFormat swapChainImageFormat;
 		VkExtent2D swapChainExtent;
-		VulkanInstance& instance;
+		VulkanInstance& vkInstance;
 
 		std::vector<VkFramebuffer> swapChainFramebuffers;
 		VkRenderPass renderPass;

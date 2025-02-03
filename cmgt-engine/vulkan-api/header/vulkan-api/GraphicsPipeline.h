@@ -8,18 +8,16 @@
 #include "vulkan-api/VulkanInstance.h"
 #include "vulkan-api/VulkanDescriptor.h"
 #include "vulkan-api/VulkanFrameData.h"
+#include "vulkan-api/VulkanSwapchain.h"
+#include "vulkan-api/VulkanBuffer.h"
+#include "vulkan-api/ShaderProgram.h"
 #include<vector>
 #include<list>
-using namespace std;
 
 namespace cmgt {
-	class VulkanBuffer;
-	class ShaderProgram;
 	struct GraphicsPipelineInfo
 	{
 		GraphicsPipelineInfo() = default;
-		GraphicsPipelineInfo(const GraphicsPipelineInfo&) = delete;
-		GraphicsPipelineInfo& operator=(const GraphicsPipelineInfo&) = delete;
 
 		VkPipelineViewportStateCreateInfo viewportInfo;
 		VkPipelineInputAssemblyStateCreateInfo inputAssemblyInfo;
@@ -28,22 +26,20 @@ namespace cmgt {
 		VkPipelineColorBlendAttachmentState colorBlendAttachment;
 		VkPipelineColorBlendStateCreateInfo colorBlendInfo;
 		VkPipelineDepthStencilStateCreateInfo depthStencilInfo;
-		vector<VkDynamicState> dynamicStateEnables;
+		std::vector<VkDynamicState> dynamicStateEnables;
 		VkPipelineDynamicStateCreateInfo dynamicStateInfo;
-		VkPipelineLayout pipelineLayout = nullptr;
-		VkRenderPass renderPass = nullptr;
 		uint32_t subpass = 0;
 	};
 
 
 	class GraphicsPipeline {
 	public:
-		GraphicsPipeline(VulkanInstance& instance,const GraphicsPipelineInfo& info, ShaderProgram& pShaderProgram);
+		GraphicsPipeline(const GraphicsPipelineInfo& info, ShaderProgram pShaderProgram, VulkanSwapchain& swapchain);
 		~GraphicsPipeline();
 
 		void bind(VkCommandBuffer commandBuffer);
 		static void defaultGraphicsPipelineInfo(GraphicsPipelineInfo& configInfo);
-
+		static GraphicsPipelineInfo defaultGraphicsPipelineInfo();
 		void writePushConstants(VkCommandBuffer commandBuffer, const void* pData);
 		void writeUniformBuffers(const VulkanFrameData& frameData,  const void* pData);
 		void createPipeline();
@@ -57,7 +53,8 @@ namespace cmgt {
 		VkPipeline graphicsPipeline;
 		VkPipelineLayout pipelineLayout;
 		VulkanInstance& vkInstance;
-		ShaderProgram& shaderProgram;
+		VulkanSwapchain& vkSwapchain;
+		ShaderProgram shaderProgram;
 		GraphicsPipeline(const GraphicsPipeline&);
 		GraphicsPipeline& operator=(const GraphicsPipeline&);
 	};
