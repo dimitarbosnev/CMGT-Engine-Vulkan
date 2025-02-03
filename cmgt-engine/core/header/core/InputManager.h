@@ -2,7 +2,7 @@
 #define INPUTMANAGER_H
 
 #pragma once
-#include "core/Window.h"
+#include "vulkan-api/Window.h"
 #include "minimal/glm.h"
 namespace cmgt
 {

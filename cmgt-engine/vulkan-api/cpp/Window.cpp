@@ -1,10 +1,9 @@
 
-#include "core/Window.h"
+#include "vulkan-api/Window.h"
 namespace cmgt{
-    Window::Window(int pWidth, int pHeight, const std::string& pName, VulkanInstance& instance) 
-        : _width(pWidth), _height(pHeight), windowName(pName), vkInstnace(instance) {
+    Window::Window(int pWidth, int pHeight, const std::string& pName) 
+        : _width(pWidth), _height(pHeight), windowName(pName) {
         InitWindow();
-        initVKSurface(vkInstnace.instance(),vkInstnace.surface());
         //InputManager::InitializeInputManager(window);
     }
 
@@ -55,7 +54,7 @@ namespace cmgt{
         return glfwGetKey(window, keyCode);
     }
 
-    void Window::initVKSurface(VkInstance instance,VkSurfaceKHR surface) {
+    void Window::initVKSurface(VkInstance& instance,VkSurfaceKHR& surface) {
         std::cout << "Initialize Surface...\n";
         if (glfwCreateWindowSurface(instance, window, nullptr, &surface) != VK_SUCCESS) {
             throw std::runtime_error("failed to create window surface!");

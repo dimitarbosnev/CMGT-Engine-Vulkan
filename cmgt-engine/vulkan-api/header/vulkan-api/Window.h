@@ -2,11 +2,12 @@
 #define WINDOW_H
 
 #pragma once
-#define GLFW_EXPOSE_NATIVE_WIN32
-#include "vulkan-api/VulkanInstance.h"
+#include <vulkan/vulkan_core.h>
 #include<GLFW/glfw3.h>
 #include<iostream>
 #include<string>
+
+#define GLFW_EXPOSE_NATIVE_WIN32
 
 namespace cmgt
 {
@@ -18,7 +19,6 @@ namespace cmgt
 		Window& operator=(const Window&);
 
 		GLFWwindow* window;
-		VulkanInstance& vkInstnace;
 		void InitWindow();
 		static void resizeWindowCallBack(GLFWwindow* pWindow, int pWidth, int pHeight);
 
@@ -26,7 +26,7 @@ namespace cmgt
 		int _height;
 		bool _resized = false;
 	public:
-		Window(int pWidth, int pHeight, const std::string& pName, VulkanInstance& instance);
+		Window(int pWidth, int pHeight, const std::string& pName);
 		~Window();
 
 		const std::string windowName;
@@ -37,7 +37,7 @@ namespace cmgt
 		void resetWindowResizeFlag() { _resized = false; }
 		void update();
 		void close();
-		void initVKSurface(VkInstance instance, VkSurfaceKHR surface);
+		void initVKSurface(VkInstance& instance, VkSurfaceKHR& surface);
 		void GetFrameBuffer(int& width, int& height);
 		VkExtent2D getWindowExtend() { return { static_cast<uint32_t>(_width), static_cast<uint32_t>(_height) }; }
 	};

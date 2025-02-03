@@ -2,7 +2,7 @@
 #include "core/VulkanRenderer.h"
 #include "vulkan-api/VulkanSwapchain.h"
 #include "vulkan-api/VulkanBuffer.h"
-#include "core/Window.h"
+#include "vulkan-api/Window.h"
 #include<array>
 #include <stdexcept>
 namespace cmgt {

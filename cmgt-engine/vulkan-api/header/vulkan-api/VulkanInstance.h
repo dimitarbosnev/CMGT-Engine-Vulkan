@@ -2,11 +2,12 @@
 #define VULKANINSTANCE_H
 
 #pragma once
-#define GLFW_INCLUDE_VULKAN
-#define NOMINMAX
-#include <GLFW/glfw3.h>
-#include <GLFW/glfw3native.h>
+#include "vulkan-api/Window.h"
+#include<vulkan/vulkan.h>
 #include<vector>
+
+#define NOMINMAX
+
 namespace cmgt {
 
 	struct SwapChainSupportDetails {
@@ -30,7 +31,7 @@ namespace cmgt {
 #else
 		const bool enableValidationLayers = true;
 #endif
-		VulkanInstance();
+		VulkanInstance(Window* window);
 		~VulkanInstance();
 
 		// Not copyable or movable
@@ -78,6 +79,7 @@ namespace cmgt {
 
 		void createInstance();
 		void setupDebugMessenger();
+		void createSurface(Window* window);
 		void pickPhysicalDevice();
 		void createLogicalDevice();
 		void createCommandPool();

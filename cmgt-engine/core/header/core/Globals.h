@@ -2,17 +2,17 @@
 #define GLOBALS_H
 
 #pragma once
-#include "core/Window.h"
 #include "core/ObjectManager.h"
 #include "core/SceneManager.h"
 #include "core/VulkanRenderer.h"
 #include "core/InputManager.h"
 #include "vulkan-api/VulkanInstance.h"
+#include "vulkan-api/Window.h"
 #include "vulkan-api/VulkanSwapchain.h"
 namespace cmgt {
 
-    VulkanInstance vulkanInstance;
-	Window gameWindow(1600,900,"CMGT-Engnie",vulkanInstance);
+	Window gameWindow(1600,900,"CMGT-Engnie");
+    VulkanInstance vulkanInstance(&gameWindow);
     VulkanSwapchain vulkanSwapchain(vulkanInstance,gameWindow.getWindowExtend());
     VulkanRenderer vulkanRenderer(vulkanInstance, vulkanSwapchain, gameWindow);
     ObjectManager objectManager;

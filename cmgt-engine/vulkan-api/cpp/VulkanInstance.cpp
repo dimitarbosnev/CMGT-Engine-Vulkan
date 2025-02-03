@@ -10,6 +10,7 @@
 #include <cstring>
 #include <iostream>
 #include <unordered_set>
+#include <GLFW/glfw3.h>
 namespace cmgt {
 
 	// local callback functions
@@ -52,9 +53,10 @@ namespace cmgt {
 	}
 
 	// class member functions
-	VulkanInstance::VulkanInstance() {
+	VulkanInstance::VulkanInstance(Window* window) {
 		createInstance();
 		setupDebugMessenger();
+		createSurface(window);
 		pickPhysicalDevice();
 		createLogicalDevice();
 		createCommandPool();
@@ -180,7 +182,7 @@ namespace cmgt {
 	}
 
 	void VulkanInstance::createLogicalDevice() {
-		QueueFamilyIndices indices = findQueueFamilies(physicalDevice);
+		QueueFamilyIndices indices = findPhysicalQueueFamilies();
 
 		std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
 		std::set<uint32_t> uniqueQueueFamilies = { indices.graphicsFamily, indices.presentFamily };
@@ -205,7 +207,7 @@ namespace cmgt {
 		createInfo.pQueueCreateInfos = queueCreateInfos.data();
 
 		createInfo.pEnabledFeatures = &deviceFeatures;
-		createInfo.enabledExtensionCount = 0;//static_cast<uint32_t>(deviceExtensions.size());
+		createInfo.enabledExtensionCount = static_cast<uint32_t>(deviceExtensions.size());
 		createInfo.ppEnabledExtensionNames = deviceExtensions.data();
 
 		// might not really be necessary anymore because device specific validation layers
@@ -278,7 +280,9 @@ namespace cmgt {
 			throw std::runtime_error("failed to set up debug messenger!");
 		}
 	}
-
+	void VulkanInstance::createSurface(Window* window){
+		window->initVKSurface(_instance, surface_);
+	}
 	bool VulkanInstance::checkValidationLayerSupport() {
 		uint32_t layerCount;
 		vkEnumerateInstanceLayerProperties(&layerCount, nullptr);
