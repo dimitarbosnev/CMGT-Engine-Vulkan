@@ -14,10 +14,28 @@ add_custom_command(
         TARGET main POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_directory
                 ${CMAKE_SOURCE_DIR}/shaders
-                ${CMAKE_SOURCE_DIR}/bin/run/shaders)
+                ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/shaders)
 
 add_custom_command(
     TARGET main POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
             ${CMAKE_SOURCE_DIR}/models
-            ${CMAKE_SOURCE_DIR}/bin/run/models)
+            ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/models)
+
+add_custom_command(
+    TARGET main POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+            ${CMAKE_SOURCE_DIR}/textures
+            ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/textures)           
+
+add_custom_command(
+    TARGET main POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy
+            ${CMAKE_SOURCE_DIR}/build/vcpkg_installed/x64-windows-static-md/bin/VkLayer_khronos_validation.dll
+            ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+
+add_custom_command(
+    TARGET main POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy
+            ${CMAKE_SOURCE_DIR}/build/vcpkg_installed/x64-windows-static-md/bin/VkLayer_khronos_validation.json
+            ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})

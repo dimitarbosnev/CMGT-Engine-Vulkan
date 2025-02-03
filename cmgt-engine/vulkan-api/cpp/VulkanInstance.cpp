@@ -10,6 +10,7 @@
 #include <cstring>
 #include <iostream>
 #include <unordered_set>
+#include <filesystem>
 #include <GLFW/glfw3.h>
 namespace cmgt {
 
@@ -54,6 +55,12 @@ namespace cmgt {
 
 	// class member functions
 	VulkanInstance::VulkanInstance(Window* window) {
+		if (enableValidationLayers) {
+		auto path = std::filesystem::current_path();
+ 		std::string set = "VK_ADD_LAYER_PATH=" + path.string();
+		std::cout << set << std::endl;
+  		_putenv(set.c_str());
+		}
 		createInstance();
 		setupDebugMessenger();
 		createSurface(window);
@@ -83,9 +90,9 @@ namespace cmgt {
 
 		VkApplicationInfo appInfo = {};
 		appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
-		appInfo.pApplicationName = "LittleVulkanEngine App";
+		appInfo.pApplicationName = "DevEnviorment";
 		appInfo.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
-		appInfo.pEngineName = "No Engine";
+		appInfo.pEngineName = "CMGT-Engine";
 		appInfo.engineVersion = VK_MAKE_VERSION(1, 0, 0);
 		appInfo.apiVersion = VK_API_VERSION_1_0;
 
