@@ -6,7 +6,7 @@
 #include<iostream>
 namespace cmgt {
 
-	GraphicsPipeline TestMaterial::pipeline(GraphicsPipeline::defaultGraphicsPipelineInfo(),ShaderProgram("vert.spv","frag.spv",sizeof(TestPushConstData),sizeof(TestUniformData),vulkanInstance),vulkanSwapchain);
+	GraphicsPipeline TestMaterial::pipeline(GraphicsPipeline::defaultGraphicsPipelineInfo(),ShaderProgram("vert.spv","frag.spv",sizeof(TestPushConstData),sizeof(TestUniformData),*vulkanInstance),*vulkanSwapchain);
 	
 	TestMaterial::TestMaterial()
 	{

@@ -25,6 +25,7 @@ namespace cmgt {
 			glm::vec4 dirLight;
 		};
 		TestMaterial();
+		static GraphicsPipeline pipeline;
 		/**
 		 * Render the given mesh in the given world using the given mvp matrices. Implement in subclass.
 		 */
@@ -33,7 +34,6 @@ namespace cmgt {
 		void bindPipeline(VkCommandBuffer commandBuffer) override;
 		//virtual GraphicsPipeline* getPipeline() override { return &_pipeline; }
 		//"vert.spv","frag.spv"
-		static GraphicsPipeline pipeline;
 	};
 }
 #endif // TESTMATERIAL_H

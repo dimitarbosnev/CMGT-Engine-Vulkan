@@ -8,24 +8,24 @@ namespace cmgt{
     }
 
     void ObjectMovement::update(float pStep) {
-        if (inputManager.isKeyPressed(GLFW_KEY_W)) {
+        if (inputManager->isKeyPressed(GLFW_KEY_W)) {
             _owner->Translate(glm::vec3(0, 0, _moveSpeed) * pStep);
             std::cout << _owner->getWorldPosition() << std::endl;
         }
-        if (inputManager.isKeyPressed(GLFW_KEY_S)) {
+        if (inputManager->isKeyPressed(GLFW_KEY_S)) {
             _owner->Translate(glm::vec3(0, 0, -_moveSpeed) * pStep);
             std::cout << _owner->getWorldPosition() << std::endl;
         }
-        if (inputManager.isKeyPressed(GLFW_KEY_A)) {
+        if (inputManager->isKeyPressed(GLFW_KEY_A)) {
             _owner->Translate(glm::vec3(-_moveSpeed, 0, 0) * pStep);
             std::cout << _owner->getWorldPosition() << std::endl;
         }
-        if (inputManager.isKeyPressed(GLFW_KEY_D)) {
+        if (inputManager->isKeyPressed(GLFW_KEY_D)) {
             _owner->Translate(glm::vec3(_moveSpeed, 0, 0) * pStep);
             std::cout << _owner->getWorldPosition() << std::endl;
         }
-        if (inputManager.isMousePressed(GLFW_MOUSE_BUTTON_LEFT)) {
-            glm::vec2 deltaPos = inputManager.deltaMousePosition();
+        if (inputManager->isMousePressed(GLFW_MOUSE_BUTTON_LEFT)) {
+            glm::vec2 deltaPos = inputManager->deltaMousePosition();
             _owner->Rotate(deltaPos.x * pStep * _rotationSpeed, glm::vec3(0, -1, 0));
             _owner->Rotate(deltaPos.y * pStep * _rotationSpeed, glm::vec3(1, 0, 0));
             //cout << "Camera Transform: \n" << _owner->getTransform() << endl;
