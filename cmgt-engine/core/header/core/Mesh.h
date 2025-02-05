@@ -23,18 +23,17 @@ namespace cmgt {
 
 			void loadModel(const std::string& filePath);
 		};
-		Mesh(const std::string& fileName, Material* pMaterial, VulkanInstance& instance);
-		Mesh(const std::vector<Vertex>& vertecies, Material* pMaterial, VulkanInstance& instance);
+		Mesh(const std::string& fileName, Material* pMaterial);
+		Mesh(const std::vector<Vertex>& vertecies, Material* pMaterial);
 		virtual ~Mesh();
 		void render(const VulkanFrameData& frameData);
 		void update(float dt) override;
 	protected:
-		VulkanInstance& vkInstnace;
 		Material* _material;
 		VulkanBuffer* vertexBuffer;
 		uint32_t vertexCount;
 
-		bool hasIndexBuffer;
+		bool hasIndexBuffer = false;
 		VulkanBuffer* indexBuffer;
 		uint32_t indexCount;
 		void createVertexBuffers(const std::vector<Vertex>& vertecies);

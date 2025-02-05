@@ -3,15 +3,16 @@
 
 #pragma once
 #include "vulkan-api/VulkanInstance.h"
+#include "minimal/types.h"
 #include <string>
 #include <vector>
 namespace cmgt {
 
-	class VulkanSwapchain{
+	class VulkanSwapchain : public Singelton<VulkanSwapchain>{
 	public:
 		#define MAX_FRAMES_IN_FLIGHT 3
 
-		VulkanSwapchain(VulkanInstance& instance,VkExtent2D extent);
+		VulkanSwapchain();
 		~VulkanSwapchain();
 		void destroySwapchain();
 
@@ -49,7 +50,6 @@ namespace cmgt {
 
 		VkFormat swapChainImageFormat;
 		VkExtent2D swapChainExtent;
-		VulkanInstance& vkInstance;
 
 		std::vector<VkFramebuffer> swapChainFramebuffers;
 		VkRenderPass renderPass;
@@ -60,7 +60,6 @@ namespace cmgt {
 		std::vector<VkImage> swapChainImages;
 		std::vector<VkImageView> swapChainImageViews;
 
-		VkExtent2D windowExtent;
 		VkSwapchainKHR swapChain;
 
 		std::vector<VkSemaphore> imageAvailableSemaphores;

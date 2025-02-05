@@ -3,35 +3,43 @@
 #include "vulkan-api/VulkanSwapchain.h"
 #include "vulkan-api/VulkanBuffer.h"
 #include "vulkan-api/Window.h"
+#include "core/GraphicsPipeline.h"
 #include<array>
 #include <stdexcept>
 namespace cmgt {
-	VulkanRenderer::VulkanRenderer(VulkanInstance& instance, VulkanSwapchain& swapchian, Window& windnow) : vkInstance(instance), vkSwapchian(swapchian), gameWindnow(windnow) {
+	VulkanRenderer::VulkanRenderer() : Singelton<VulkanRenderer>(this) {
 		createCommandBuffers();
 	}
 	VulkanRenderer::~VulkanRenderer() {
+		for(GraphicsPipeline* pipeline : pipelines){
+			delete pipeline;
+		}
+		pipelines.clear();
 	}
 
 	void VulkanRenderer::createCommandBuffers() {
 
-		commandBuffers.resize(vkSwapchian.imageCount());
+		commandBuffers.resize(VulkanSwapchain::get()->imageCount());
 		VkCommandBufferAllocateInfo allocInfo{};
 		allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
 		allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-		allocInfo.commandPool = vkInstance.getCommandPool();
+		allocInfo.commandPool = VulkanInstance::get()->getCommandPool();
 		allocInfo.commandBufferCount = static_cast<uint32_t>(commandBuffers.size());
 
-		if (vkAllocateCommandBuffers(vkInstance.device(), &allocInfo, commandBuffers.data()) != VK_SUCCESS)
+		if (vkAllocateCommandBuffers(VulkanInstance::get()->device(), &allocInfo, commandBuffers.data()) != VK_SUCCESS)
 			throw std::runtime_error("failed to allocate command buffers!");
 	}
 
 	void VulkanRenderer::freeCommandBuffers() {
-		vkFreeCommandBuffers(vkInstance.device(), vkInstance.getCommandPool(),
+		VulkanInstance* VkInstance = VulkanInstance::get();
+		vkFreeCommandBuffers(VkInstance->device(), VkInstance->getCommandPool(),
 			static_cast<uint32_t>(commandBuffers.size()), commandBuffers.data());
 		commandBuffers.clear();
 	}
 
-	void VulkanRenderer::recordCommandBuffer(int imageIndex) {
+	void VulkanRenderer::recordCommandBuffer(int imageIndex, glm::mat4 viewMatrix, glm::mat4 projectionMatrix) {
+
+		VulkanSwapchain* VkSwapchain = VulkanSwapchain::get();
 		VkCommandBufferBeginInfo beginInfo{};
 		beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 
@@ -40,10 +48,10 @@ namespace cmgt {
 
 		VkRenderPassBeginInfo renderPassInfo{};
 		renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-		renderPassInfo.renderPass = vkSwapchian.getRenderPass();
-		renderPassInfo.framebuffer = vkSwapchian.getFrameBuffer(imageIndex);
+		renderPassInfo.renderPass = VkSwapchain->getRenderPass();
+		renderPassInfo.framebuffer = VkSwapchain->getFrameBuffer(imageIndex);
 		renderPassInfo.renderArea.offset = { 0,0 };
-		renderPassInfo.renderArea.extent = vkSwapchian.getSwapChainExtent();
+		renderPassInfo.renderArea.extent = VkSwapchain->getSwapChainExtent();
 
 		std::array<VkClearValue, 2> clearValues{};
 		clearValues[0].color = { 0.1f, 0.1f, 0.1f, 1.0f };
@@ -56,33 +64,32 @@ namespace cmgt {
 
 		viewport.x = 0.0f;
 		viewport.y = 0.0f;
-		viewport.width = static_cast<float>(vkSwapchian.width());
-		viewport.height = static_cast<float>(vkSwapchian.height());
+		viewport.width = static_cast<float>(VkSwapchain->width());
+		viewport.height = static_cast<float>(VkSwapchain->height());
 		viewport.minDepth = 0.0f;
 		viewport.maxDepth = 1.0f;
-		VkRect2D scissor{ {0, 0}, vkSwapchian.getSwapChainExtent() };
+		VkRect2D scissor{ {0, 0}, VkSwapchain->getSwapChainExtent() };
 		vkCmdSetViewport(commandBuffers[imageIndex], 0, 1, &viewport);
 		vkCmdSetScissor(commandBuffers[imageIndex], 0, 1, &scissor);
-
-		//OnCommandBufferRecord.trigger();
-
-		//Camera& camera = *SceneManager::get().getCurrentScene()->getWorld().getMainCamera();
-		//glm::mat4 viewMatrix = camera.getTransform();
-		//glm::mat4 projectionMatrix = camera.getProjection();
-		//VulkanFrameData frameData(commandBuffers[imageIndex],imageIndex, viewMatrix, projectionMatrix);
-		//for (GraphicsPipeline* pipeline : pipelines)
-		//	pipeline->renderMeshes(frameData);
 		
+		
+		VulkanFrameData frameData(commandBuffers[imageIndex],imageIndex, viewMatrix, projectionMatrix);
 
-
+		//Good performance but explore the option for meshes to render themsleves
+		//This way you don't have to keep track of which mesh is visible
+		for(GraphicsPipeline* pipeline : pipelines){
+			pipeline->recordFrameCommandBuffer(frameData);
+		}
+		
 		vkCmdEndRenderPass(commandBuffers[imageIndex]);
 		if (vkEndCommandBuffer(commandBuffers[imageIndex]) != VK_SUCCESS)
 			throw std::runtime_error("failed to record command buffer!");
 	}
 
-	void VulkanRenderer::drawFrame() {
+	void VulkanRenderer::drawFrame(glm::mat4 viewMatrix, glm::mat4 projectionMatrix) {
+		VulkanSwapchain* VkSwapchain = VulkanSwapchain::get();
 		uint32_t imageIndex;
-		VkResult result = vkSwapchian.acquireNextImage(imageIndex);
+		VkResult result = VkSwapchain->acquireNextImage(imageIndex);
 
 		if (result == VK_ERROR_OUT_OF_DATE_KHR) {
 			recreateSwapchain();
@@ -91,11 +98,11 @@ namespace cmgt {
 		if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR)
 			throw std::runtime_error("failed to accure swap chain image");
 
-		recordCommandBuffer(imageIndex);
-		result = vkSwapchian.submitCommandBuffers(commandBuffers[imageIndex], imageIndex);
+		recordCommandBuffer(imageIndex,viewMatrix,projectionMatrix);
+		result = VkSwapchain->submitCommandBuffers(commandBuffers[imageIndex], imageIndex);
 
-		if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || gameWindnow.isWindowResized()) {
-			gameWindnow.resetWindowResizeFlag();
+		if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || Window::get()->isWindowResized()) {
+			Window::get()->resetWindowResizeFlag();
 			recreateSwapchain();
 			return;
 		}
@@ -104,17 +111,19 @@ namespace cmgt {
 	}
 
 	void VulkanRenderer::recreateSwapchain() {
-		auto extent = gameWindnow.getWindowExtend();
+		Window* gameWindow = Window::get();
+		auto extent = gameWindow->getWindowExtend();
 		while (extent.width == 0 || extent.height == 0) {
-			extent = gameWindnow.getWindowExtend();
+			extent = gameWindow->getWindowExtend();
 			glfwWaitEvents();
 		}
+		
+		vkDeviceWaitIdle(VulkanInstance::get()->device());
 
-		vkDeviceWaitIdle(vkInstance.device());
-
-		vkSwapchian.destroySwapchain();
-		vkSwapchian.createSwapChain();
-		if (vkSwapchian.imageCount() != commandBuffers.size()) {
+		VulkanSwapchain* VkSwapchain = VulkanSwapchain::get();
+		VkSwapchain->destroySwapchain();
+		VkSwapchain->createSwapChain();
+		if (VkSwapchain->imageCount() != commandBuffers.size()) {
 			freeCommandBuffers();
 			createCommandBuffers();
 		}

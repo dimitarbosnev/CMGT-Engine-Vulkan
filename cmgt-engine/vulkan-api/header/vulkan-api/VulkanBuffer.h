@@ -1,14 +1,15 @@
 #ifndef VULKANBUFFER_H
 #define VULKANBUFFER_H
 #pragma once
-#include "vulkan-api/VulkanInstance.h"
+#include <vulkan/vulkan.h>
 
 namespace cmgt {
 
     class VulkanBuffer {
     public:
         VulkanBuffer(
-            VulkanInstance& instnace,
+            VkPhysicalDevice physicalDevice,
+            VkDevice device,
             VkDeviceSize instanceSize,
             uint32_t instanceCount,
             VkBufferUsageFlags usageFlags,
@@ -16,6 +17,7 @@ namespace cmgt {
             VkDeviceSize minOffsetAlignment = 1);
         ~VulkanBuffer();
 
+            
         VulkanBuffer(const VulkanBuffer&) = delete;
         VulkanBuffer& operator=(const VulkanBuffer&) = delete;
 
@@ -55,7 +57,8 @@ namespace cmgt {
         VkBufferUsageFlags usageFlags;
         VkMemoryPropertyFlags memoryPropertyFlags;
 
-        VulkanInstance& vkInstance;
+        VkDevice vkDevice;
+        VkPhysicalDevice vkPhysicalDevice;
     };
 
 }  // namespace cmgt

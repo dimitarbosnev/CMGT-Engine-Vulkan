@@ -4,7 +4,7 @@
 #pragma once
 #include "minimal/glm.h"
 #include "vulkan-api/VulkanInstance.h"
-#include "vulkan-api/GraphicsPipeline.h"
+#include "core/GraphicsPipeline.h"
 #include "core/VulkanRenderer.h"
 #include "vulkan-api/VulkanFrameData.h"
 
@@ -28,14 +28,16 @@ namespace cmgt {
 		void setShinines(float shininess) {
 			this->_shininess.w = shininess;
 		};
+
+		virtual GraphicsPipeline* getPipeline() = 0;
 		/**
 		 * Render the given mesh in the given world using the given mvp matrices. Implement in subclass.
 		 */
 	protected:
 		glm::vec4 _shininess = glm::vec4(1);
-		virtual void bindPipeline(VkCommandBuffer commandBuffer) = 0;
+		//Push Constants are meant to vary between Meshes
 		virtual void bindPushConstants(const VulkanFrameData& frameData, const glm::mat4 pModelMatrix) = 0;
-		virtual GraphicsPipeline* getPipeline() = 0;
+		//Bind Pipeline can also be called once per frame for all materials as long as you don't bind smth else in between
 		friend class Mesh;
 	};
 }

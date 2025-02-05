@@ -37,5 +37,22 @@ namespace cmgt {
 		return bindingDescription;
 	}
 	};
+
+	template<typename T>
+	class Singelton{
+	public:
+		Singelton(T* instance){
+			if(!_instance){
+				_instance = instance;
+			}
+		}
+		~Singelton() = default;
+		inline static T* get(){
+			assert(_instance && "No Instance created");
+			return _instance;
+		}
+	private:
+		inline static T* _instance = nullptr;
+	};
 }
 #endif //TYPES_H

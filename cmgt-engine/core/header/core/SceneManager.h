@@ -6,11 +6,11 @@
 #include<map>
 #include<stack>
 #include "minimal/types.h"
-
+#include "core/Scene.h"
 namespace cmgt
 {
-    class Scene;
-    class SceneManager {
+    //class Scene;
+    class SceneManager : public Singelton<SceneManager>{
     public:
         SceneManager();
         ~SceneManager();

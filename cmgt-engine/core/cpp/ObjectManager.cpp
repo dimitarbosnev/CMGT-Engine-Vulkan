@@ -4,7 +4,7 @@
 namespace cmgt {
 
 
-	ObjectManager::ObjectManager(){
+	ObjectManager::ObjectManager() : Singelton<ObjectManager>(this){
 		
 	}
 	ObjectManager::~ObjectManager()

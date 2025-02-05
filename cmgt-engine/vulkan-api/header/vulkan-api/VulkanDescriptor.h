@@ -19,13 +19,13 @@ namespace cmgt {
 				VkDescriptorType descriptorType,
 				VkShaderStageFlags stageFlags,
 				uint32_t count = 1);
-			VulkanDescriptorSetLayout build(VulkanInstance& instance) const;
+			VulkanDescriptorSetLayout build() const;
 
 		private:
 			std::unordered_map<uint32_t, VkDescriptorSetLayoutBinding> bindings{};
 		};
 
-		VulkanDescriptorSetLayout(VulkanInstance& instance, std::unordered_map<uint32_t, VkDescriptorSetLayoutBinding> bindings);
+		VulkanDescriptorSetLayout(std::unordered_map<uint32_t, VkDescriptorSetLayoutBinding> bindings);
 		~VulkanDescriptorSetLayout();
 
 		VkDescriptorSetLayout getDescriptorSetLayout() const { return descriptorSetLayout; }
@@ -33,7 +33,6 @@ namespace cmgt {
 	private:
 		VkDescriptorSetLayout descriptorSetLayout;
 		std::unordered_map<uint32_t, VkDescriptorSetLayoutBinding> bindings;
-		VulkanInstance& vkInstance;
 		friend class VulkanDescriptorWriter;
 		VulkanDescriptorSetLayout(const VulkanDescriptorSetLayout&);
 		VulkanDescriptorSetLayout& operator=(const VulkanDescriptorSetLayout&);
@@ -47,7 +46,7 @@ namespace cmgt {
 			Builder& addPoolSize(VkDescriptorType descriptorType, uint32_t count);
 			Builder& setPoolFlags(VkDescriptorPoolCreateFlags flags);
 			Builder& setMaxSets(uint32_t count);
-			VulkanDescriptorPool build(VulkanInstance& instance) const;
+			VulkanDescriptorPool build() const;
 
 		private:
 			std::vector<VkDescriptorPoolSize> poolSizes{};
@@ -55,11 +54,10 @@ namespace cmgt {
 			VkDescriptorPoolCreateFlags poolFlags = 0;
 		};
 
-		VulkanDescriptorPool(VulkanInstance& instance, uint32_t maxSets,
+		VulkanDescriptorPool(uint32_t maxSets,
 			VkDescriptorPoolCreateFlags poolFlags,
 			const std::vector<VkDescriptorPoolSize>& poolSizes);
 		~VulkanDescriptorPool();
-		VulkanDescriptorPool(const VulkanDescriptorPool&);
 		bool allocateDescriptor(
 			const VkDescriptorSetLayout descriptorSetLayout, VkDescriptorSet& descriptor) const;
 
@@ -69,9 +67,7 @@ namespace cmgt {
 
 	private:
 		VkDescriptorPool descriptorPool;
-		VulkanInstance& vkInstance;
 		friend class VulkanDescriptorWriter;
-		VulkanDescriptorPool& operator=(const VulkanDescriptorPool&);
 	};
 
 	class VulkanDescriptorWriter {

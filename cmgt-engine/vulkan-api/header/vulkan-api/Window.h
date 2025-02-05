@@ -2,6 +2,7 @@
 #define WINDOW_H
 
 #pragma once
+#include "minimal/types.h"
 #include <vulkan/vulkan_core.h>
 #include<GLFW/glfw3.h>
 #include<iostream>
@@ -11,9 +12,9 @@
 
 namespace cmgt
 {
-	class Window
+	class Window : public Singelton<Window>
 	{
-		friend class InputManager;
+		friend class Input;
 	private:
 		Window(const Window&);
 		Window& operator=(const Window&);

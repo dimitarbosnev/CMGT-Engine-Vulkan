@@ -1,15 +1,16 @@
 
+#define TINYOBJLOADER_IMPLEMENTATION
+
 #include <iostream>
 #include <string>
 #include <exception>
 #include "core/Mesh.h"
 #include "vulkan-api/VulkanInstance.h"
-#include "core/VulkanRenderer.h"
 #include "core/Globals.h"
-#define TINYOBJLOADER_IMPLEMENTATION
 #include "tiny_obj_loader.h"
+#include "minimal/events.h"
 namespace cmgt {
-	Mesh::Mesh(const std::string& fileName, Material* pMaterial, VulkanInstance& instance) : _material(pMaterial), vkInstnace(instance){
+	Mesh::Mesh(const std::string& fileName, Material* pMaterial) : _material(pMaterial){
 
 		std::string filePath = CMGT_MODEL_PATH + fileName;
 		Builder builder;
@@ -17,9 +18,11 @@ namespace cmgt {
 
 		createVertexBuffers(builder.vertecies);
 		createIndexBuffers(builder.indices);
+		_material->getPipeline()->renderMeshs.push_back(this);
 	}
-	Mesh::Mesh(const std::vector<Vertex>& vertecies, Material* pMaterial, VulkanInstance& instance) : _material(pMaterial), vkInstnace(instance) {
+	Mesh::Mesh(const std::vector<Vertex>& vertecies, Material* pMaterial) : _material(pMaterial) {
 		createVertexBuffers(vertecies);
+		_material->getPipeline()->renderMeshs.push_back(this);
 	}
 
 	Mesh::~Mesh() {
@@ -30,26 +33,29 @@ namespace cmgt {
 	}
 
 	void Mesh::createVertexBuffers(const std::vector<Vertex>& vertecies){
+		VulkanInstance* vkInstnace = VulkanInstance::get();
 		vertexCount = vertecies.size();
 		assert(vertexCount >= 3 && "Mesh Vertex count must be atleast 3!");
-		VulkanBuffer stagingBuffer(vkInstnace, sizeof(Vertex), vertexCount, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+		VulkanBuffer stagingBuffer(vkInstnace->physicalDevice(), vkInstnace->device(), sizeof(Vertex), vertexCount, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 		stagingBuffer.map();
 		stagingBuffer.writeToBuffer((void*)vertecies.data());
 
-		vertexBuffer = new VulkanBuffer(vkInstnace, sizeof(Vertex), vertexCount, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
-		vkInstnace.copyBuffer(stagingBuffer.getBuffer(), vertexBuffer->getBuffer(), sizeof(Vertex)*vertexCount);
+		vertexBuffer = new VulkanBuffer(vkInstnace->physicalDevice(), vkInstnace->device(), sizeof(Vertex), vertexCount, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+		copyBuffer(stagingBuffer.getBuffer(), vertexBuffer->getBuffer(), sizeof(Vertex)*vertexCount,vkInstnace->device(),vkInstnace->graphicsQueue(),vkInstnace->getCommandPool());
 	}
 	void Mesh::createIndexBuffers(const std::vector<uint32_t>& indices){
+		VulkanInstance* vkInstnace = VulkanInstance::get();
+
 		indexCount = indices.size();
 		hasIndexBuffer = indexCount > 0;
 		if (!hasIndexBuffer) return;
 
-		VulkanBuffer stagingBuffer(vkInstnace,sizeof(uint32_t), indexCount, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+		VulkanBuffer stagingBuffer(vkInstnace->physicalDevice(), vkInstnace->device(),sizeof(uint32_t), indexCount, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 		stagingBuffer.map();
 		stagingBuffer.writeToBuffer((void*)indices.data());
 
-		indexBuffer = new VulkanBuffer(vkInstnace,sizeof(uint32_t), indexCount, VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
-		vkInstnace.copyBuffer(stagingBuffer.getBuffer(), indexBuffer->getBuffer(), sizeof(uint32_t)*indexCount);
+		indexBuffer = new VulkanBuffer(vkInstnace->physicalDevice(), vkInstnace->device(),sizeof(uint32_t), indexCount, VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+		copyBuffer(stagingBuffer.getBuffer(), indexBuffer->getBuffer(), sizeof(uint32_t)*indexCount,vkInstnace->device(),vkInstnace->graphicsQueue(),vkInstnace->getCommandPool());
 	}
 
 	void Mesh::render(const VulkanFrameData& frameData) {
@@ -65,7 +71,7 @@ namespace cmgt {
 		else vkCmdDraw(frameData.commandBuffer, vertexCount, 1, 0, 0);
 	}
 	void Mesh::update(float dt) {
-		//_material->getPipeline()->AddMeshToRender(this);
+		//_material->getPipeline()->renderMeshs.add(render);
 	}
 	
 	void Mesh::Builder::loadModel(const std::string& filePath) {

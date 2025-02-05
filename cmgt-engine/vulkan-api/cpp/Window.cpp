@@ -2,7 +2,7 @@
 #include "vulkan-api/Window.h"
 namespace cmgt{
     Window::Window(int pWidth, int pHeight, const std::string& pName) 
-        : _width(pWidth), _height(pHeight), windowName(pName) {
+        : Singelton<Window>(this), _width(pWidth), _height(pHeight), windowName(pName) {
         InitWindow();
         //InputManager::InitializeInputManager(window);
     }

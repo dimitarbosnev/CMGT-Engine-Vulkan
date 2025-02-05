@@ -1,8 +1,9 @@
 
 #include "vulkan-api/VulkanBuffer.h"
+#include "vulkan-api/VulkanInstance.h"
 #include <cassert>
 #include <cstring>
-
+#include <exception>
 namespace cmgt {
 
     VkDeviceSize VulkanBuffer::getAlignment(VkDeviceSize instanceSize, VkDeviceSize minOffsetAlignment) {
@@ -13,7 +14,8 @@ namespace cmgt {
     }
 
     VulkanBuffer::VulkanBuffer(
-        VulkanInstance& instnace,
+        VkPhysicalDevice physicalDevice,
+        VkDevice device,
         VkDeviceSize instanceSize,
         uint32_t instanceCount,
         VkBufferUsageFlags usageFlags,
@@ -23,17 +25,20 @@ namespace cmgt {
         instanceCount{ instanceCount },
         usageFlags{ usageFlags },
         memoryPropertyFlags{ memoryPropertyFlags },
-        vkInstance(instnace) {
+        vkDevice(device),
+        vkPhysicalDevice(physicalDevice) {
         alignmentSize = getAlignment(instanceSize, minOffsetAlignment);
         bufferSize = alignmentSize * instanceCount;
-        vkInstance.createBuffer(bufferSize, usageFlags, memoryPropertyFlags, buffer, memory);
+        createBuffer(physicalDevice,device,bufferSize, usageFlags, memoryPropertyFlags, buffer, memory);
     }
 
     VulkanBuffer::~VulkanBuffer() {
         unmap();
-        vkDestroyBuffer(vkInstance.device(), buffer, nullptr);
-        vkFreeMemory(vkInstance.device(), memory, nullptr);
+        vkDestroyBuffer(vkDevice, buffer, nullptr);
+        vkFreeMemory(vkDevice, memory, nullptr);
     }
+
+
 
     /**
      * Map a memory range of this buffer. If successful, mapped points to the specified buffer range.
@@ -46,7 +51,7 @@ namespace cmgt {
      */
     VkResult VulkanBuffer::map(VkDeviceSize size, VkDeviceSize offset) {
         assert(buffer && memory && "Called map on buffer before create");
-        return vkMapMemory(vkInstance.device(), memory, offset, size, 0, &mapped);
+        return vkMapMemory(vkDevice, memory, offset, size, 0, &mapped);
     }
 
     /**
@@ -56,7 +61,7 @@ namespace cmgt {
      */
     void VulkanBuffer::unmap() {
         if (mapped) {
-            vkUnmapMemory(vkInstance.device(), memory);
+            vkUnmapMemory(vkDevice, memory);
             mapped = nullptr;
         }
     }
@@ -100,7 +105,7 @@ namespace cmgt {
         mappedRange.memory = memory;
         mappedRange.offset = offset;
         mappedRange.size = size;
-        return vkFlushMappedMemoryRanges(vkInstance.device(), 1, &mappedRange);
+        return vkFlushMappedMemoryRanges(vkDevice, 1, &mappedRange);
     }
 
     /**
@@ -120,7 +125,7 @@ namespace cmgt {
         mappedRange.memory = memory;
         mappedRange.offset = offset;
         mappedRange.size = size;
-        return vkInvalidateMappedMemoryRanges(vkInstance.device(), 1, &mappedRange);
+        return vkInvalidateMappedMemoryRanges(vkDevice, 1, &mappedRange);
     }
 
     /**

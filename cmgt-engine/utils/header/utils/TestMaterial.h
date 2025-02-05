@@ -4,8 +4,7 @@
 #pragma once
 #include "minimal/glm.h"
 #include "core/Material.h"
-#include "vulkan-api/GraphicsPipeline.h"
-#include "vulkan-api/ShaderProgram.h"
+#include "core/GraphicsPipeline.h"
 #include "core/Globals.h"
 
 namespace cmgt {
@@ -25,13 +24,24 @@ namespace cmgt {
 			glm::vec4 dirLight;
 		};
 		TestMaterial();
-		static GraphicsPipeline pipeline;
 		/**
 		 * Render the given mesh in the given world using the given mvp matrices. Implement in subclass.
 		 */
+	public:
+		GraphicsPipeline* getPipeline() override {return pipeline;}
 	private:
-		virtual void bindPushConstants(const VulkanFrameData& frameData, const glm::mat4 pModelMatrix) override;
-		void bindPipeline(VkCommandBuffer commandBuffer) override;
+		void bindPushConstants(const VulkanFrameData& frameData, const glm::mat4 pModelMatrix) override;
+		//Uniform Buffers Are meant to be one for all instances of the material
+		static void bindUniformBuffers(const VulkanFrameData&);
+		static void initPipeline();
+		static void freePipeline();
+		static VkPipelineShaderStageCreateInfo* bindPipelineShaderStages(uint8_t& num);
+		static VulkanDescriptorSetLayout createDescriptorSetLayout(uint32_t& uniformSize);
+		static VkPushConstantRange setupPushConsts();
+
+		inline static VkShaderModule vertexShaderModule = nullptr;
+		inline static VkShaderModule fragmentShaderModule = nullptr;
+		inline static GraphicsPipeline* pipeline = nullptr;
 		//virtual GraphicsPipeline* getPipeline() override { return &_pipeline; }
 		//"vert.spv","frag.spv"
 	};

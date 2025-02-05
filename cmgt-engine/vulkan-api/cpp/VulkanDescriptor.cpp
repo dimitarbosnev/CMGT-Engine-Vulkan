@@ -22,14 +22,14 @@ namespace cmgt {
 		return *this;
 	}
 
-	VulkanDescriptorSetLayout VulkanDescriptorSetLayout::Builder::build(VulkanInstance& instance) const {
-		return VulkanDescriptorSetLayout(instance,bindings);
+	VulkanDescriptorSetLayout VulkanDescriptorSetLayout::Builder::build() const {
+		return VulkanDescriptorSetLayout(bindings);
 	}
 
 	// *************** Descriptor Set Layout *********************
 
-	VulkanDescriptorSetLayout::VulkanDescriptorSetLayout(VulkanInstance& instance, std::unordered_map<uint32_t, VkDescriptorSetLayoutBinding> bindings)
-		: bindings(bindings) , vkInstance(instance){
+	VulkanDescriptorSetLayout::VulkanDescriptorSetLayout(std::unordered_map<uint32_t, VkDescriptorSetLayoutBinding> bindings)
+		: bindings(bindings){
 		std::vector<VkDescriptorSetLayoutBinding> setLayoutBindings{};
 		for (auto kv : bindings) {
 			setLayoutBindings.push_back(kv.second);
@@ -41,7 +41,7 @@ namespace cmgt {
 		descriptorSetLayoutInfo.pBindings = setLayoutBindings.data();
 
 		if (vkCreateDescriptorSetLayout(
-			vkInstance.device(),
+			VulkanInstance::get()->device(),
 			&descriptorSetLayoutInfo,
 			nullptr,
 			&descriptorSetLayout) != VK_SUCCESS) {
@@ -50,7 +50,7 @@ namespace cmgt {
 	}
 
 	VulkanDescriptorSetLayout::~VulkanDescriptorSetLayout() {
-		vkDestroyDescriptorSetLayout(vkInstance.device(), descriptorSetLayout, nullptr);
+		vkDestroyDescriptorSetLayout(VulkanInstance::get()->device(), descriptorSetLayout, nullptr);
 	}
 
 	// *************** Descriptor Pool Builder *********************
@@ -71,17 +71,16 @@ namespace cmgt {
 		return *this;
 	}
 
-	VulkanDescriptorPool VulkanDescriptorPool::Builder::build(VulkanInstance& instance) const {
-		return VulkanDescriptorPool(instance, maxSets, poolFlags, poolSizes);
+	VulkanDescriptorPool VulkanDescriptorPool::Builder::build() const {
+		return VulkanDescriptorPool(maxSets, poolFlags, poolSizes);
 	}
 
 	// *************** Descriptor Pool *********************
 
 	VulkanDescriptorPool::VulkanDescriptorPool(
-		VulkanInstance& instance,
 		uint32_t maxSets,
 		VkDescriptorPoolCreateFlags poolFlags,
-		const std::vector<VkDescriptorPoolSize>& poolSizes) : vkInstance(instance){
+		const std::vector<VkDescriptorPoolSize>& poolSizes){
 		VkDescriptorPoolCreateInfo descriptorPoolInfo{};
 		descriptorPoolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
 		descriptorPoolInfo.poolSizeCount = static_cast<uint32_t>(poolSizes.size());
@@ -89,14 +88,14 @@ namespace cmgt {
 		descriptorPoolInfo.maxSets = maxSets;
 		descriptorPoolInfo.flags = poolFlags;
 
-		if (vkCreateDescriptorPool(vkInstance.device(), &descriptorPoolInfo, nullptr, &descriptorPool) !=
+		if (vkCreateDescriptorPool(VulkanInstance::get()->device(), &descriptorPoolInfo, nullptr, &descriptorPool) !=
 			VK_SUCCESS) {
 			throw std::runtime_error("failed to create descriptor pool!");
 		}
 	}
 
 	VulkanDescriptorPool::~VulkanDescriptorPool() {
-		vkDestroyDescriptorPool(vkInstance.device(), descriptorPool, nullptr);
+		vkDestroyDescriptorPool(VulkanInstance::get()->device(), descriptorPool, nullptr);
 	}
 
 	bool VulkanDescriptorPool::allocateDescriptor(
@@ -109,7 +108,7 @@ namespace cmgt {
 
 		// Might want to create a "DescriptorPoolManager" class that handles this case, and builds
 		// a new pool whenever an old pool fills up. But this is beyond our current scope
-		if (vkAllocateDescriptorSets(vkInstance.device(), &allocInfo, &descriptor) != VK_SUCCESS) {
+		if (vkAllocateDescriptorSets(VulkanInstance::get()->device(), &allocInfo, &descriptor) != VK_SUCCESS) {
 			return false;
 		}
 		return true;
@@ -117,14 +116,14 @@ namespace cmgt {
 
 	void VulkanDescriptorPool::freeDescriptors(std::vector<VkDescriptorSet>& descriptors) const {
 		vkFreeDescriptorSets(
-			vkInstance.device(),
+			VulkanInstance::get()->device(),
 			descriptorPool,
 			static_cast<uint32_t>(descriptors.size()),
 			descriptors.data());
 	}
 
 	void VulkanDescriptorPool::resetPool() {
-		vkResetDescriptorPool(vkInstance.device(), descriptorPool, 0);
+		vkResetDescriptorPool(VulkanInstance::get()->device(), descriptorPool, 0);
 	}
 
 	// *************** Descriptor Writer *********************
@@ -189,7 +188,7 @@ namespace cmgt {
 		for (auto& write : writes) {
 			write.dstSet = set;
 		}
-		vkUpdateDescriptorSets(pool.vkInstance.device(), writes.size(), writes.data(), 0, nullptr);
+		vkUpdateDescriptorSets(VulkanInstance::get()->device(), writes.size(), writes.data(), 0, nullptr);
 	}
 
 

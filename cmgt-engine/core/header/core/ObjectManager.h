@@ -9,7 +9,7 @@
 namespace cmgt
 {
     class GameObject;
-    class ObjectManager {
+    class ObjectManager : public Singelton<ObjectManager> {
     public:
         ObjectManager();
         ~ObjectManager();

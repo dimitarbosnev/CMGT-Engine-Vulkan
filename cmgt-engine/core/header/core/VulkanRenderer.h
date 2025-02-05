@@ -2,32 +2,30 @@
 #define VULKANRENDERER_H
 
 #pragma once
-#include<string>
-#include<vector>
-#include<list>
 #include "vulkan-api/VulkanInstance.h"
 #include "vulkan-api/VulkanSwapchain.h"
 #include "vulkan-api/VulkanDescriptor.h"
+#include "vulkan-api/VulkanFrameData.h"
 #include "vulkan-api/Window.h"
 #include "minimal/glm.h"
 #include "minimal/events.h"
+#include "minimal/types.h"
+#include<string>
+#include<vector>
+#include<list>
 namespace cmgt {
 	class GraphicsPipeline;
 
-	class VulkanRenderer {
+	class VulkanRenderer : public Singelton<VulkanRenderer>{
 		public:
-			VulkanRenderer(VulkanInstance& instance, VulkanSwapchain& swapchian, Window& windnow);
+			VulkanRenderer();
 			~VulkanRenderer();
-			void recordCommandBuffer(int imageIndex);
-			void drawFrame();
-
+			void recordCommandBuffer(int imageIndex, glm::mat4 viewMatrix, glm::mat4 projectionMatrix);
+			void drawFrame(glm::mat4 viewMatrix, glm::mat4 projectionMatrix);
+			std::list<GraphicsPipeline*> pipelines;
 			
 		private:
-			VulkanInstance& vkInstance;
-			VulkanSwapchain& vkSwapchian;
-			Window& gameWindnow;
 			//Event OnSwapchainRecreate;
-			//Event OnCommandBufferRecord;
 			std::vector<VkCommandBuffer> commandBuffers;
 			void createCommandBuffers();
 			void freeCommandBuffers();

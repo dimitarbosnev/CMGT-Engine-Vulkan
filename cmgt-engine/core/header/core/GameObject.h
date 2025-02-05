@@ -17,6 +17,7 @@ namespace cmgt
 	class GameObject
 	{
 	public:
+		GameObject(const  std::string& pName);
 		id_t getID() { return id; }
 		virtual ~GameObject();
 
@@ -67,7 +68,6 @@ namespace cmgt
 
 	protected:
 		//Used to spawn objects from world seed
-		GameObject(const  std::string& pName);
 
 		 std::string _name;
 		id_t id;

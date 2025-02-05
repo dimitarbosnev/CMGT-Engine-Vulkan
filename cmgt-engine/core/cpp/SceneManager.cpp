@@ -3,7 +3,7 @@
 #include "core/Scene.h"
 namespace cmgt {
 
-	SceneManager::SceneManager() {
+	SceneManager::SceneManager() : Singelton<SceneManager>(this) {
 	}
 
 	SceneManager::~SceneManager() {

@@ -2,27 +2,53 @@
 #define EVENTS_H
 #pragma once
 #include <list>
+#include <map>
+#include <functional>
 namespace cmgt {
-    
+    template<typename Class>
     class Event{
     public:
-        Event();
-        ~Event();
-        void add(void(*function)()){
-            subscribers.push_back(function);
+        Event() = default;
+        ~Event() = default;
+        inline void add(void(Class::*function)(), Class* sub){
+            subscribers.emplace(function,sub);
         }
 
-        void remove(void(*function)()){
-            subscribers.remove(function);
+        inline void remove(void(Class::*function)(), Class* sub){
+            subscribers.erase(function);
         }
 
-        void trigger(){
-            for(void(*function)() : subscribers){
-                function();
+        inline void trigger(){
+            for(std::pair<void(Class::*)(),Class*> event : subscribers){
+                (event.second->*event.first)();
             }
         }
     private:
-        std::list<void(*)()> subscribers;
+        std::map<void(Class::*)(),Class*> subscribers;
+    };
+
+    template<typename Class, typename Type>
+    class EventType{
+    public:
+        EventType() = default;
+        ~EventType() = default;
+        inline void add(Class* sub, void(Class::*function)(Type)){
+            auto pair = std::pair<Class*,void(Class::*)(Type)>(sub,function);
+            subscribers.push_back(pair);
+        }
+
+        //TODO: Figure out how to remove it
+        //inline void remove(Class* sub, void(Class::*function)(Type)){
+        //    subscribers.erase(sub);
+        //}
+
+        inline void trigger(Type type){
+            for(auto event : subscribers){
+                (event.first->*event.second)(type);
+            }
+        }
+    private:
+        std::list<std::pair<Class*,void(Class::*)(Type)>> subscribers;
     };
 
     template<typename T>
