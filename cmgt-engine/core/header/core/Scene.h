@@ -6,7 +6,7 @@
 #include <string>
 #include <vector>
 #include "core/GameObject.h"
-#include "core/WorldSeed.h"
+#include "core/World.h"
 
 namespace cmgt
 {
@@ -18,11 +18,11 @@ namespace cmgt
         void renderScene(VkCommandBuffer commandBuffer);
         std::string getName() { return name; }
         id_t getID() { return id; }
-        WorldSeed& getWorld() { return *_world; }
+        World& getWorld() { return *_world; }
     private:
         id_t id;
         std::string name;
-        WorldSeed* _world = new WorldSeed();
+        World* _world = new World();
 
         Scene(const Scene&) = delete;
         Scene& operator= (const Scene&) = delete;

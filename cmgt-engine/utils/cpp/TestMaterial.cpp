@@ -37,15 +37,14 @@ namespace cmgt {
 		CreateShader("frag.spv", &fragmentShaderModule);
 		std::cout << "\t Fragment Shader Initalized!\n";
 
-		pipeline = new GraphicsPipeline(GraphicsPipeline::defaultGraphicsPipelineInfo(), createDescriptorSetLayout, bindPipelineShaderStages, setupPushConsts, bindUniformBuffers);
+		pipeline = new GraphicsPipeline(GraphicsPipeline::defaultGraphicsPipelineInfo(), createDescriptorSetLayout, bindPipelineShaderStages, setupPushConsts, bindUniformBuffers,freePipeline);
 		
 	}
 
+	//has to be called somewhere
 	void TestMaterial::freePipeline(){
 		vkDestroyShaderModule(VulkanInstance::get()->device(), vertexShaderModule, nullptr);
 		vkDestroyShaderModule(VulkanInstance::get()->device(), fragmentShaderModule, nullptr);
-
-		delete pipeline;
 	}
 	VkPipelineShaderStageCreateInfo* TestMaterial::bindPipelineShaderStages(uint8_t& num)
 	{

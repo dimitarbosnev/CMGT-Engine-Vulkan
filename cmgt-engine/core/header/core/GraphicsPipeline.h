@@ -44,7 +44,8 @@ namespace cmgt {
 		std::function<VulkanDescriptorSetLayout(uint32_t&)> desriptorSetLayout, 
 		std::function<VkPipelineShaderStageCreateInfo*(uint8_t&)> shadersStages,
 		std::function<VkPushConstantRange()> pushConstants,
-		std::function<void(const VulkanFrameData&)> uniformData);
+		std::function<void(const VulkanFrameData&)> uniformData,
+		std::function<void()> deleteShaders);
 		~GraphicsPipeline();
 
 		void bind(VkCommandBuffer commandBuffer);
@@ -54,6 +55,7 @@ namespace cmgt {
 		void writeUniformBuffers(const short& imageIndex, const VkCommandBuffer& commandBuffer, const void* pData);
 		void recordFrameCommandBuffer(const VulkanFrameData& frameData);
 		std::function<void(const VulkanFrameData&)> setUniformData;
+		std::function<void()> freeShaders;
 		std::function<VulkanDescriptorSetLayout(uint32_t&)> setDesriptorSetLayout;//have to be set
 		std::function<VkPipelineShaderStageCreateInfo*(uint8_t&)> setPipelineShaderStages;//have to be set
 		std::function<VkPushConstantRange()> setPushConstants;//have to be set

@@ -11,7 +11,7 @@
 
 namespace cmgt
 {
-	class WorldSeed;
+	class World;
 	class Component;
 
 	class GameObject
@@ -64,7 +64,7 @@ namespace cmgt
 		int getChildCount() const;
 		GameObject* getChildAt(int pIndex) const;
 
-		WorldSeed* getWorld() const;
+		World* getWorld() const;
 
 	protected:
 		//Used to spawn objects from world seed
@@ -77,14 +77,14 @@ namespace cmgt
 		std::vector<GameObject*> _children;
 
 		std::vector<Component*> _components;
-		WorldSeed* _world;
+		World* _world;
 
 		//update children list administration
 		void _innerAdd(GameObject* pChild);
 		void _innerRemove(GameObject* pChild);
 
 		//used to pass on pointer to the world to a gameobject
-		virtual void _setWorldRecursively(WorldSeed* pWorldSeed);
+		virtual void _setWorldRecursively(World* pWorldSeed);
 
 	private:
 		GameObject(const GameObject&);

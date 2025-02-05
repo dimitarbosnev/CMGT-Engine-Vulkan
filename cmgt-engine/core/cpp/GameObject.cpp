@@ -181,7 +181,7 @@ namespace cmgt {
         }
     }
 
-    void GameObject::_setWorldRecursively(WorldSeed* pWorld) {
+    void GameObject::_setWorldRecursively(World* pWorld) {
         _world = pWorld;
 
         for (int i = _children.size() - 1; i >= 0; --i) {
@@ -197,7 +197,7 @@ namespace cmgt {
         return _children[pIndex];
     }
 
-    WorldSeed* GameObject::getWorld() const {
+    World* GameObject::getWorld() const {
         return _world;
     }
 }

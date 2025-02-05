@@ -52,8 +52,9 @@ namespace cmgt {
 		std::function<VulkanDescriptorSetLayout(uint32_t&)> desriptorSetLayout, 
 		std::function<VkPipelineShaderStageCreateInfo*(uint8_t&)> shadersStages,
 		std::function<VkPushConstantRange()> pushConstants,
-		std::function<void(const VulkanFrameData&)> uniformData) : 
-		setDesriptorSetLayout(desriptorSetLayout), setPipelineShaderStages(shadersStages), setPushConstants(pushConstants), setUniformData(uniformData),
+		std::function<void(const VulkanFrameData&)> uniformData,
+		std::function<void()> deleteShaders) : 
+		setDesriptorSetLayout(desriptorSetLayout), setPipelineShaderStages(shadersStages), setPushConstants(pushConstants), setUniformData(uniformData), freeShaders(deleteShaders),
 		//Can be set through the Material but it's useless right now
 		descriptorPool(VulkanDescriptorPool::Builder().setMaxSets(MAX_FRAMES_IN_FLIGHT).addPoolSize(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, MAX_FRAMES_IN_FLIGHT).build()) {
 		std::cout << " Creating Graphics Pipeline...\n";
@@ -66,7 +67,13 @@ namespace cmgt {
 
 
 	GraphicsPipeline::~GraphicsPipeline() {
-
+		freeShaders();
+		//clear meshes
+		for(Mesh* mesh : renderMeshs){
+			delete mesh;
+		}
+		renderMeshs.clear();
+		//clear buffers
 		for (VulkanBuffer* buffer : uniformBuffers)
 			delete buffer;
 		uniformBuffers.clear();

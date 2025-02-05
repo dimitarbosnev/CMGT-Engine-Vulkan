@@ -29,7 +29,7 @@ namespace cmgt {
 		//VkDevice device = vulkanInstance.device();
 		//delete _material;
 		delete vertexBuffer;
-		delete indexBuffer;
+		if(hasIndexBuffer) delete indexBuffer;
 	}
 
 	void Mesh::createVertexBuffers(const std::vector<Vertex>& vertecies){

@@ -1,7 +1,7 @@
 
 #include "core/Light.h"
 #include "core/GameObject.h"
-#include "core/WorldSeed.h"
+#include "core/World.h"
 namespace cmgt {
 	Light::Light( LightType type) {
 	}

@@ -102,6 +102,7 @@ int main() {
 			glm::mat4 projectionMatrix = camera->getProjection();
 			cmgt::VulkanRenderer::get()->drawFrame(viewMatrix,projectionMatrix);
 		}
+	vkDeviceWaitIdle(cmgt::VulkanInstance::get()->device());
 
     DestroyGame();
 	cmgt::FreeGlobals();
@@ -109,3 +110,5 @@ int main() {
     return EXIT_SUCCESS;
 }
 
+//Make spawnObject in worldSeed
+//Make newComponent and a manager for managing components

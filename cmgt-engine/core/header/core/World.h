@@ -10,10 +10,10 @@ namespace cmgt
 	//class Camera;
 	//class Light;
 
-	class WorldSeed : public GameObject
+	class World : public GameObject
 	{
 	public:
-		WorldSeed() : GameObject("root"), _mainCamera(nullptr) { _world = this; }
+		World() : GameObject("root"), _mainCamera(nullptr) { _world = this; }
 		void setMainCamera(Camera* pCamera);
 		Camera* getMainCamera();
 
@@ -27,8 +27,8 @@ namespace cmgt
 	private:
 		Camera* _mainCamera;
 		std::vector<Light*> _lights;
-		WorldSeed& operator=(const WorldSeed&);
-		WorldSeed(const WorldSeed&);
+		World& operator=(const World&);
+		World(const World&);
 	};
 }
 #endif // WORLDSEED_H
