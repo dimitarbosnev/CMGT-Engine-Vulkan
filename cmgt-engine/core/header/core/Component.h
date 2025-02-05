@@ -3,25 +3,25 @@
 
 #pragma once
 #include "minimal/glm.h"
-
+#include "core/Object.h"
 namespace cmgt
 {
 	class GameObject;
 
-	class Component
+	class Component : public Object
 	{
 	public:
 
 		Component();
-		virtual ~Component();
 
+		virtual ~Component();
 		//for internal administration, do not use directly
 		virtual void setOwner(GameObject* pGameObject);
 
 		//behaviour should be able to update itself every step and MUST be implemented
 		virtual void update(float pStep);
 
-		const glm::mat4& getTransform();
+		glm::mat4 getTransform();
 	protected:
 
 		GameObject* _owner;

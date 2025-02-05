@@ -10,18 +10,14 @@
 
 namespace cmgt
 {
-    class Scene {
+    class Scene : public Object {
     public:
         Scene(std::string pName);
         ~Scene();
         void update(float dt);
         void renderScene(VkCommandBuffer commandBuffer);
-        std::string getName() { return name; }
-        id_t getID() { return id; }
-        World& getWorld() { return *_world; }
+        World* getWorld() { return _world; }
     private:
-        id_t id;
-        std::string name;
         World* _world = new World();
 
         Scene(const Scene&) = delete;

@@ -7,14 +7,10 @@
 #include "core/GraphicsPipeline.h"
 #include "core/VulkanRenderer.h"
 #include "vulkan-api/VulkanFrameData.h"
-
+#include "core/Object.h"
 namespace cmgt {
-	class GameObject;
 	class Mesh;
-	class World;
-
-
-	class Material
+	class Material : public Object
 	{
 	public:
 		Material() = default;

@@ -7,13 +7,6 @@ namespace cmgt {
 	}
 
 	SceneManager::~SceneManager() {
-		while (!scenesStack.empty()) {
-			scenesStack.pop();
-		}
-		for (auto &scene : scenes) {
-			delete scene.second;
-		}
-		scenes.clear();
 	}
 
 	void SceneManager::update(float dt) {

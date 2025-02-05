@@ -6,6 +6,7 @@
 #pragma once
 #include "minimal/glm.h"
 #include "minimal/types.h"
+#include "core/Object.h"
 #include <string>
 #include <vector>
 
@@ -14,20 +15,19 @@ namespace cmgt
 	class World;
 	class Component;
 
-	class GameObject
+	class GameObject : public Object
 	{
 	public:
 		GameObject(const  std::string& pName);
-		id_t getID() { return id; }
+
 		virtual ~GameObject();
 
-		void setName(const std::string& pName);
-		 std::string getName() { return _name; }
+
 
 
 		//contains local rotation, scale, position
 		void setTransform(const glm::mat4& pTransform);
-		const glm::mat4& getTransform() const;
+		glm::mat4 getTransform();
 
 		//access just the local position
 		void setLocalPosition(glm::vec3 pPosition);
@@ -68,9 +68,6 @@ namespace cmgt
 
 	protected:
 		//Used to spawn objects from world seed
-
-		 std::string _name;
-		id_t id;
 		glm::mat4 _transform;
 
 		GameObject* _parent;

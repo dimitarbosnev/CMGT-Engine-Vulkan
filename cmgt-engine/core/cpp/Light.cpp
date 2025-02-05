@@ -3,7 +3,7 @@
 #include "core/GameObject.h"
 #include "core/World.h"
 namespace cmgt {
-	Light::Light( LightType type) {
+	Light::Light(LightType type) {
 	}
 
 	Light::~Light() {}

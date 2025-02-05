@@ -8,20 +8,20 @@
 
 namespace cmgt
 {
-    class GameObject;
+    class Object;
     class ObjectManager : public Singelton<ObjectManager> {
     public:
         ObjectManager();
         ~ObjectManager();
-        void addGameObject(GameObject& obj);
-        GameObject& getGameObject(std::string name);
-        GameObject& getGameObject(id_t pID);
-        id_t assignGameObjectID();
-        void deleteGameObject(GameObject& obj);
-        void deleteGameObject(id_t pID);
+        void addObject(Object* obj);
+        Object* getObject(std::string name);
+        Object* getObject(id_t pID);
+        id_t assignObjectID();
+        void deleteObject(Object* obj);
+        void deleteObject(id_t pID);
 
     private:
-        std::map<id_t, GameObject*> gameObjects;
+        std::map<id_t, Object*> Objects;
         ObjectManager(const ObjectManager&) = delete;
         ObjectManager operator=(const ObjectManager&) = delete;
     };

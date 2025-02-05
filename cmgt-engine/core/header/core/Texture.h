@@ -4,9 +4,9 @@
 #pragma once
 #include <map>
 #include <string>
-
+#include "core/Object.h"
 namespace cmgt {
-	class Texture
+	class Texture : public Object
 	{
 	public:
 		static Texture* load(const std::string& pTexturePath);

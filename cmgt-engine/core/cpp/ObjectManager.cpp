@@ -9,35 +9,37 @@ namespace cmgt {
 	}
 	ObjectManager::~ObjectManager()
 	{
-		for (auto& obj : gameObjects) {
+		for (auto& obj : Objects) {
 			delete obj.second;
 		}
-		gameObjects.clear();
+		Objects.clear();
 	}
-	void ObjectManager::addGameObject(GameObject& obj) {
-		gameObjects.emplace(obj.getID(), &obj);
+	void ObjectManager::addObject(Object* obj) {
+		id_t newID = assignObjectID();
+		obj->_id = newID;
+		Objects.emplace(newID, obj);
 	}
-	GameObject& ObjectManager::getGameObject(std::string name)
+	Object* ObjectManager::getObject(std::string name)
 	{
-		auto findByName = [name](const std::pair<id_t, GameObject*>& a) { return a.second->getName() == name; };
-		auto it = find_if(gameObjects.begin(), gameObjects.end(), findByName);
-		return *it->second;
+		auto findByName = [name](const std::pair<id_t, Object*>& a) { return a.second->_name == name; };
+		auto it = find_if(Objects.begin(), Objects.end(), findByName);
+		return it->second;
 	}
-	GameObject& ObjectManager::getGameObject(id_t pID)
+	Object* ObjectManager::getObject(id_t pID)
 	{
-		return *gameObjects.find(pID)->second;
+		return Objects.find(pID)->second;
 	}
-	id_t ObjectManager::assignGameObjectID()
+	id_t ObjectManager::assignObjectID()
 	{
 		id_t i = 0;
-		while (gameObjects.contains(i)) {
+		while (Objects.contains(i)) {
 			i++;
 		}
 		return i;
 	}
-	void ObjectManager::deleteGameObject(GameObject& obj) { deleteGameObject(obj.getID()); }
-	void ObjectManager::deleteGameObject(id_t pID) { 
-		delete& gameObjects[pID];
-		gameObjects.erase(pID);
+	void ObjectManager::deleteObject(Object* obj) { deleteObject(obj->_id); }
+	void ObjectManager::deleteObject(id_t pID) { 
+		delete Objects[pID];
+		Objects.erase(pID);
 	}
 }

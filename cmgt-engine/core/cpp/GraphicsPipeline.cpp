@@ -69,9 +69,6 @@ namespace cmgt {
 	GraphicsPipeline::~GraphicsPipeline() {
 		freeShaders();
 		//clear meshes
-		for(Mesh* mesh : renderMeshs){
-			delete mesh;
-		}
 		renderMeshs.clear();
 		//clear buffers
 		for (VulkanBuffer* buffer : uniformBuffers)
