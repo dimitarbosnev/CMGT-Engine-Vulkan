@@ -7,5 +7,7 @@
 7. Add ImGui to the project -> might translate into making an editor
 8. Implement Textures
 9. Implement Better Graphics Pipelines
-10. Implement Physics
-11. Have Fun I guess :)
+10. Implement Physics -> GJK Algorithm
+11. Implement proper Subscribe system
+12. Implement proper Event system
+13. Have Fun I guess :)
