@@ -4,9 +4,8 @@
 #pragma once
 #include "minimal/types.h"
 #include <vulkan/vulkan_core.h>
-#include<GLFW/glfw3.h>
-#include<iostream>
-#include<string>
+#include <iostream>
+#include <string>
 
 #define GLFW_EXPOSE_NATIVE_WIN32
 
@@ -14,33 +13,31 @@ namespace cmgt
 {
 	class Window : public Singelton<Window>
 	{
-		friend class Input;
 	private:
 		Window(const Window&);
 		Window& operator=(const Window&);
-
-		GLFWwindow* window;
-		void InitWindow();
-		static void resizeWindowCallBack(GLFWwindow* pWindow, int pWidth, int pHeight);
-
+	protected:
 		int _width;
 		int _height;
 		bool _resized = false;
+		virtual void InitWindow() = 0;
+		virtual void FreeWindow() = 0;
 	public:
 		Window(int pWidth, int pHeight, const std::string& pName);
-		~Window();
+		virtual ~Window();
 
 		const std::string windowName;
 
-		int getKeyState(int keyCode);
-		bool isOpened();
-		bool isWindowResized() { return _resized; }
+
 		void resetWindowResizeFlag() { _resized = false; }
-		void update();
-		void close();
-		void initVKSurface(VkInstance& instance, VkSurfaceKHR& surface);
-		void GetFrameBuffer(int& width, int& height);
+		bool isWindowResized() { return _resized; }
 		VkExtent2D getWindowExtend() { return { static_cast<uint32_t>(_width), static_cast<uint32_t>(_height) }; }
+		virtual void waitEvents() = 0;
+		virtual bool isOpened() = 0;
+		virtual void update() = 0;
+		virtual void initVKSurface(VkInstance& instance, VkSurfaceKHR& surface) = 0;
+		virtual std::vector<const char*> getInstanceExtentions() = 0;
+		virtual void GetFrameBuffer(int& width, int& height) = 0;
 	};
 }
 #endif //WINDOW_H

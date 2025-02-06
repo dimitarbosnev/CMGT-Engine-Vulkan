@@ -10,7 +10,7 @@ namespace cmgt {
 	SceneManager* sceneManager;          
                                                   //     
     void InitGlobals(){
-        gameWindow = new Window(1600,900,"CMGT-Engnie");                            
+        gameWindow = new GLFWindow(1600,900,"CMGT-Engnie");                            
         vulkanInstance = new VulkanInstance();                                      
         vulkanSwapchain = new VulkanSwapchain();  
         vulkanRenderer = new VulkanRenderer();    

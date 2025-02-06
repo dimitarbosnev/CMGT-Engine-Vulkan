@@ -8,6 +8,7 @@
 #include "core/VulkanRenderer.h"
 #include "vulkan-api/VulkanInstance.h"
 #include "vulkan-api/Window.h"
+#include "vulkan-api/GLFW_Window.h"
 #include "vulkan-api/VulkanSwapchain.h"
 
 namespace cmgt{

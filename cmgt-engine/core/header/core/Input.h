@@ -2,17 +2,15 @@
 #define INPUT_H
 
 #pragma once
-#include "vulkan-api/Window.h"
+#include "vulkan-api/GLFW_Window.h"
 #include "minimal/glm.h"
 #include "minimal/types.h"
 namespace cmgt
 {
+	//Input class should be revisited for now it will only work wit GLFW_Window
 	class Input
 	{
 	private:
-
-		Input(const Input&);
-		Input& operator=(const Input&);
 		inline static GLFWwindow* window = nullptr;
 		inline static glm::vec2 _previousMousePosition = glm::vec2(0);
 	public:

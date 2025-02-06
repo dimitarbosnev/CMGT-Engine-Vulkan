@@ -11,7 +11,6 @@
 #include <iostream>
 #include <unordered_set>
 #include <filesystem>
-#include <GLFW/glfw3.h>
 namespace cmgt {
 	
 	uint32_t findMemoryType(VkPhysicalDevice physicalDevice, uint32_t typeFilter, VkMemoryPropertyFlags properties) {
@@ -449,11 +448,8 @@ namespace cmgt {
 	}
 
 	std::vector<const char*> VulkanInstance::getRequiredExtensions() {
-		uint32_t glfwExtensionCount = 0;
-		const char** glfwExtensions;
-		glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
 
-		std::vector<const char*> extensions(glfwExtensions, glfwExtensions + glfwExtensionCount);
+		std::vector<const char*> extensions = Window::get()->getInstanceExtentions();
 
 		if (enableValidationLayers) {
 			extensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);

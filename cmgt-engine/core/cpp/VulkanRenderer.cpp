@@ -115,7 +115,8 @@ namespace cmgt {
 		auto extent = gameWindow->getWindowExtend();
 		while (extent.width == 0 || extent.height == 0) {
 			extent = gameWindow->getWindowExtend();
-			glfwWaitEvents();
+			
+			Window::get()->waitEvents();
 		}
 		
 		vkDeviceWaitIdle(VulkanInstance::get()->device());

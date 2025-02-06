@@ -4,14 +4,15 @@ namespace cmgt{
     
     
     void Input::InitInput(){
-        window = Window::get()->window;
+        GLFWindow* gameWindow = dynamic_cast<GLFWindow*>(Window::get());
+        window = gameWindow->window;
     }
     void Input::processInput()
     {
         _previousMousePosition = mousePosition();
     }
 
-
+    //Input Functions should be called through the window
     bool Input::isKeyPressed(int key) {
         return glfwGetKey(window, key) == GLFW_PRESS;
     }
