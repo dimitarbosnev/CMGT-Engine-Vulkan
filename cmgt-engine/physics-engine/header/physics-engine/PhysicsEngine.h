@@ -21,9 +21,9 @@ namespace cmgt
 		void update(float pStep); 
 		const glm::vec3& getGravity() { return gravity; }
 		void addCollider(Collider* collider){colliders.push_back(collider);}
+		static std::vector<glm::vec3> checkCollision(Shape& shape1, Shape& shape2);
 	private:
 		glm::vec3 gravity;
-		static std::vector<glm::vec3> checkCollision(Shape& shape1, Shape& shape2);
 		static glm::vec3 getSupportPoint(Shape& shape1, Shape& shape2, glm::vec3 dir);
 		static glm::vec3 getFurthestPoint(Shape& shape1,glm::vec3 dir);
 		static bool loopCheck(glm::vec3 simplex[4],Shape& shape1, Shape& shape2);

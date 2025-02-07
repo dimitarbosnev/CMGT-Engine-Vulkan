@@ -46,8 +46,9 @@ namespace cmgt
     // calculate point 2
         glm::vec3 supportPoint2 = getSupportPoint(shape1, shape2, direction);
         // check if the support point passed the origin
-        if (glm::dot(supportPoint2, glm::normalize(direction)) < 0)
-            return simplex;
+
+        //if (glm::dot(supportPoint2, glm::normalize(direction)) < 0)
+        //    return false;
 
         //simplex[1] = supportPoint2;
         simplex.push_back(supportPoint2);
@@ -66,8 +67,9 @@ namespace cmgt
 
         glm::vec3 supportPoint3 = getSupportPoint(shape1, shape2, direction);
         // check if the support point passed the origin
-        if (glm::dot(supportPoint3, glm::normalize(direction)) < 0)
-            return simplex;
+
+        //if (glm::dot(supportPoint3, glm::normalize(direction)) < 0)
+        //    return false;
 
         //simplex[2] = supportPoint3;
         simplex.push_back(supportPoint3);
@@ -84,16 +86,24 @@ namespace cmgt
         glm::vec3 supportPoint4 = getSupportPoint(shape1, shape2, direction);
 
         // check if the support point passed the origin
-        if (glm::dot(supportPoint4, glm::normalize(direction)) < 0)
-            return simplex;
+
+        //if (glm::dot(supportPoint4, glm::normalize(direction)) < 0)
+        //    return false;
 
         //simplex[3] = supportPoint4;
         simplex.push_back(supportPoint4);
+    
+    return simplex;
 
     //Final Checks 
 
         //return loopCheck(simplex,shape1, shape2);
     }
+
+
+
+
+
 
     glm::vec3 PhysicsEngine::getSupportPoint(Shape &shape1, Shape &shape2, glm::vec3 dir)
     {
@@ -101,6 +111,10 @@ namespace cmgt
 
         return getFurthestPoint(shape2, -dir) - getFurthestPoint(shape1, dir);
     }
+
+
+
+
 
     glm::vec3 PhysicsEngine::getFurthestPoint(Shape &shape, glm::vec3 dir)
     {
@@ -123,6 +137,11 @@ namespace cmgt
         return shape.worldTransform[3] * glm::vec4(furthestVert,1);
     }
 
+
+
+
+
+    
     bool PhysicsEngine::loopCheck(glm::vec3 simplex[4], Shape &shape1, Shape &shape2)
     {
         //NOTE: Its possible that the normal of ABC has to be recalculated and checked ones we change a point
