@@ -37,7 +37,7 @@ namespace cmgt {
 		commandBuffers.clear();
 	}
 
-	void VulkanRenderer::recordCommandBuffer(int imageIndex, glm::mat4 viewMatrix, glm::mat4 projectionMatrix) {
+	void VulkanRenderer::recordCommandBuffer(uint8_t imageIndex, glm::mat4 viewMatrix, glm::mat4 projectionMatrix) {
 
 		VulkanSwapchain* VkSwapchain = VulkanSwapchain::get();
 		VkCommandBufferBeginInfo beginInfo{};

@@ -35,8 +35,6 @@ namespace cmgt
 	private:
 		void Serialize();
 		void Deserialize();
-		Object(const Object&);
-		Object& operator= (const Object&);
 	};
 }
 #endif // OBJECT_H

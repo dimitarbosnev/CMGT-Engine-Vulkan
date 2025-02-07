@@ -1,5 +1,7 @@
 #ifndef PHYSICSBODY_H
 #define PHYSICSBODY_H
+
+#pragma once
 #include "minimal/glm.h"
 #include "core/Component.h"
 

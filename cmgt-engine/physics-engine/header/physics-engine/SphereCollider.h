@@ -1,5 +1,7 @@
 #ifndef SPHERECOLLIDER_H
 #define SPHERECOLLIDER_H
+
+#pragma once
 #include "minimal/glm.h"
 #include "physics-engine/Collider.h"
 

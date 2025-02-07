@@ -1,9 +1,13 @@
 
 #include "physics-engine/Collider.h"
 #include "core/GameObject.h"
+#include "physics-engine/PhysicsEngine.h"
 namespace cmgt{
 
-    Collider::Collider() {
+    Collider::Collider(std::vector<Vertex> meshData) {
+        colliderMesh = meshData;
+        _name = "Collider";
+        PhysicsEngine::get()->addCollider(this);
     }
 
 

@@ -1,5 +1,7 @@
 #ifndef PLANECOLLIDER_H
 #define PLANECOLLIDER_H
+
+#pragma once
 #include "minimal/glm.h"
 #include "physics-engine/Collider.h"
 

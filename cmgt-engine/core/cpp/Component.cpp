@@ -14,5 +14,5 @@ namespace cmgt{
     }
 
     void Component::update(float pStep) {}
-    glm::mat4 Component::getTransform() { return _owner->getWorldTransform(); }
+    Transform& Component::getTransform() { return _owner->getTransform(); }
 }

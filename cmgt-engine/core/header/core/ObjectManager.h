@@ -21,7 +21,7 @@ namespace cmgt
         void deleteObject(id_t pID);
 
     private:
-        std::map<id_t, Object*> Objects;
+        std::map<id_t, Object*> Objects{};
         ObjectManager(const ObjectManager&) = delete;
         ObjectManager operator=(const ObjectManager&) = delete;
     };

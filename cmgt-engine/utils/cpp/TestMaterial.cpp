@@ -6,6 +6,7 @@
 namespace cmgt {	
 	TestMaterial::TestMaterial()
 	{
+		_name = "TestMaterial";
 		//For Everymaterial the pipeline should be initalized
 		if(pipeline == nullptr){
 			initPipeline();

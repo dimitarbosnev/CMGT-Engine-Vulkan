@@ -28,6 +28,8 @@ namespace cmgt {
 		virtual ~Mesh();
 		void render(const VulkanFrameData& frameData);
 		void update(float dt) override;
+		void setVertexData(const std::vector<Vertex>& vertecies) {vertexData = vertecies;}
+		const std::vector<Vertex>& getVertexData() { return vertexData;}
 	protected:
 		Material* _material;
 		VulkanBuffer* vertexBuffer;
@@ -40,6 +42,7 @@ namespace cmgt {
 		void createIndexBuffers(const std::vector<uint32_t>& indices);
 
 	private:
+		std::vector<Vertex> vertexData;
 		Mesh(const Mesh&);
 		Mesh& operator=(const Mesh&);
 	};

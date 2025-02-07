@@ -3,8 +3,7 @@
 #include "core/Component.h"
 namespace cmgt {
 
-    GameObject::GameObject(const  std::string& pName) :
-        _parent{ nullptr }, _transform{ glm::mat4(1) }, _world{ nullptr } {
+    GameObject::GameObject(const  std::string& pName) : _world{ nullptr } {
             _name = pName;
     }
     GameObject::~GameObject()
@@ -13,44 +12,15 @@ namespace cmgt {
         _components.clear();
     }
 
-    void GameObject::setTransform(const glm::mat4& pTransform)
+    void GameObject::setTransform(const Transform& pTransform)
     {
         _transform = pTransform;
     }
 
-    glm::mat4 GameObject::getTransform()
+    Transform& GameObject::getTransform()
     {
         return _transform;
     }
-
-    void GameObject::setLocalPosition(glm::vec3 pPosition)
-    {
-        _transform[3] = glm::vec4(pPosition, 1);
-    }
-
-    void GameObject::setWorldPosition(glm::vec3 pPosition)
-    {
-        //has to do some heavy computational work
-        _transform[3] = glm::vec4(pPosition, 1);
-    }
-
-    glm::vec3 GameObject::getLocalPosition() const
-    {
-        return glm::vec3(_transform[3]);
-    }
-
-    glm::vec3 GameObject::getScale() const
-    {
-        return glm::vec3();
-    }
-
-    glm::vec3 GameObject::getEulerRotation() const
-    {
-        glm::vec3 eulerAngles;
-        glm::extractEulerAngleXYZ(_transform, eulerAngles.x, eulerAngles.y, eulerAngles.z);
-        return eulerAngles;
-    }
-
 
     void GameObject::addComponent(Component* pBehaviour)
     {
@@ -73,8 +43,8 @@ namespace cmgt {
     }
     void GameObject::setParent(GameObject* pParent) {
         //remove from previous parent
-        if (_parent != nullptr) {
-            _parent->_innerRemove(this);
+        if (_transform._parent != nullptr) {
+            _transform._parent->_innerRemove(this);
         }
 
         //set new parent
@@ -87,12 +57,12 @@ namespace cmgt {
         //if we have been attached to a parent, make sure
         //the world reference for us and all our children is set to our parent world reference
         //(this could still be null if the parent or parent's parent is not attached to the world)
-        if (_parent == nullptr) {
+        if (_transform._parent == nullptr) {
             _setWorldRecursively(nullptr);
         }
         else {
             //might still not be available if our parent is not part of the world
-            _setWorldRecursively(_parent->_world);
+            _setWorldRecursively(_transform._parent->_world);
         }
     }
 
@@ -100,7 +70,7 @@ namespace cmgt {
         for (auto i = _children.begin(); i != _children.end(); ++i) {
             if (*i == pChild) {
                 _children.erase(i);
-                pChild->_parent = nullptr;
+                pChild->_transform._parent = nullptr;
                 return;
             }
         }
@@ -109,7 +79,7 @@ namespace cmgt {
     void GameObject::_innerAdd(GameObject* pChild)
     {
         _children.push_back(pChild);
-        pChild->_parent = this;
+        pChild->_transform._parent = this;
     }
 
     void GameObject::add(GameObject* pChild) {
@@ -127,37 +97,11 @@ namespace cmgt {
     }
 
     GameObject* GameObject::getParent() const {
-        return _parent;
+        return _transform._parent;
     }
     ////////////
 
     //costly operation, use with care
-    glm::vec3 GameObject::getWorldPosition() const
-    {
-        return glm::vec3(getWorldTransform()[3]);
-    }
-
-    //costly operation, use with care
-    glm::mat4 GameObject::getWorldTransform() const
-    {
-        if (_parent == nullptr) return _transform;
-        else return _parent->getWorldTransform() * _transform;
-    }
-
-    ////////////
-
-    void GameObject::Translate(glm::vec3 pTranslation) {
-        setTransform(glm::translate(_transform, pTranslation));
-    }
-
-    void GameObject::Scale(glm::vec3 pScale) {
-        setTransform(glm::scale(_transform, pScale));
-    }
-
-    void GameObject::Rotate(float pAngle, glm::vec3 pAxis) {
-        setTransform(glm::rotate(_transform, pAngle, pAxis));
-    }
-
     void GameObject::update(float pStep)
     {
         //make sure behaviour is updated after worldtransform is set

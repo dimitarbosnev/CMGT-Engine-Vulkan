@@ -3,7 +3,7 @@
 #include"core/GameObject.h"
 namespace cmgt{
 
-    PlaneCollider::PlaneCollider() {
+    PlaneCollider::PlaneCollider() : Collider(std::vector<Vertex>{}) {
     }
 
 

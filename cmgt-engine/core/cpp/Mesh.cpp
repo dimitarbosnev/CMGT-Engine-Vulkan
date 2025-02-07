@@ -18,16 +18,19 @@ namespace cmgt {
 
 		createVertexBuffers(builder.vertecies);
 		createIndexBuffers(builder.indices);
+
+		vertexData = builder.vertecies;
+		_name = fileName;
 		_material->getPipeline()->renderMeshs.push_back(this);
 	}
 	Mesh::Mesh(const std::vector<Vertex>& vertecies, Material* pMaterial) : _material(pMaterial) {
 		createVertexBuffers(vertecies);
+
+		vertexData = vertecies;
 		_material->getPipeline()->renderMeshs.push_back(this);
 	}
 
 	Mesh::~Mesh() {
-		//VkDevice device = vulkanInstance.device();
-		//delete _material;
 		delete vertexBuffer;
 		if(hasIndexBuffer) delete indexBuffer;
 	}
@@ -65,7 +68,7 @@ namespace cmgt {
 		vkCmdBindVertexBuffers(frameData.commandBuffer, 0, 1, buffers, offsets);
 		if (hasIndexBuffer) vkCmdBindIndexBuffer(frameData.commandBuffer, indexBuffer->getBuffer(), 0, VK_INDEX_TYPE_UINT32);
 
-		_material->bindPushConstants(frameData, getTransform());
+		_material->bindPushConstants(frameData, getTransform().getWorldTransform());
 
 		if (hasIndexBuffer) vkCmdDrawIndexed(frameData.commandBuffer, indexCount, 1, 0, 0, 0);
 		else vkCmdDraw(frameData.commandBuffer, vertexCount, 1, 0, 0);

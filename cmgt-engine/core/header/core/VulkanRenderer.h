@@ -20,7 +20,7 @@ namespace cmgt {
 		public:
 			VulkanRenderer();
 			~VulkanRenderer();
-			void recordCommandBuffer(int imageIndex, glm::mat4 viewMatrix, glm::mat4 projectionMatrix);
+			void recordCommandBuffer(uint8_t imageIndex, glm::mat4 viewMatrix, glm::mat4 projectionMatrix);
 			void drawFrame(glm::mat4 viewMatrix, glm::mat4 projectionMatrix);
 			std::list<GraphicsPipeline*> pipelines;
 			

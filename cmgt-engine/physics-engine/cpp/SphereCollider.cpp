@@ -3,7 +3,7 @@
 #include"core/GameObject.h"
 namespace cmgt{
 
-    SphereCollider::SphereCollider() {
+    SphereCollider::SphereCollider() : Collider(std::vector<Vertex>{}){
     }
 
 

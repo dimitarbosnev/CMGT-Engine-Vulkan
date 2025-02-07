@@ -4,6 +4,7 @@
 #pragma once
 #include "minimal/glm.h"
 #include "core/Object.h"
+#include "core/Transform.h"
 namespace cmgt
 {
 	class GameObject;
@@ -21,7 +22,7 @@ namespace cmgt
 		//behaviour should be able to update itself every step and MUST be implemented
 		virtual void update(float pStep);
 
-		glm::mat4 getTransform();
+		Transform& getTransform();
 	protected:
 
 		GameObject* _owner;

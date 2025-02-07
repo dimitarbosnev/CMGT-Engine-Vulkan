@@ -7,6 +7,7 @@
 #include "minimal/glm.h"
 #include "minimal/types.h"
 #include "core/Object.h"
+#include "core/Transform.h"
 #include <string>
 #include <vector>
 
@@ -14,7 +15,6 @@ namespace cmgt
 {
 	class World;
 	class Component;
-
 	class GameObject : public Object
 	{
 	public:
@@ -22,28 +22,11 @@ namespace cmgt
 
 		virtual ~GameObject();
 
-
-
-
 		//contains local rotation, scale, position
-		void setTransform(const glm::mat4& pTransform);
-		glm::mat4 getTransform();
+		void setTransform(const Transform& pTransform);
+		Transform& getTransform();
 
 		//access just the local position
-		void setLocalPosition(glm::vec3 pPosition);
-		void setWorldPosition(glm::vec3 pPosition);
-		glm::vec3 getLocalPosition() const;
-		glm::vec3 getScale() const;
-		glm::vec3 getEulerRotation() const;
-		//get the objects world position by combining transforms, SLOW use with care
-		glm::vec3 getWorldPosition() const;
-		glm::mat4 getWorldTransform() const;
-
-		//change LOCAL position, rotation, scaling
-		void Translate(glm::vec3 pTranslation);
-		void Rotate(float pAngle, glm::vec3 pAxis);
-		void Scale(glm::vec3 pScale);
-
 
 		void addComponent(Component* pBehaviour);
 		template<class T>  T* getComponent();
@@ -68,9 +51,8 @@ namespace cmgt
 
 	protected:
 		//Used to spawn objects from world seed
-		glm::mat4 _transform;
+		Transform _transform;
 
-		GameObject* _parent;
 		std::vector<GameObject*> _children;
 
 		std::vector<Component*> _components;
