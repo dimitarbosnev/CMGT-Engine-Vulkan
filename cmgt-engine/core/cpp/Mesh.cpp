@@ -21,13 +21,11 @@ namespace cmgt {
 
 		vertexData = builder.vertecies;
 		_name = fileName;
-		_material->getPipeline()->renderMeshs.push_back(this);
 	}
 	Mesh::Mesh(const std::vector<Vertex>& vertecies, Material* pMaterial) : _material(pMaterial) {
 		createVertexBuffers(vertecies);
 
 		vertexData = vertecies;
-		_material->getPipeline()->renderMeshs.push_back(this);
 	}
 
 	Mesh::~Mesh() {
@@ -74,7 +72,7 @@ namespace cmgt {
 		else vkCmdDraw(frameData.commandBuffer, vertexCount, 1, 0, 0);
 	}
 	void Mesh::update(float dt) {
-		//_material->getPipeline()->renderMeshs.add(render);
+		_material->getPipeline()->scheduleToRender(this);
 	}
 	
 	void Mesh::Builder::loadModel(const std::string& filePath) {

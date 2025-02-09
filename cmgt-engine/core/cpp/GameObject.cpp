@@ -27,20 +27,10 @@ namespace cmgt {
         _components.push_back(pBehaviour);
 
         pBehaviour->setOwner(this);
+        pBehaviour->OnSetOwner();
     }
 
-    template<class T> T* GameObject::getComponent()
-    {
-        static_assert(std::is_base_of<Component, T>::value, "type parameter of this class must derive from Component");
-        //use dynamic_cast to find the right component
-        for(Component* child : _components)
-        {
-            if(T* component = dynamic_cast<T>(child)){
-                return component;
-            }
-        }
-        return nullptr;
-    }
+
     void GameObject::setParent(GameObject* pParent) {
         //remove from previous parent
         if (_transform._parent != nullptr) {

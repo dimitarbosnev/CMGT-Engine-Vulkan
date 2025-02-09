@@ -9,10 +9,16 @@ namespace cmgt{
     Component::~Component() {
     }
 
+    void Component::update(float pStep) {}
+
+    Transform& Component::getTransform() { return _owner->getTransform(); }
+
+
     void Component::setOwner(GameObject* pOwner) {
         _owner = pOwner;
     }
 
-    void Component::update(float pStep) {}
-    Transform& Component::getTransform() { return _owner->getTransform(); }
+    void Component::OnSetOwner(){
+        
+    }
 }

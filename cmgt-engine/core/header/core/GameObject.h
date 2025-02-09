@@ -15,6 +15,7 @@ namespace cmgt
 {
 	class World;
 	class Component;
+	class Mesh;
 	class GameObject : public Object
 	{
 	public:
@@ -29,7 +30,17 @@ namespace cmgt
 		//access just the local position
 
 		void addComponent(Component* pBehaviour);
-		template<class T>  T* getComponent();
+
+		template<typename T> T* getComponent() {
+			for(Component* child : _components)
+			{
+				if(T* component = dynamic_cast<T*>(child)){
+					return component;
+				}
+			}
+			return nullptr;
+		}
+
 		virtual void update(float pStep);
 
 		//child management, note that add/remove and setParent are closely coupled.

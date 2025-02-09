@@ -10,9 +10,8 @@ namespace cmgt {
 
 	//Override setOwner to make sure we are registered
 	//to the world we are a part of.
-	void Light::setOwner(GameObject* pOwner) {
+	void Light::OnSetOwner() {
 		//if (pOwner == nullptr) return;
-		Component::setOwner(pOwner);
 		//_owner->getWorld()->registerLight(this);
 	}
 

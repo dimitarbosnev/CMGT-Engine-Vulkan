@@ -1,6 +1,9 @@
 #ifndef GLOBALS_H
 #define GLOBALS_H
 
+//use SAT for now it is more efficent over all and GJK/EPA has a problem with axis aligned objects giving weird collision normals
+#define SAT
+
 #pragma once
 #include "core/ObjectManager.h"
 #include "core/SceneManager.h"

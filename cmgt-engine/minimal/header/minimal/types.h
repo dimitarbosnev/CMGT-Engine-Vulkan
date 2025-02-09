@@ -1,10 +1,20 @@
 #ifndef TYPES_H
 #define TYPES_H
+
+#define EPSILON std::numeric_limits<float>::epsilon()
+#define MAX std::numeric_limits<float>::max()
+//can be moved to settings
+
 #pragma once
 #include "minimal/glm.h"
+#include <chrono>
 #include <vulkan/vulkan.h>
 namespace cmgt {
     typedef long int id_t;
+	typedef std::chrono::high_resolution_clock clock;
+	typedef std::chrono::milliseconds ms;
+	typedef std::chrono::microseconds mc;
+    typedef std::chrono::nanoseconds ns;
 
     struct Vertex {
 	public:

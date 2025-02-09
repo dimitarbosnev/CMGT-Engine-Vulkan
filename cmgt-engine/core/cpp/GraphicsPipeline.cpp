@@ -149,6 +149,9 @@ namespace cmgt {
 		delete[] shaderStages;
 	}
 
+	void GraphicsPipeline::scheduleToRender(Mesh* mesh){
+		renderMeshs.push_back(mesh);
+	}
 	//void GraphicsPipeline::createPipeline()
 	//{
 	//	GraphicsPipelineInfo configInfo{};
@@ -176,6 +179,7 @@ namespace cmgt {
 		for(Mesh* mesh : renderMeshs){
 			mesh->render(frameData);
 		}
+		renderMeshs.clear();
 	}
 
 	void GraphicsPipeline::bind(VkCommandBuffer commandBuffer) {

@@ -11,24 +11,25 @@ namespace cmgt
 
 	class Component : public Object
 	{
+		friend class GameObject;
 	public:
 
 		Component();
 
 		virtual ~Component();
 		//for internal administration, do not use directly
-		virtual void setOwner(GameObject* pGameObject);
-
+		
 		//behaviour should be able to update itself every step and MUST be implemented
 		virtual void update(float pStep);
-
+		
 		Transform& getTransform();
-	protected:
-
+		protected:
+		
 		GameObject* _owner;
-
+	protected:
+		virtual void OnSetOwner();
 	private:
-
+		void setOwner(GameObject* pGameObject);
 		//disallow copy and assignment
 		Component(const Component&) = delete;
 		Component& operator=(const Component&) = delete;

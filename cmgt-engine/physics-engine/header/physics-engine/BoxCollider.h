@@ -1,5 +1,5 @@
-#ifndef PLANECOLLIDER_H
-#define PLANECOLLIDER_H
+#ifndef BOXCOLLIDER_H
+#define BOXCOLLIDER_H
 
 #pragma once
 #include "minimal/glm.h"
@@ -7,20 +7,17 @@
 
 namespace cmgt
 {
-	class PlaneCollider : public Collider
+	class BoxCollider : public Collider
 	{
 	public:
-
-	public:
-		PlaneCollider();
+		BoxCollider();
 		//behaviour should be able to update itself every step and MUST be implemented
 		void update(float pStep) override;
-
 	private:
 
 		//disallow copy and assignment
-		PlaneCollider(const PlaneCollider&);
-		PlaneCollider& operator=(const PlaneCollider&);
+		BoxCollider(const BoxCollider&);
+		BoxCollider& operator=(const BoxCollider&);
 	};
 } 
-#endif // PLANECOLLIDER_H
+#endif // BOXCOLLIDER_H

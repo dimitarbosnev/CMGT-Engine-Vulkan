@@ -9,29 +9,26 @@
 #include <list>
 namespace cmgt
 {
+	struct Shape;
 	class Collider : public Component
 	{
 	protected:
 		glm::vec3 offset;
 		glm::vec3 scale;
 	public:
-		Collider(std::vector<Vertex> meshData);
+		Collider();
 		//behaviour should be able to update itself every step and MUST be implemented
 		virtual void update(float pStep) override;
-		std::vector<Vertex> colliderMesh;
+		std::list<glm::vec3> colliderMesh;
+		//used in the SAT algorithm
+		virtual std::pair<float, float> getMinMaxValues(const Shape& shape, glm::vec3 axis);
+		//used in the GJK/EPA algorithm
+		virtual glm::vec3 getFurthestPoint(const Shape& shape1,glm::vec3 dir);
 	private:
 
 		//disallow copy and assignment
 		Collider(const Collider&);
 		Collider& operator=(const Collider&);
-	};
-
-	struct Shape{
-		Shape(Collider* collider) : colliderMesh(collider->colliderMesh){
-			worldTransform = collider->getTransform().getWorldTransform();
-		}
-		const std::vector<Vertex>& colliderMesh;
-		glm::mat4 worldTransform;
 	};
 } 
 #endif // COLLIDER_H

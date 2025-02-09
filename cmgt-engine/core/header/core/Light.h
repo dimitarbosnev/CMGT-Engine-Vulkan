@@ -21,7 +21,6 @@ namespace cmgt {
 		Light(LightType type = Ambient);
 		~Light() override;
 
-		virtual void setOwner(GameObject* pOwner) override;
 		virtual void update(float pStep) override;
 
 		void setLightColor(glm::vec3 color) {
@@ -58,6 +57,7 @@ namespace cmgt {
 		*				[position,  range]
 		*/
 	protected:
+		virtual void OnSetOwner() override;
 		glm::vec4 _color = glm::vec4(1);
 		glm::vec3 _direction = glm::vec3(1);
 		float _range;

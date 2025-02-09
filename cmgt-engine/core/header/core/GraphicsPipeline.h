@@ -54,25 +54,21 @@ namespace cmgt {
 		VkPipelineLayout pipelineLayout() {return _pipelineLayout;}
 		void writeUniformBuffers(const short& imageIndex, const VkCommandBuffer& commandBuffer, const void* pData);
 		void recordFrameCommandBuffer(const VulkanFrameData& frameData);
+		void createPipelineLayout();
+		void createPipeline();
+		void scheduleToRender(Mesh* mesh);
+		
+	private:
+		
 		std::function<void(const VulkanFrameData&)> setUniformData;
 		std::function<void()> freeShaders;
 		std::function<VulkanDescriptorSetLayout(uint32_t&)> setDesriptorSetLayout;//have to be set
 		std::function<VkPipelineShaderStageCreateInfo*(uint8_t&)> setPipelineShaderStages;//have to be set
 		std::function<VkPushConstantRange()> setPushConstants;//have to be set
 		std::list<Mesh*> renderMeshs;
-		void createPipelineLayout();
-		void createPipeline();
-
-		
-	private:
-
 		void createPipeline(const GraphicsPipelineInfo& info);
-		//MOVE TO SHADER PROGRAM
-
-		//
 		VkPipelineLayout _pipelineLayout;
 		VkPipeline graphicsPipeline;
-		//ShaderProgram shaderProgram;
 		VulkanDescriptorPool descriptorPool;
 		std::vector<VulkanBuffer*> uniformBuffers;
 		std::vector<VkDescriptorSet> descriptorSets;
