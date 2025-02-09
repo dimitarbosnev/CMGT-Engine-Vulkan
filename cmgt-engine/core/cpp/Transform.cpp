@@ -10,24 +10,34 @@ namespace cmgt{
         newMatrix[3] = glm::vec4(pPosition, 1); 
 
         if (_parent != nullptr) 
-        matrix = _parent->getTransform().getWorldTransform() * newMatrix;
-     
+        newMatrix = _parent->getTransform().getWorldTransform() * newMatrix;
+        
+        setMatrix(newMatrix);
     }
-    void Transform::setWorldTransform(const glm::mat4& newMatrix){
+
+    void Transform::setWorldTransform(const glm::mat4& pMatrix){
+        glm::mat4 newMatrix = pMatrix;
         if (_parent != nullptr) 
-        matrix = _parent->getTransform().getWorldTransform() * newMatrix;
+        newMatrix = _parent->getTransform().getWorldTransform() * pMatrix;
+
+        setMatrix(newMatrix);
     }
 
     glm::vec3 Transform::getLocalPosition()	{ 
-        return glm::vec3(matrix[3]); 
+        return glm::vec3(getMatrix()[3]); 
     }
     glm::vec3 Transform::getScale() { 
-        return glm::vec3(); 
+        glm::mat4 newMatrix = getMatrix();
+        glm::vec3 scale;
+        scale.x = glm::length(glm::vec3(newMatrix[0]));
+        scale.y = glm::length(glm::vec3(newMatrix[1]));
+        scale.z = glm::length(glm::vec3(newMatrix[2]));
+        return scale;
     }
     
     glm::vec3 Transform::getEulerRotation() {
         glm::vec3 eulerAngles;
-        glm::extractEulerAngleXYZ(matrix, eulerAngles.x, eulerAngles.y, eulerAngles.z);
+        glm::extractEulerAngleXYZ(getMatrix(), eulerAngles.x, eulerAngles.y, eulerAngles.z);
         return eulerAngles; 
     }
 
@@ -36,7 +46,7 @@ namespace cmgt{
     }
     glm::mat4 Transform::getWorldTransform() {
         if (_parent == nullptr) return matrix;
-        else return _parent->getTransform().getWorldTransform() * matrix;
+        else return _parent->getTransform().getWorldTransform() * getMatrix();
     };
 
     glm::mat4 Transform::toWorldSpace(const glm::mat4& pMatrix){
@@ -53,15 +63,15 @@ namespace cmgt{
     }
 
     void Transform::Translate(const glm::vec3& pTranslation) {
-        matrix = glm::translate(matrix, pTranslation);
+        setMatrix(glm::translate(getMatrix(), pTranslation));
     }
 
     void Transform::Rotate(float pAngle, const glm::vec3& pAxis) {
-        matrix = glm::rotate(matrix, pAngle, pAxis);
+        setMatrix(glm::rotate(getMatrix(), pAngle,pAxis));
     }
 
     void Transform::Scale(const glm::vec3& pScale) {
-        matrix = glm::scale(matrix, pScale);
+        setMatrix(glm::scale(getMatrix(), pScale));
     }
 
 }

@@ -12,9 +12,9 @@ namespace cmgt {
         _components.clear();
     }
 
-    void GameObject::setTransform(const Transform& pTransform)
+    void GameObject::setTransform(Transform& pTransform)
     {
-        _transform = pTransform;
+        _transform.setParent(pTransform.getParent());
     }
 
     Transform& GameObject::getTransform()
@@ -33,8 +33,8 @@ namespace cmgt {
 
     void GameObject::setParent(GameObject* pParent) {
         //remove from previous parent
-        if (_transform._parent != nullptr) {
-            _transform._parent->_innerRemove(this);
+        if (_transform.getParent() != nullptr) {
+            _transform.getParent()->_innerRemove(this);
         }
 
         //set new parent
@@ -47,12 +47,12 @@ namespace cmgt {
         //if we have been attached to a parent, make sure
         //the world reference for us and all our children is set to our parent world reference
         //(this could still be null if the parent or parent's parent is not attached to the world)
-        if (_transform._parent == nullptr) {
+        if (_transform.getParent() == nullptr) {
             _setWorldRecursively(nullptr);
         }
         else {
             //might still not be available if our parent is not part of the world
-            _setWorldRecursively(_transform._parent->_world);
+            _setWorldRecursively(_transform.getParent()->_world);
         }
     }
 
@@ -60,7 +60,7 @@ namespace cmgt {
         for (auto i = _children.begin(); i != _children.end(); ++i) {
             if (*i == pChild) {
                 _children.erase(i);
-                pChild->_transform._parent = nullptr;
+                pChild->_transform.setParent(nullptr);
                 return;
             }
         }
@@ -69,7 +69,7 @@ namespace cmgt {
     void GameObject::_innerAdd(GameObject* pChild)
     {
         _children.push_back(pChild);
-        pChild->_transform._parent = this;
+        pChild->_transform.setParent(this);
     }
 
     void GameObject::add(GameObject* pChild) {
@@ -86,8 +86,8 @@ namespace cmgt {
 
     }
 
-    GameObject* GameObject::getParent() const {
-        return _transform._parent;
+    GameObject* GameObject::getParent() {
+        return _transform.getParent();
     }
     ////////////
 

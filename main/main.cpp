@@ -11,7 +11,7 @@
 #include "minimal/types.h"
 #include <memory>
 #include <string>
-
+#include <thread>
 cmgt::PhysicsEngine* physicsEngnie;
 void DestroyGame(){
 	//if(cmgt::TestMaterial::pipeline)
@@ -65,56 +65,101 @@ void OnGameStart(){
 	cmgt::SceneManager::get()->addScene(*firstScene);
 }
 
-int main() {
-	cmgt::InitGlobals();
-	OnGameStart();
 
-	//std::vector<cmgt::GameObject*> points(4);
-	
-    const cmgt::ms phys_step = cmgt::ms(1000 / PHYSICS_STEP); // Time per iteration
+void game_loop(){
+
+	const cmgt::ms fixed_game_step = cmgt::ms(1000 / TARGET_FPS); // Time per iteration
+
+    auto game_clock = cmgt::clock::now();
+
+	float second = 0;
+	float fps = 0;
+	while (!cmgt::Window::get()->isOpened()) {
+		float _deltaTime = std::chrono::duration<float>(cmgt::clock::now() - game_clock).count();
+		game_clock = cmgt::clock::now();
+
+		if (second >= 1)
+		{
+			std::cout << "FPS: " << fps << std::endl;
+			second = 0;
+			fps = 0;
+		}
+		else {
+			second += _deltaTime;
+			fps++;
+		}
+
+		cmgt::Input::processInput();
+		OnUpdate();
+		cmgt::SceneManager::get()->update(_deltaTime);
+	}
+}
+
+void physics_loop(){
+
+ const cmgt::ms phys_step = cmgt::ms(1000 / PHYSICS_STEP); // Time per iteration
 
     auto phys_clock = cmgt::clock::now();
-    float lastTick = glfwGetTime();
-		float second = 0;
-		float fps = 0;
-		while (!cmgt::Window::get()->isOpened()) {
-
-			
-
-			double time = glfwGetTime();
-			float _deltaTime = (float)time - lastTick;
-			lastTick = (float)time;
-			if (second >= 1)
-			{
-				std::cout << "FPS: " << fps << std::endl;
-				second = 0;
-				fps = 0;
-			}
-			else {
-				second += _deltaTime;
-				fps++;
-			}
-			OnUpdate();
-			cmgt::SceneManager::get()->update(_deltaTime);
-			cmgt::Input::processInput();
-
+		while (!cmgt::Window::get()->isOpened()) {	
 			if(cmgt::clock::now() >= phys_clock){
 				phys_clock += phys_step;
 				float phys_tick = std::chrono::duration<float>(cmgt::clock::now() - phys_clock).count();
 				cmgt::PhysicsEngine::get()->update(phys_tick);
 			}
-
-			//Debug collision code
-			//cmgt::Shape shape1(collider), shape2(collider2);
-			//std::vector<glm::vec3> simplex = cmgt::PhysicsEngine::GJKcheckCollision(shape1,shape2);
-			
-			//Debug collision code end
-			OnRender();
-			cmgt::Camera* camera = cmgt::SceneManager::get()->getCurrentScene()->getWorld()->getMainCamera();
-			glm::mat4 viewMatrix = camera->getTransform().getWorldTransform();
-			glm::mat4 projectionMatrix = camera->getProjection();
-			cmgt::VulkanRenderer::get()->drawFrame(viewMatrix,projectionMatrix);
 		}
+}
+
+void render_loop(){
+	while (!cmgt::Window::get()->isOpened()) {
+		OnRender();
+		cmgt::Camera* camera = cmgt::SceneManager::get()->getCurrentScene()->getWorld()->getMainCamera();
+		glm::mat4 viewMatrix = camera->getTransform().getWorldTransform();
+		glm::mat4 projectionMatrix = camera->getProjection();
+		cmgt::VulkanRenderer::get()->drawFrame(viewMatrix,projectionMatrix);
+	}
+}
+int main() {
+	cmgt::InitGlobals();
+	OnGameStart();
+	//std::thread game_thread(game_loop);
+	std::thread physics_thread(physics_loop);
+	//std::thread render_thread(render_loop);
+	const cmgt::ms fixed_game_step = cmgt::ms(1000 / TARGET_FPS); // Time per iteration
+
+    auto game_clock = cmgt::clock::now();
+
+	float second = 0;
+	float fps = 0;
+	while (!cmgt::Window::get()->isOpened()) {
+		float _deltaTime = std::chrono::duration<float>(cmgt::clock::now() - game_clock).count();
+		game_clock = cmgt::clock::now();
+
+		if (second >= 1)
+		{
+			std::cout << "FPS: " << fps << std::endl;
+			second = 0;
+			fps = 0;
+		}
+		else {
+			second += _deltaTime;
+			fps++;
+		}
+
+		cmgt::Input::processInput();
+		OnUpdate();
+		cmgt::SceneManager::get()->update(_deltaTime);
+
+		OnRender();
+		cmgt::Camera* camera = cmgt::SceneManager::get()->getCurrentScene()->getWorld()->getMainCamera();
+		glm::mat4 viewMatrix = camera->getTransform().getWorldTransform();
+		glm::mat4 projectionMatrix = camera->getProjection();
+		cmgt::VulkanRenderer::get()->drawFrame(viewMatrix,projectionMatrix);
+	}
+
+	//game_thread.join();
+	physics_thread.join();
+	//render_thread.join();
+	
 	vkDeviceWaitIdle(cmgt::VulkanInstance::get()->device());
 
     DestroyGame();
@@ -122,6 +167,3 @@ int main() {
     _CrtDumpMemoryLeaks();
     return EXIT_SUCCESS;
 }
-
-//Make spawnObject in worldSeed
-//Make newComponent and a manager for managing components

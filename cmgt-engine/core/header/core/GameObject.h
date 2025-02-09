@@ -24,7 +24,7 @@ namespace cmgt
 		virtual ~GameObject();
 
 		//contains local rotation, scale, position
-		void setTransform(const Transform& pTransform);
+		void setTransform(Transform& pTransform);
 		Transform& getTransform();
 
 		//access just the local position
@@ -53,7 +53,7 @@ namespace cmgt
 		void remove(GameObject* pChild);
 
 		void setParent(GameObject* pGameObject);
-		GameObject* getParent() const;
+		GameObject* getParent();
 
 		int getChildCount() const;
 		GameObject* getChildAt(int pIndex) const;

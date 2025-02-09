@@ -7,7 +7,7 @@
 #include "core/Object.h"
 #include <string>
 #include <vector>
-
+#include <mutex>
 namespace cmgt
 {
 	class World;
@@ -16,9 +16,12 @@ namespace cmgt
 	//The transform could be an object but not sure for now
 	class Transform {
 	private:
-		friend class GameObject;
+		//to make this class thread safe functions for acsessing/writing the matrix getMantrix()/setMatrix()
 		glm::mat4 matrix = glm::mat4(1);
+		std::mutex matrix_lock;
+
 		GameObject* _parent = nullptr;
+		std::mutex parent_lock;
 	public:
 		void setLocalPosition(const glm::vec3& pPosition);
 		//set the position in world space, SLOW use with care
@@ -28,8 +31,14 @@ namespace cmgt
 		glm::vec3 getLocalPosition();
 		glm::vec3 getScale();
 		glm::vec3 getEulerRotation();
-		glm::mat4 getMatrix() {return matrix; }
-		void setMatrix(const glm::mat4& newMatrix) { matrix = newMatrix; }
+		glm::mat4 getMatrix() { 
+			std::lock_guard<std::mutex> lock(matrix_lock);
+			return matrix; 
+		}
+		void setMatrix(const glm::mat4& newMatrix) { 
+			std::lock_guard<std::mutex> lock(matrix_lock);
+			matrix = newMatrix; 
+		}
 		//get the objects world position by combining transforms, SLOW use with care
 		glm::vec3 getWorldPosition();
 		//get the objects world position by combining transforms, SLOW use with care
@@ -44,7 +53,15 @@ namespace cmgt
 		//in local space
 		void Scale(const glm::vec3& pScale);
 
-		const GameObject* getParent(){return _parent;}
+		GameObject* getParent() {
+			std::lock_guard<std::mutex> lock(parent_lock);
+			return _parent;
+		}
+
+		void setParent(GameObject* pParent){
+			std::lock_guard<std::mutex> lock(parent_lock);
+			_parent = pParent;
+		}
 
 	};
 }
