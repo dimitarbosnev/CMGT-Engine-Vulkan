@@ -8,6 +8,7 @@
 #include "physics-engine/PhysicsBody.h"
 #include "physics-engine/MeshCollider.h"
 #include "physics-engine/SphereCollider.h"
+#include "minimal/types.h"
 #include <memory>
 #include <string>
 
@@ -70,11 +71,16 @@ int main() {
 
 	//std::vector<cmgt::GameObject*> points(4);
 	
+    const cmgt::ms phys_step = cmgt::ms(1000 / PHYSICS_STEP); // Time per iteration
 
+    auto phys_clock = cmgt::clock::now();
     float lastTick = glfwGetTime();
 		float second = 0;
 		float fps = 0;
 		while (!cmgt::Window::get()->isOpened()) {
+
+			
+
 			double time = glfwGetTime();
 			float _deltaTime = (float)time - lastTick;
 			lastTick = (float)time;
@@ -91,7 +97,12 @@ int main() {
 			OnUpdate();
 			cmgt::SceneManager::get()->update(_deltaTime);
 			cmgt::Input::processInput();
-			cmgt::PhysicsEngine::get()->update(_deltaTime);
+
+			if(cmgt::clock::now() >= phys_clock){
+				phys_clock += phys_step;
+				float phys_tick = std::chrono::duration<float>(cmgt::clock::now() - phys_clock).count();
+				cmgt::PhysicsEngine::get()->update(phys_tick);
+			}
 
 			//Debug collision code
 			//cmgt::Shape shape1(collider), shape2(collider2);

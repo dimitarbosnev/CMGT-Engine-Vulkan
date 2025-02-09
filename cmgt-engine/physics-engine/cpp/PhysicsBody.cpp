@@ -10,7 +10,4 @@ namespace cmgt{
 
     void PhysicsBody::update(float pStep) {
     }
-    void PhysicsBody::physicsStep(float pStep)
-    {
-    }
 }

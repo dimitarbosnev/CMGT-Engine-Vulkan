@@ -78,6 +78,7 @@ namespace cmgt
 		static bool SATcheckCollision(const Shape& shape1, const Shape& shape2, CollisionInfo* info);
 		static bool computeAxis(const Shape& shape1,const Shape& shape2, glm::vec3 axis, CollisionInfo* info);
 		static bool checkAxisOverlap(float min1, float max1, float min2, float max2, glm::vec3 axis, CollisionInfo* info);
+		//
 		//disallow copy and assignment
 		PhysicsEngine(const PhysicsEngine&);
 		PhysicsEngine& operator=(const PhysicsEngine&);

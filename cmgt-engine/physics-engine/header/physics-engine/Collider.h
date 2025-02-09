@@ -6,6 +6,7 @@
 #include "core/Component.h"
 #include "minimal/types.h"
 #include "core/Mesh.h"
+#include "physics-engine/PhysicsBody.h"
 #include <list>
 namespace cmgt
 {
@@ -24,8 +25,9 @@ namespace cmgt
 		virtual std::pair<float, float> getMinMaxValues(const Shape& shape, glm::vec3 axis);
 		//used in the GJK/EPA algorithm
 		virtual glm::vec3 getFurthestPoint(const Shape& shape1,glm::vec3 dir);
+		PhysicsBody& getPhysicsBody(){return *physicsBody;}
 	private:
-
+		PhysicsBody* physicsBody;
 		//disallow copy and assignment
 		Collider(const Collider&);
 		Collider& operator=(const Collider&);
