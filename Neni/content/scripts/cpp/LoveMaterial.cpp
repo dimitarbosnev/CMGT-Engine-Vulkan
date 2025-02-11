@@ -1,18 +1,16 @@
 
-#include "utils/TestMaterial.h"
-#include "minimal/paths.h"
-#include "core/Globals.h"
+#include "LoveMaterial.h"
 #include<iostream>
 namespace cmgt {	
-	TestMaterial::TestMaterial()
+	LoveMaterial::LoveMaterial()
 	{
-		_name = "TestMaterial";
+		_name = "LoveMaterial";
 		//For Everymaterial the pipeline should be initalized
 		if(pipeline == nullptr){
 			initPipeline();
 		}
 	}
-	void TestMaterial::bindPushConstants(const VulkanFrameData& frameData, const glm::mat4 pModelMatrix){
+	void LoveMaterial::bindPushConstants(const VulkanFrameData& frameData, const glm::mat4 pModelMatrix){
 
 		PushConstData data;
 		data.mvpMatrix = frameData.projectionMatrix * glm::inverse(frameData.viewMatrix) * pModelMatrix;
@@ -20,22 +18,25 @@ namespace cmgt {
 
 		vkCmdPushConstants(frameData.commandBuffer, pipeline->pipelineLayout(), VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(PushConstData), &data);
 	}
-	void TestMaterial::bindUniformBuffers(const VulkanFrameData& frameData){
+	void LoveMaterial::bindUniformBuffers(const VulkanFrameData& frameData){
+
+		VkExtent2D extend = Window::get()->getWindowExtend();
 
 		UniformData uniformData;
 		uniformData.cameraMatrix = frameData.viewMatrix;
 		uniformData.projMatrix = frameData.projectionMatrix;
-		uniformData.dirLight = glm::vec4(glm::normalize(glm::vec3(1, -1, 1)), 1);
+		uniformData.dirLight = glm::vec4(glm::normalize(glm::vec3(1, -1, 1)), 1.f);
 		uniformData.ambientLight = glm::vec4(1, 1, 1, .2f);
+		uniformData.windowSize = glm::vec2(extend.width,extend.height);
 
 		pipeline->writeUniformBuffers(frameData.imageIndex, frameData.commandBuffer,&uniformData);
 	}
-	void TestMaterial::initPipeline(){
+	void LoveMaterial::initPipeline(){
 
 		std::cout << "Initalizing Shaders...\n";
-		CreateShader("BasicVertexShader.vert", &vertexShaderModule);
+		CreateShader("LoveVertexShader.vert", &vertexShaderModule);
 		std::cout << "\t Vertex Shader Initalized!\n";
-		CreateShader("BasicFragmentShader.frag", &fragmentShaderModule);
+		CreateShader("LoveFragmentShader.frag", &fragmentShaderModule);
 		std::cout << "\t Fragment Shader Initalized!\n";
 
 		pipeline = new GraphicsPipeline(GraphicsPipeline::defaultGraphicsPipelineInfo(), createDescriptorSetLayout, bindPipelineShaderStages, setupPushConsts, bindUniformBuffers,freePipeline);
@@ -43,11 +44,11 @@ namespace cmgt {
 	}
 
 	//has to be called somewhere
-	void TestMaterial::freePipeline(){
+	void LoveMaterial::freePipeline(){
 		vkDestroyShaderModule(VulkanInstance::get()->device(), vertexShaderModule, nullptr);
 		vkDestroyShaderModule(VulkanInstance::get()->device(), fragmentShaderModule, nullptr);
 	}
-	VkPipelineShaderStageCreateInfo* TestMaterial::bindPipelineShaderStages(uint8_t& num)
+	VkPipelineShaderStageCreateInfo* LoveMaterial::bindPipelineShaderStages(uint8_t& num)
 	{
 		num = 2;
 		VkPipelineShaderStageCreateInfo* shaderStages = new VkPipelineShaderStageCreateInfo[num];
@@ -70,12 +71,12 @@ namespace cmgt {
 		return shaderStages;
 	}
 
-	VulkanDescriptorSetLayout TestMaterial::createDescriptorSetLayout(uint32_t& uniformSize){
+	VulkanDescriptorSetLayout LoveMaterial::createDescriptorSetLayout(uint32_t& uniformSize){
 		uniformSize = sizeof(UniformData);
 		return VulkanDescriptorSetLayout::Builder().addBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT).build();
 	}
 
-	VkPushConstantRange TestMaterial::setupPushConsts()
+	VkPushConstantRange LoveMaterial::setupPushConsts()
 	{
 		VkPushConstantRange range;
 		range.stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;

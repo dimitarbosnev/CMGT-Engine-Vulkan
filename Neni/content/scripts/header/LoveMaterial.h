@@ -1,5 +1,5 @@
-#ifndef TESTMATERIAL_H
-#define TESTMATERIAL_H
+#ifndef LOVEMATERIAL_H
+#define LOVEMATERIAL_H
 
 #pragma once
 #include "minimal/glm.h"
@@ -9,7 +9,7 @@
 
 namespace cmgt {
 
-	class TestMaterial : public Material
+	class LoveMaterial : public Material
 	{
 	public:
 		struct PushConstData
@@ -22,8 +22,9 @@ namespace cmgt {
 			glm::mat4 projMatrix;
 			glm::vec4 ambientLight;
 			glm::vec4 dirLight;
+			glm::vec2 windowSize;
 		};
-		TestMaterial();
+		LoveMaterial();
 		/**
 		 * Render the given mesh in the given world using the given mvp matrices. Implement in subclass.
 		 */
@@ -42,8 +43,6 @@ namespace cmgt {
 		inline static VkShaderModule vertexShaderModule = nullptr;
 		inline static VkShaderModule fragmentShaderModule = nullptr;
 		inline static GraphicsPipeline* pipeline = nullptr;
-		//virtual GraphicsPipeline* getPipeline() override { return &_pipeline; }
-		//"vert.spv","frag.spv"
 	};
 }
-#endif // TESTMATERIAL_H
+#endif // LOVEMATERIAL_H

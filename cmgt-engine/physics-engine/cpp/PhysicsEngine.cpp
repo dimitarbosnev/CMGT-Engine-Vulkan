@@ -61,6 +61,13 @@ namespace cmgt
         }
     }
 
+    bool  PhysicsEngine::rayCast(const glm::vec3& origin, const glm::vec3& dir, Ray* rayInfo) {
+        std::vector<Collider*>& colliders = PhysicsEngine::get()->colliders;
+
+        for(Collider* collider : colliders){
+
+        }
+    }
     void PhysicsEngine::CollisionResponse(CollisionInfo& info){
 
         //don't forget to implement for both dynamic and static objects
@@ -257,7 +264,7 @@ namespace cmgt
 
         glm::vec3 crossABC = glm::cross(vecAB, vecAC);
 
-        direction = crossABC * (glm::dot(crossABC, vecAO) > 0 ? 1 : -1);
+        direction = crossABC * (glm::dot(crossABC, vecAO) > 0 ? 1.f : -1.f);
 
         glm::vec3 supportPoint4 = getSupportPoint(shape1, shape2, direction);
 

@@ -27,12 +27,17 @@ namespace cmgt
 		std::pair<Shape&,Collider*> collider2;
 	};
 
+	struct Ray{
+		bool hit = false;
+		Collider* hitCollider = nullptr;
+		glm::vec3 hitPoint = glm::vec3(0);
+	};
 	struct Simplex{
 		glm::vec3 vertecies[4]{};
 
 		bool inSimplex(glm::vec3 point){
 			//If the point is contained in the simplex return true to exit the loop
-			if(vertecies[0] == point || vertecies[1] == point || vertecies[3] == point || vertecies[4] == point)
+			if(vertecies[0] == point || vertecies[1] == point || vertecies[2] == point || vertecies[3] == point)
 				return true;
 	
 			return false;
@@ -59,7 +64,7 @@ namespace cmgt
 		void update(float pStep); 
 		const glm::vec3& getGravity() { return gravity; }
 		void addCollider(Collider* collider){colliders.push_back(collider);}
-		
+		static bool rayCast(const glm::vec3& origin, const glm::vec3& dir, Ray* rayInfo);
 		private:
 		glm::vec3 gravity;
 		//The functions responsible for collision detection

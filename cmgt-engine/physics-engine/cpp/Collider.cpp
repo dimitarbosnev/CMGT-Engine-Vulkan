@@ -33,7 +33,7 @@ namespace cmgt{
         dir = glm::normalize(dir);
 
         glm::vec3 furthestVert;
-        float value = -std::numeric_limits<float>::max();
+        float value = -MAX;
         for (glm::vec3 vert : shape.colliderMesh)
         {
             float temp = glm::dot(vert, dir);

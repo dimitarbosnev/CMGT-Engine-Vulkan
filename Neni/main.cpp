@@ -10,6 +10,7 @@
 #include "physics-engine/SphereCollider.h"
 #include "physics-engine/BoxCollider.h"
 #include "minimal/types.h"
+#include "LoveMaterial.h"
 #include <memory>
 #include <string>
 #include <thread>
@@ -35,8 +36,8 @@ void OnGameStart(){
 
 	cmgt::GameObject* childObject = new cmgt::GameObject("Child GameObject");
 	childObject->getTransform().Translate(glm::vec3(2, 0, 0));
-	childObject->getTransform().Scale(glm::vec3(.5f));
-	cmgt::Mesh* cube = new cmgt::Mesh("cube_smooth.obj", new cmgt::TestMaterial());
+	childObject->getTransform().Scale(glm::vec3(.02f,-.02f,.02f));
+	cmgt::Mesh* cube = new cmgt::Mesh("heart_new.obj", new cmgt::LoveMaterial());
 	cmgt::Collider* collider = new cmgt::BoxCollider();
 	childObject->addComponent(cube);
 	childObject->addComponent(collider);
@@ -46,7 +47,7 @@ void OnGameStart(){
 	cmgt::GameObject* childObject2 = new cmgt::GameObject("Child GameObject2");
 	childObject2->getTransform().Translate(glm::vec3(0, 0, 0));
 	childObject2->getTransform().Scale(glm::vec3(.5f));
-	cmgt::Mesh* cube2 = new cmgt::Mesh("cube_smooth.obj", new cmgt::TestMaterial());
+	cmgt::Mesh* cube2 = new cmgt::Mesh("cube_smooth.obj", new cmgt::LoveMaterial());
 	cmgt::Collider* collider2 = new cmgt::MeshCollider(cube2->getVertexData());
 	childObject2->addComponent(cube2);
 	childObject2->addComponent(collider2);
@@ -66,35 +67,6 @@ void OnGameStart(){
 	cmgt::SceneManager::get()->addScene(*firstScene);
 }
 
-void game_loop(){
-
-	const cmgt::ms fixed_game_step = cmgt::ms(1000 / TARGET_FPS); // Time per iteration
-
-    auto game_clock = cmgt::clock::now();
-
-	float second = 0;
-	float fps = 0;
-	while (!cmgt::Window::get()->isOpened()) {
-		float _deltaTime = std::chrono::duration<float>(cmgt::clock::now() - game_clock).count();
-		game_clock = cmgt::clock::now();
-
-		if (second >= 1)
-		{
-			std::cout << "FPS: " << fps << std::endl;
-			second = 0;
-			fps = 0;
-		}
-		else {
-			second += _deltaTime;
-			fps++;
-		}
-
-		cmgt::Input::processInput();
-		OnUpdate();
-		cmgt::SceneManager::get()->update(_deltaTime);
-	}
-}
-
 void physics_loop(){
 
  const cmgt::ms phys_step = cmgt::ms(1000 / PHYSICS_STEP); // Time per iteration
@@ -107,16 +79,6 @@ void physics_loop(){
 				cmgt::PhysicsEngine::get()->update(phys_tick);
 			}
 		}
-}
-
-void render_loop(){
-	while (!cmgt::Window::get()->isOpened()) {
-		OnRender();
-		cmgt::Camera* camera = cmgt::SceneManager::get()->getCurrentScene()->getWorld()->getMainCamera();
-		glm::mat4 viewMatrix = camera->getTransform().getWorldTransform();
-		glm::mat4 projectionMatrix = camera->getProjection();
-		cmgt::VulkanRenderer::get()->drawFrame(viewMatrix,projectionMatrix);
-	}
 }
 
 int main() {

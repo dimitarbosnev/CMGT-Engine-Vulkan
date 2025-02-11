@@ -13,13 +13,17 @@ namespace cmgt
 		CapsuleCollider();
 		//behaviour should be able to update itself every step and MUST be implemented
 		void update(float pStep) override;
-		
+		void setRadius(float r) { radius = r; }
+		void setHeight(float h) { height = h; }
+		void setOrientation(glm::vec3 o) { orientation = glm::normalize(o); }
 		//used in the SAT algorithm
 		virtual std::pair<float, float> getMinMaxValues(const Shape& shape, glm::vec3 axis) override;
 		//used in the GJK/EPA algorithm
 		virtual glm::vec3 getFurthestPoint(const Shape& shape1,glm::vec3 dir) override;
 	private:
-
+		float radius = 1.f;
+		float height = 1.f;
+		glm::vec3 orientation = glm::vec3(0,1,0);
 		//disallow copy and assignment
 		CapsuleCollider(const CapsuleCollider&);
 		CapsuleCollider& operator=(const CapsuleCollider&);

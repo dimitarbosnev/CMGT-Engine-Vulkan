@@ -1,4 +1,5 @@
-
+#define SDL_WINDOW_H
+#ifndef SDL_WINDOW_H
 #include "vulkan-api/SDL_Window.h"
 #include <SDL2/SDL_vulkan.h>
 namespace cmgt{
@@ -90,3 +91,4 @@ namespace cmgt{
         SDL_Vulkan_GetDrawableSize(window, &width, &height);
     }
 }
+#endif //SDL_WINDOW_H

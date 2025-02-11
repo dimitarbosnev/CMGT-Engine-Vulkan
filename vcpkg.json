@@ -6,8 +6,6 @@
     "tinyobjloader",
     "glfw3",
     "tinygltf",
-    "libpng",
-    "sdl2",
-    "eigen3"
+    "libpng"
   ]
 }

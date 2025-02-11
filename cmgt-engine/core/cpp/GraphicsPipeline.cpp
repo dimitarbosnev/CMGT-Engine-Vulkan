@@ -32,7 +32,7 @@ namespace cmgt {
 	}
 
 	void CreateShader(const std::string& shaderFile, VkShaderModule* module) {
-		std::vector<char> shaderCode = readFile(CMGT_SHADER_PATH + shaderFile);
+		std::vector<char> shaderCode = readFile(CMGT_SHADER_PATH + shaderFile + ".spv");
 		CreateShader(shaderCode, module);
 	}
 

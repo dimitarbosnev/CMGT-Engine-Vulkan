@@ -1,13 +1,10 @@
 
 # The name of a new project
-set(PROJ_NAME main)
+set(PROJ_NAME Neni)
 # DO NOT TOUCH CRUTIAL FOR LOCATING STUFF
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${PROJ_NAME})
 set(PROJ_CONTENT_FOLDER ${CMAKE_CURRENT_SOURCE_DIR}/content)
 set(OUT_CONTENT_FOLDER ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/content)
-
-
-
 
 file(GLOB_RECURSE CPP_Files ${PROJ_CONTENT_FOLDER}/scripts/cpp/*.cpp)
 add_executable(${PROJ_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp ${CPP_Files})
@@ -99,3 +96,4 @@ ${PROJ_NAME}_CompileShaders
 ${PROJ_NAME}_CopyModels
 ${PROJ_NAME}_CopyTextures
 )   
+   

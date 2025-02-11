@@ -10,6 +10,17 @@
 #include <list>
 namespace cmgt
 {
+	struct Face{
+		glm::vec3 vertecies[3];
+		const glm::vec3& a(){ return vertecies[0];}
+		const glm::vec3& b(){ return vertecies[1];}
+		const glm::vec3& c(){ return vertecies[2];}
+
+		const glm::vec3& operator[] (int i){
+			return vertecies[i];
+		}
+	};
+
 	struct Shape;
 	class Collider : public Component
 	{

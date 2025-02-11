@@ -13,7 +13,7 @@ namespace cmgt{
 
     std::pair<float, float> SphereCollider::getMinMaxValues(const Shape& shape, glm::vec3 axis) {
         // Initialize with extreme values
-        float dot = glm::dot(shape.worldTransform[3].xyz(), axis);
+        float dot = glm::dot(shape.centroid, axis);
         float minProj = dot - radius;
         float maxProj = dot + radius;
 

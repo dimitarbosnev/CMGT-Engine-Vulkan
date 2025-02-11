@@ -24,6 +24,6 @@ namespace cmgt{
         for(glm::vec3 vert : vertecies){
             vecSum += vert;
         }
-        return vecSum/vertecies.size();
+        return vecSum / vertecies.size();
     }
 }

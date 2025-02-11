@@ -36,9 +36,9 @@ namespace cmgt{
     }
     
     glm::vec3 Transform::getEulerRotation() {
-        glm::vec3 eulerAngles;
-        glm::extractEulerAngleXYZ(getMatrix(), eulerAngles.x, eulerAngles.y, eulerAngles.z);
-        return eulerAngles; 
+        float x, y, z;
+        glm::extractEulerAngleXYZ(getMatrix(),x,y,z);
+        return glm::vec3(x,y,z);
     }
 
     glm::vec3 Transform::getWorldPosition(){
