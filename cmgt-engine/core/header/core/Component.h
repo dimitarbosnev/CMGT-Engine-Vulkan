@@ -23,10 +23,9 @@ namespace cmgt
 		virtual void update(float pStep);
 		
 		Transform& getTransform();
-		protected:
-		
+		const GameObject* getOwner(){ return _owner;}
+	protected:	
 		GameObject* _owner;
-	protected:
 		virtual void OnSetOwner();
 	private:
 		void setOwner(GameObject* pGameObject);

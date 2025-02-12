@@ -13,11 +13,7 @@ namespace cmgt{
 
     std::pair<float, float> CapsuleCollider::getMinMaxValues(const Shape& shape, glm::vec3 axis) {
 
-        glm::mat3 rotationMatrix(
-            glm::vec3(shape.worldTransform[0]) / glm::length(shape.worldTransform[0]),
-            glm::vec3(shape.worldTransform[1]) / glm::length(shape.worldTransform[1]),
-            glm::vec3(shape.worldTransform[2]) / glm::length(shape.worldTransform[2])
-        );
+        glm::mat3 rotationMatrix = getTransform().getWorldRotationMatrix();
 
         glm::vec3 worldOrientation = (rotationMatrix * orientation) * (height/2.f);
 

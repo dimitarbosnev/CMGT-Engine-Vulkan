@@ -7,16 +7,16 @@
 #include "minimal/types.h"
 #include "core/Mesh.h"
 #include "physics-engine/Collider.h"
-#include <list>
+#include <vector>
 namespace cmgt
 {
 	struct Shape{
 		Shape(Collider*pCollider);
-		std::list<glm::vec3> colliderMesh;
+		std::vector<glm::vec3> colliderMesh;
 		glm::mat4 worldTransform;
 		glm::vec3 centroid;
 
-		static glm::vec3 getCentroid(const std::list<glm::vec3>& vertecies);
+		static glm::vec3 getCentroid(const std::vector<glm::vec3>& vertecies);
 		//used in the SAT algorithm
 		std::pair<float, float> getMinMaxValues(glm::vec3 axis) const { return collider->getMinMaxValues(*this, axis);}
 		//used in the GJK/EPA algorithm

@@ -7,9 +7,11 @@ namespace cmgt{
     Shape::Shape(Collider*pCollider) : collider(pCollider){
 
         worldTransform = collider->getTransform().getWorldTransform();
+        //Some meshes have duplicate vertecies
+        //So we check if the vertex is already added
+        colliderMesh.reserve(collider->colliderMesh.size());
         for(const glm::vec3& vert : collider->colliderMesh){
-            glm::vec3 point = vert;
-            point = worldTransform * glm::vec4(point,1);
+            glm::vec3 point = worldTransform* glm::vec4(vert,1);
             colliderMesh.push_back(point);
         }
         //Centroid
@@ -19,9 +21,9 @@ namespace cmgt{
         
     }
 
-    glm::vec3 Shape::getCentroid(const std::list<glm::vec3>& vertecies){
+    glm::vec3 Shape::getCentroid(const std::vector<glm::vec3>& vertecies){
         glm::vec3 vecSum = glm::vec3(0);
-        for(glm::vec3 vert : vertecies){
+        for(const glm::vec3& vert : vertecies){
             vecSum += vert;
         }
         return vecSum / vertecies.size();

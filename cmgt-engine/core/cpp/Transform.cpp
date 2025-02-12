@@ -61,7 +61,23 @@ namespace cmgt{
         if (_parent != nullptr) 
         pMatrix = _parent->getTransform().getWorldTransform() * pMatrix;
     }
+    glm::mat3 Transform::getWorldRotationMatrix(){
+        glm::mat4 worldTransform = getWorldTransform();
+        return glm::mat3(
+            glm::vec3(worldTransform[0]) / glm::length(worldTransform[0]),
+            glm::vec3(worldTransform[1]) / glm::length(worldTransform[1]),
+            glm::vec3(worldTransform[2]) / glm::length(worldTransform[2])
+        );
+    }
 
+    glm::mat3 Transform::getLocalRotationMatrix(){
+        glm::mat4 matrix = getMatrix();
+        return glm::mat3(
+            glm::vec3(matrix[0]) / glm::length(matrix[0]),
+            glm::vec3(matrix[1]) / glm::length(matrix[1]),
+            glm::vec3(matrix[2]) / glm::length(matrix[2])
+        );
+    }
     void Transform::Translate(const glm::vec3& pTranslation) {
         setMatrix(glm::translate(getMatrix(), pTranslation));
     }

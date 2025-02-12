@@ -1,5 +1,5 @@
-#define SDL_WINDOW_H
-#ifndef SDL_WINDOW_H
+
+/*#ifndef SDL_WINDOW_H
 #define SDL_WINDOW_H
 
 #pragma once
@@ -35,4 +35,4 @@ namespace cmgt
 		void GetFrameBuffer(int& width, int& height) override;
 	};
 }
-#endif //SDL_WINDOW_H
+#endif //SDL_WINDOW_H*/

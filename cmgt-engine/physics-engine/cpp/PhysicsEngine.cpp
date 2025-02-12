@@ -61,12 +61,21 @@ namespace cmgt
         }
     }
 
-    bool  PhysicsEngine::rayCast(const glm::vec3& origin, const glm::vec3& dir, Ray* rayInfo) {
+    bool PhysicsEngine::rayCast(const glm::vec3& origin, const glm::vec3& dir, RayInfo* rayInfo) {
+
+        glm::vec3 normDir = glm::normalize(dir);
         std::vector<Collider*>& colliders = PhysicsEngine::get()->colliders;
 
         for(Collider* collider : colliders){
-
+            if(collider->getOwner() == rayInfo->sender) continue;
+            if(collider->rayIntersectCheck(origin,normDir,rayInfo)){
+                rayInfo->hit = true;
+                rayInfo->hitCollider = collider;
+                return true;
+            }
         }
+
+        return false;
     }
     void PhysicsEngine::CollisionResponse(CollisionInfo& info){
 

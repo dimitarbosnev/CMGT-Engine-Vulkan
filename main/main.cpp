@@ -13,6 +13,11 @@
 #include <memory>
 #include <string>
 #include <thread>
+
+#define _CRTDBG_MAP_ALLOC
+#include <stdlib.h>
+#include <crtdbg.h>
+
 cmgt::PhysicsEngine* physicsEngnie;
 void DestroyGame(){
 	//if(cmgt::TestMaterial::pipeline)
@@ -53,10 +58,10 @@ void OnGameStart(){
 	firstScene->getWorld()->add(childObject2);
 
 	cmgt::GameObject* cameraObject = new cmgt::GameObject("Camera Object");
-	cameraObject->getTransform().setMatrix(glm::mat4(+0.9,-0.0,-0.5,+0.0,
-										 +0.3,+0.9,+0.4,+0.0,
-										 +0.5,-0.5,+0.8,+0.0,
-										 +2.0,-1.8,+3.2,+1.0 ));
+	//cameraObject->getTransform().setMatrix(glm::mat4(+0.9,-0.0,-0.5,+0.0,
+	//									 +0.3,+0.9,+0.4,+0.0,
+	//									 +0.5,-0.5,+0.8,+0.0,
+	//									 +2.0,-1.8,+3.2,+1.0 ));
 	cmgt::Camera* camera = new cmgt::Camera();
 	cameraObject->addComponent(camera);
 	cameraObject->addComponent(new cmgt::CameraMovement(1.f,1.f));
@@ -66,34 +71,6 @@ void OnGameStart(){
 	cmgt::SceneManager::get()->addScene(*firstScene);
 }
 
-void game_loop(){
-
-	const cmgt::ms fixed_game_step = cmgt::ms(1000 / TARGET_FPS); // Time per iteration
-
-    auto game_clock = cmgt::clock::now();
-
-	float second = 0;
-	float fps = 0;
-	while (!cmgt::Window::get()->isOpened()) {
-		float _deltaTime = std::chrono::duration<float>(cmgt::clock::now() - game_clock).count();
-		game_clock = cmgt::clock::now();
-
-		if (second >= 1)
-		{
-			std::cout << "FPS: " << fps << std::endl;
-			second = 0;
-			fps = 0;
-		}
-		else {
-			second += _deltaTime;
-			fps++;
-		}
-
-		cmgt::Input::processInput();
-		OnUpdate();
-		cmgt::SceneManager::get()->update(_deltaTime);
-	}
-}
 
 void physics_loop(){
 
@@ -109,22 +86,13 @@ void physics_loop(){
 		}
 }
 
-void render_loop(){
-	while (!cmgt::Window::get()->isOpened()) {
-		OnRender();
-		cmgt::Camera* camera = cmgt::SceneManager::get()->getCurrentScene()->getWorld()->getMainCamera();
-		glm::mat4 viewMatrix = camera->getTransform().getWorldTransform();
-		glm::mat4 projectionMatrix = camera->getProjection();
-		cmgt::VulkanRenderer::get()->drawFrame(viewMatrix,projectionMatrix);
-	}
-}
-
 int main() {
+
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+	//_CrtSetBreakAlloc(200); //replase 200 with the coresponding number from the memory leack report :]
 	cmgt::InitGlobals();
 	OnGameStart();
-	//std::thread game_thread(game_loop);
 	std::thread physics_thread(physics_loop);
-	//std::thread render_thread(render_loop);
 	const cmgt::ms fixed_game_step = cmgt::ms(1000 / TARGET_FPS); // Time per iteration
 
     auto game_clock = cmgt::clock::now();
@@ -152,19 +120,16 @@ int main() {
 
 		OnRender();
 		cmgt::Camera* camera = cmgt::SceneManager::get()->getCurrentScene()->getWorld()->getMainCamera();
-		glm::mat4 viewMatrix = camera->getTransform().getWorldTransform();
+		glm::mat4 viewMatrix = glm::inverse(camera->getTransform().getWorldTransform());
 		glm::mat4 projectionMatrix = camera->getProjection();
 		cmgt::VulkanRenderer::get()->drawFrame(viewMatrix,projectionMatrix);
 	}
 
-	//game_thread.join();
 	physics_thread.join();
-	//render_thread.join();
 	
 	vkDeviceWaitIdle(cmgt::VulkanInstance::get()->device());
 
     DestroyGame();
 	cmgt::FreeGlobals();
-    _CrtDumpMemoryLeaks();
     return EXIT_SUCCESS;
 }

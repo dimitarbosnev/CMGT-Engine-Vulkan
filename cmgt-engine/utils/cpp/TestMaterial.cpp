@@ -15,7 +15,7 @@ namespace cmgt {
 	void TestMaterial::bindPushConstants(const VulkanFrameData& frameData, const glm::mat4 pModelMatrix){
 
 		PushConstData data;
-		data.mvpMatrix = frameData.projectionMatrix * glm::inverse(frameData.viewMatrix) * pModelMatrix;
+		data.mvpMatrix = frameData.projectionMatrix * frameData.viewMatrix * pModelMatrix;
 		data.normalMatrix = glm::transpose(glm::inverse(pModelMatrix));
 
 		vkCmdPushConstants(frameData.commandBuffer, pipeline->pipelineLayout(), VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(PushConstData), &data);

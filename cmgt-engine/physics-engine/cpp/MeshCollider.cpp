@@ -22,18 +22,22 @@ namespace cmgt{
     }
 
     void MeshCollider::populateCollider(const std::vector<Vertex>& meshData){
-        //Some meshes have duplicate vertecies
-        //So we check if the vertex is already added
+        colliderFaces.reserve(meshData.size() / 3);
+        for(int i = 0; i < meshData.size(); i+=3){
+            colliderFaces.push_back(Face(meshData[i].position, meshData[i+1].position, meshData[i+2].position));
+        }
+
+        colliderMesh.reserve(meshData.size());
         for(const Vertex& vert : meshData){
             bool duplicate = false;
             for(const glm::vec3& v : colliderMesh){
-                if(vert.position == v){
+                if(v == vert.position){
                     duplicate = true;
                     break;
                 }
             }
-            //if vert is a duplicate we skip it
             if(duplicate) continue;
+
             colliderMesh.push_back(vert.position);
         }
     }

@@ -17,7 +17,7 @@ namespace cmgt{
         window = glfwCreateWindow(_width, _height, windowName.c_str(), nullptr,nullptr);
         glfwSetWindowAspectRatio(window, 16, 9);
         glfwSetWindowUserPointer(window, this);
-        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+        //glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
         glfwSetFramebufferSizeCallback(window, resizeWindowCallBack);
         std::cout << "Window Initialized!\n";
     }
@@ -45,6 +45,7 @@ namespace cmgt{
     void GLFWindow::FreeWindow() {
         //InputManager::destroyInstance();
         glfwDestroyWindow(window);
+        glfwTerminate();
     }
 
     void GLFWindow::initVKSurface(VkInstance& instance,VkSurfaceKHR& surface) {

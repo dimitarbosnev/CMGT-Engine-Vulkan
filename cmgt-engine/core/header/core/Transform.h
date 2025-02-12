@@ -44,8 +44,10 @@ namespace cmgt
 		//get the objects world position by combining transforms, SLOW use with care
 		glm::mat4 getWorldTransform();
 		//Transform a 4x4 matrix to world space NOTE: assumed pMatrix is in object space
-		glm::mat4 toWorldSpace(const glm::mat4& pMatrix);
+		glm::mat4 toWorldSpace(const glm::mat4& pMatrix);	
 		void toWorldSpace(glm::mat4& pMatrix);
+		glm::mat3 getLocalRotationMatrix();
+		glm::mat3 getWorldRotationMatrix();
 		//in local space
 		void Translate(const glm::vec3& pTranslation);
 		//in local space

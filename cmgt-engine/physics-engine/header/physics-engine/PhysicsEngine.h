@@ -13,6 +13,7 @@ namespace cmgt
 {
 	class Collider;
 	class PhysicsBody;
+	class GameObject;
 	struct Shape;
 
 	struct CollisionInfo {
@@ -27,11 +28,13 @@ namespace cmgt
 		std::pair<Shape&,Collider*> collider2;
 	};
 
-	struct Ray{
+	struct RayInfo{
 		bool hit = false;
 		Collider* hitCollider = nullptr;
 		glm::vec3 hitPoint = glm::vec3(0);
+		GameObject* sender = nullptr;
 	};
+
 	struct Simplex{
 		glm::vec3 vertecies[4]{};
 
@@ -64,7 +67,7 @@ namespace cmgt
 		void update(float pStep); 
 		const glm::vec3& getGravity() { return gravity; }
 		void addCollider(Collider* collider){colliders.push_back(collider);}
-		static bool rayCast(const glm::vec3& origin, const glm::vec3& dir, Ray* rayInfo);
+		static bool rayCast(const glm::vec3& origin, const glm::vec3& dir, RayInfo* rayInfo);
 		private:
 		glm::vec3 gravity;
 		//The functions responsible for collision detection

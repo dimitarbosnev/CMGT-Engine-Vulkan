@@ -12,5 +12,6 @@ target_link_libraries(utils
     vulkan-api
     minimal
     glfw
+    physics-engine
 )
 #target_compile_definitions(core PUBLIC _USE_MATH_DEFINES)
