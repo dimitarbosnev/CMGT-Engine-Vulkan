@@ -56,3 +56,8 @@
 17. Implement Compute pipelines
 18. Move physics engine to compute pipelines
 15. Have Fun I guess :)
+
+
+
+NOTE: The enigne requires vc++ redistributable
+NOTE: And don't forget to compile in release mode to work for other PCs

@@ -2,6 +2,7 @@
 #include "utils/TestMaterial.h"
 #include "utils/ObjectMovement.h"
 #include "utils/CameraMovement.h"
+#include "utils/MouseMovement.h"
 #include "core/Mesh.h"
 #include "core/GraphicsPipeline.h"
 #include "physics-engine/PhysicsEngine.h"
@@ -57,11 +58,18 @@ void OnGameStart(){
 	childObject2->addComponent(collider2);
 	firstScene->getWorld()->add(childObject2);
 
+	//cmgt::GameObject* mousedObject = new cmgt::GameObject("Child GameObject");
+	//mousedObject->getTransform().Translate(glm::vec3(0, 0, 0));
+	//mousedObject->getTransform().Scale(glm::vec3(.5f));
+	//mousedObject->addComponent(new cmgt::Mesh("sphere_smooth.obj", new cmgt::TestMaterial()));
+	//mousedObject->addComponent(new cmgt::MouseMovement());
+	//firstScene->getWorld()->add(mousedObject);
+
 	cmgt::GameObject* cameraObject = new cmgt::GameObject("Camera Object");
-	//cameraObject->getTransform().setMatrix(glm::mat4(+0.9,-0.0,-0.5,+0.0,
-	//									 +0.3,+0.9,+0.4,+0.0,
-	//									 +0.5,-0.5,+0.8,+0.0,
-	//									 +2.0,-1.8,+3.2,+1.0 ));
+	cameraObject->getTransform().setMatrix(glm::mat4(+0.9,-0.0,-0.5,+0.0,
+										 +0.3,+0.9,+0.4,+0.0,
+										 +0.5,-0.5,+0.8,+0.0,
+										 +2.0,-1.8,+3.2,+1.0 ));
 	cmgt::Camera* camera = new cmgt::Camera();
 	cameraObject->addComponent(camera);
 	cameraObject->addComponent(new cmgt::CameraMovement(1.f,1.f));

@@ -53,9 +53,16 @@ namespace cmgt{
 
     bool Collider::rayIntersectCheck(const glm::vec3& S, const glm::vec3& d, RayInfo* rayInfo){
         //get the centroid
-        glm::vec3 centroid = Shape::getCentroid(colliderMesh);
 
         glm::mat4 worldMatrix = getTransform().getWorldTransform();
+
+        //leaving it here just in case it doesn't work out
+        //std::vector<glm::vec3> worldMesh; worldMesh.reserve(colliderMesh.size());
+        //for(const glm::vec3 vert : colliderMesh){
+        //    worldMesh.push_back(worldMatrix*glm::vec4(vert,1));
+        //}
+        //glm::vec3 centroid = Shape::getCentroid(worldMesh);
+
         for(const Face& face : colliderFaces){
             //points on the triangle
             //S is the starting point of the ray
@@ -67,6 +74,7 @@ namespace cmgt{
             glm::vec3 e = b - a;
             //e = vector ac
             glm::vec3 f = c - a;
+            //leaving it here just in case it doesn't work out
             //if(glm::dot(centroid,glm::cross(f,e)) > 0){
             //    glm::vec3 temp = f;
             //    f = e;
@@ -75,7 +83,7 @@ namespace cmgt{
             glm::vec3 q = glm::cross(e,d);     
 
             float D = glm::dot(f,q);
-            if(D <= 0) continue;
+            if(D < 0) continue;
             
             glm::vec3 B = S - a;
             float B_q = glm::dot(B,q);

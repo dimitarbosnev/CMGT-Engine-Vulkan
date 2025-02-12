@@ -37,8 +37,8 @@ namespace cmgt{
             _owner->getTransform().Rotate(-pStep, glm::vec3(0, 1, 0));
         }
         RayInfo info;
-            if(PhysicsEngine::rayCast(worldPos[3], getTransform().getLocalRotationMatrix() * glm::vec3(-1, 0, 0),&info))
-                std::cout << "RayCast WORKS!!!" << std::endl;
+            //if(PhysicsEngine::rayCast(worldPos[3], getTransform().getWorldRotationMatrix() * glm::vec3(-1, 0, 0),&info))
+                //std::cout << "RayCast WORKS!!!" << std::endl;
         //cout << "Delta mouse pos: " << InputManager::deltaMousePosition() << " | Current mouse pos: " << InputManager::mousePosition() << endl;
     }
 }

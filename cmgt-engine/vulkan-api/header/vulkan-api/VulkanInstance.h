@@ -36,7 +36,7 @@ namespace cmgt {
 
 	class VulkanInstance : public Singelton<VulkanInstance>{
 	public:
-#ifdef DEBUG
+#ifdef NDEBUG
 		const bool enableValidationLayers = false;
 #else
 		const bool enableValidationLayers = true;
