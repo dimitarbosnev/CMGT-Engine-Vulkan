@@ -79,7 +79,7 @@ namespace cmgt{
         );
     }
     void Transform::Translate(const glm::vec3& pTranslation) {
-        setMatrix(glm::translate(getMatrix(), pTranslation));
+        setMatrix(glm::translate(getMatrix(), -pTranslation));
     }
 
     void Transform::Rotate(float pAngle, const glm::vec3& pAxis) {

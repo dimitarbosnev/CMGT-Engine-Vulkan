@@ -40,6 +40,7 @@ namespace cmgt{
 
             colliderMesh.push_back(vert.position);
         }
+        colliderMesh.resize(colliderMesh.size());
     }
 
 }
