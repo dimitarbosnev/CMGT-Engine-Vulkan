@@ -8,7 +8,6 @@
     # make a base structure "Packet" that defines a header for seria1lized objects
     # a mechanism to trigger the correct deserializer for an object
     # make a serializer/deserializer for every obect derived class
-
 4. Better Implementation of Lights
     # Where to store the lights (is the world object correct?) (maybe similar mechanisim to how meshes are scheduled for render)
     # how to pass multiple lights to the shaders
@@ -24,6 +23,7 @@
     # Create a texture reader using libpng
 7. Implement Better Graphics Pipelines
     # Think what basic materials I am missing
+    # Pipeline cashe
 8. Implement proper Subscribe system
     # Reaserch why the EventType crashes
 9. Implement proper Event system
@@ -36,26 +36,22 @@
     # Functions to apply force to physics body
     # detetmine body type (STATIC, DYNAMIC)
     * implement angular velosity and acceleration and functions
-12. Add  physics_update!
-    # move update function to base class Object (refactoring)
-    # add physics_update() to base class Object
-    # add physics_update() function to SceneManager
-    # add physics_update() to GaameObject
-    # add physics_update() to Components
-    # call physics_update() in physics_loop (before collision check)
 13. Add UI to engine viewport
     # Create a UiObject from Object class
     # Create a new shaders for UIs -> the don't need view and projection matrixes
     # create a pipeline for UIs
 14. Add Ray cast to physics engine
-    # reaserch how to do a ray cast
-    # determine which algorithm will be easier to use (GK or SAT)
+    # add ray cast for sphere collider
+    # add ray cast to capsule collider
 15. Implement trigger colliders
     # seperate colliders to trigger colliders or not
 16. Implemet algorithm to determine if a mesh is convex or not and seperate mesh into convex shapes
 17. Implement Compute pipelines
 18. Move physics engine to compute pipelines
-15. Have Fun I guess :)
+19. Make it so all objects have the render function
+20. Implemet a sky box
+21. Implement Specialized constants
+22. Have Fun I guess :)
 
 
 

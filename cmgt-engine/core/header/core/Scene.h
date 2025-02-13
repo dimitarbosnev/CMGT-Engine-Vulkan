@@ -14,9 +14,11 @@ namespace cmgt
     public:
         Scene(std::string pName);
         ~Scene();
-        void update(float dt);
-        void renderScene(VkCommandBuffer commandBuffer);
         World* getWorld() { return _world; }
+
+        void update(float pStep) override;
+		void render(const VulkanFrameData& frameData) override;
+		void physics_update(float phys_step) override;
     private:
         World* _world = new World();
 

@@ -10,6 +10,7 @@
 #pragma once
 #include "minimal/glm.h"
 #include "minimal/types.h"
+#include "vulkan-api/VulkanFrameData.h"
 #include <string>
 #include <vector>
 
@@ -28,6 +29,9 @@ namespace cmgt
 		const id_t getID() { return _id; }
 		void setName(const std::string& pName);
 		std::string getName() { return _name; }
+		virtual void update(float pStep);
+		virtual void render(const VulkanFrameData& frameData);
+		virtual void physics_update(float phys_step);
 	protected:
 		std::string _name;
 		//The ID system can be improved

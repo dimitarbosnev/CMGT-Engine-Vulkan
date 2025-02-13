@@ -152,14 +152,6 @@ namespace cmgt {
 	void GraphicsPipeline::scheduleToRender(Mesh* mesh){
 		renderMeshs.push_back(mesh);
 	}
-	//void GraphicsPipeline::createPipeline()
-	//{
-	//	GraphicsPipelineInfo configInfo{};
-	//	defaultGraphicsPipelineInfo(configInfo);
-	//	configInfo.renderPass = VulkanSwapchain::getInstance().getRenderPass();
-	//	configInfo.pipelineLayout = shaderProgram->getPipelineLayout();
-	//	createPipeline(configInfo);
-	//}
 
 	void GraphicsPipeline::writeUniformBuffers(const short& imageIndex, const VkCommandBuffer& commandBuffer, const void* pData)
 	{

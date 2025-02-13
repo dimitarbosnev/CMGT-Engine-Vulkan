@@ -10,8 +10,18 @@ namespace cmgt {
 	}
 
 	void SceneManager::update(float dt) {
-		if (scenesStack.size() != 0) {
-			scenesStack.top()->update(dt);
+		SceneManager* sceneManager = SceneManager::get();
+		if (sceneManager->scenesStack.size() != 0) {
+			sceneManager->scenesStack.top()->update(dt);
+		}
+		else
+			std::cout << "There is no scene on the stack!" << std::endl;
+	}
+
+	void SceneManager::physics_update(float phys_step) {
+		SceneManager* sceneManager = SceneManager::get();
+		if (sceneManager->scenesStack.size() != 0) {
+			sceneManager->scenesStack.top()->physics_update(phys_step);
 		}
 		else
 			std::cout << "There is no scene on the stack!" << std::endl;

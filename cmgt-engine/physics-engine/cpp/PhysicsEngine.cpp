@@ -16,9 +16,8 @@ namespace cmgt
     {
     }
 
-    void PhysicsEngine::update(float pStep)
+    void PhysicsEngine::phys_tick(float pStep)
     {
-
         for(int i = 0; i < colliders.size(); i++)
         for (int j = i + 1; j < colliders.size(); j++) {
 

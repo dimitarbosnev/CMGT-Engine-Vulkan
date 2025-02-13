@@ -102,6 +102,24 @@ namespace cmgt {
             child->update(pStep);
         }
     }
+    
+    void GameObject::render(const VulkanFrameData& frameData){
+
+        for (Component* component : _components)
+            component->render(frameData);
+
+        for (GameObject* child : _children) 
+            child->render(frameData);
+    }
+
+    void GameObject::physics_update(float phys_step){
+
+        for (Component* component : _components)
+            component->physics_update(phys_step);
+
+        for (GameObject* child : _children) 
+            child->physics_update(phys_step);
+    }
 
     void GameObject::_setWorldRecursively(World* pWorld) {
         _world = pWorld;

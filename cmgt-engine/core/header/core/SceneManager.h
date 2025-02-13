@@ -14,7 +14,8 @@ namespace cmgt
     public:
         SceneManager();
         ~SceneManager();
-        void update(float dt);
+        static void update(float dt);
+		static void physics_update(float phys_step);
         void addScene(Scene& scene);
         void gotoScene(Scene& scene);
         void previousScene();

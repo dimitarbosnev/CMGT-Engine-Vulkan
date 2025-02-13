@@ -15,5 +15,4 @@ set(VULKAN_SHADER_COMPILER ${CMAKE_SOURCE_DIR}/build/vcpkg_installed/x64-windows
 
 add_subdirectory(main)
 add_subdirectory(cmgt-engine)
-add_subdirectory(Neni)
 

@@ -41,9 +41,9 @@ void OnGameStart(){
 
 	cmgt::GameObject* childObject = new cmgt::GameObject("Child GameObject");
 	childObject->getTransform().Translate(glm::vec3(2, 0, 0));
-	childObject->getTransform().Scale(glm::vec3(.5f));
-	cmgt::Mesh* cube = new cmgt::Mesh("cube_smooth.obj", new cmgt::TestMaterial());
-	cmgt::Collider* collider = new cmgt::BoxCollider();
+	childObject->getTransform().Scale(glm::vec3(1.f));
+	cmgt::Mesh* cube = new cmgt::Mesh("sphere_smooth.obj", new cmgt::TestMaterial());
+	cmgt::Collider* collider = new cmgt::SphereCollider();
 	childObject->addComponent(cube);
 	childObject->addComponent(collider);
 	childObject->addComponent(new cmgt::ObjectMovement(2.f, 2.f));
@@ -52,7 +52,7 @@ void OnGameStart(){
 	cmgt::GameObject* childObject2 = new cmgt::GameObject("Child GameObject2");
 	childObject2->getTransform().Translate(glm::vec3(0, 0, 0));
 	childObject2->getTransform().Scale(glm::vec3(.5f));
-	cmgt::Mesh* cube2 = new cmgt::Mesh("cube_smooth.obj", new cmgt::TestMaterial());
+	cmgt::Mesh* cube2 = new cmgt::Mesh("sphere_smooth.obj", new cmgt::TestMaterial());
 	cmgt::Collider* collider2 = new cmgt::MeshCollider(cube2->getVertexData());
 	childObject2->addComponent(cube2);
 	childObject2->addComponent(collider2);
@@ -89,7 +89,8 @@ void physics_loop(){
 			if(cmgt::clock::now() >= phys_clock){
 				phys_clock += phys_step;
 				float phys_tick = std::chrono::duration<float>(cmgt::clock::now() - phys_clock).count();
-				cmgt::PhysicsEngine::get()->update(phys_tick);
+				cmgt::SceneManager::physics_update(phys_tick);
+				cmgt::PhysicsEngine::get()->phys_tick(phys_tick);
 			}
 		}
 }
@@ -123,7 +124,7 @@ int main() {
 		}
 
 		OnUpdate();
-		cmgt::SceneManager::get()->update(_deltaTime);
+		cmgt::SceneManager::update(_deltaTime);
 		cmgt::Input::processInput();
 
 		OnRender();

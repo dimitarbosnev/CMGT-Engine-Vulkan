@@ -26,7 +26,7 @@ namespace cmgt {
 		Mesh(const std::string& fileName, Material* pMaterial);
 		Mesh(const std::vector<Vertex>& vertecies, Material* pMaterial);
 		virtual ~Mesh();
-		void render(const VulkanFrameData& frameData);
+		void render(const VulkanFrameData& frameData) override;
 		void update(float dt) override;
 		void setVertexData(const std::vector<Vertex>& vertecies) {vertexData = vertecies;}
 		const std::vector<Vertex>& getVertexData() { return vertexData;}

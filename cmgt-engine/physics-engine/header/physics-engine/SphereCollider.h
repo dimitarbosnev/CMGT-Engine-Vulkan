@@ -17,9 +17,11 @@ namespace cmgt
 		void update(float pStep) override;
 		void setRadius(float r) {radius = r;}
 		//used in the SAT algorithm
-		virtual std::pair<float, float> getMinMaxValues(const Shape& shape, glm::vec3 axis) override;
+		std::pair<float, float> getMinMaxValues(const Shape& shape, glm::vec3 axis) override;
 		//used in the GJK/EPA algorithm
-		virtual glm::vec3 getFurthestPoint(const Shape& shape1,glm::vec3 dir) override;
+		glm::vec3 getFurthestPoint(const Shape& shape1,glm::vec3 dir) override;
+		//used for checking rays intersections
+		bool rayIntersectCheck(const glm::vec3& origin, const glm::vec3& dir, RayInfo* rayInfo) override;
 	private:
 		float radius = 1.f;
 		//disallow copy and assignment

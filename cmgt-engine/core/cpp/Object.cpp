@@ -15,4 +15,8 @@ namespace cmgt {
     {
         _name = pName;
     }
+
+    void Object::update(float pStep){}
+    void Object::render(const VulkanFrameData& frameData){}
+    void Object::physics_update(float phys_step){}
 }

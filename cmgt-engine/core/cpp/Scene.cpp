@@ -12,7 +12,15 @@ namespace cmgt{
 	{
 		_world->update(dt);
 	}
-	void Scene::renderScene(VkCommandBuffer commandBuffer){
 
+	void Scene::render(const VulkanFrameData& frameData)
+	{
+		_world->render(frameData);
 	}
+
+	void Scene::physics_update(float dt)
+	{
+		_world->physics_update(dt);
+	}
+
 }

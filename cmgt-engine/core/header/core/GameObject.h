@@ -41,8 +41,9 @@ namespace cmgt
 			return nullptr;
 		}
 
-		virtual void update(float pStep);
-
+		void update(float pStep) override;
+		void render(const VulkanFrameData& frameData) override;
+		void physics_update(float phys_step) override;
 		//child management, note that add/remove and setParent are closely coupled.
 		//a.add(b) has the same effect as b.setParent(a)
 		//Adding a gameobject or resetting the parent, recursively passes on the world pointer to all child objects

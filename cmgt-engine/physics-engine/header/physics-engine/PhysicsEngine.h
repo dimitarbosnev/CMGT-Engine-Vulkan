@@ -64,7 +64,7 @@ namespace cmgt
 		PhysicsEngine();
 		~PhysicsEngine();
 		//behaviour should be able to update itself every step and MUST be implemented
-		void update(float pStep); 
+		void phys_tick(float pStep); 
 		const glm::vec3& getGravity() { return gravity; }
 		void addCollider(Collider* collider){colliders.push_back(collider);}
 		static bool rayCast(const glm::vec3& origin, const glm::vec3& dir, RayInfo* rayInfo);
