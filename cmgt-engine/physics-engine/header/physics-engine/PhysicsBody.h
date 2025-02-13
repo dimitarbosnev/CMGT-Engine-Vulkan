@@ -1,6 +1,8 @@
 #ifndef PHYSICSBODY_H
 #define PHYSICSBODY_H
 
+#define AIR_DENSITY 1.225f
+#define DRAG_COEF 0.9f
 #pragma once
 #include "minimal/glm.h"
 #include "core/Component.h"
@@ -24,8 +26,12 @@ namespace cmgt
 		void setPhysType(phys_type t){ type = t; }
 		phys_type getPhysType() { return type; }
 		void addForce(glm::vec3 force, bool impulse = false);
-		glm::vec3 velosity = glm::vec3(0);
+		void reflectVelosity(const glm::vec3& collNormal);
+		glm::vec3 velocity = glm::vec3(0);
 		glm::vec3 acceleration = glm::vec3(0);
+		glm::vec3 angularVelosity = glm::vec3(0);
+		//to get rotation axis glm::cross(angularVelosity, the up vector of the transform)
+		glm::vec3 angularAcceleratiom = glm::vec3(0);
 	private:
 		float mass = 1;
 		phys_type type = phys_type::DYNAMIC;

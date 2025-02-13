@@ -76,7 +76,7 @@ void OnGameStart(){
 										 +2.0,-1.8,+3.2,+1.0 ));
 	cmgt::Camera* camera = new cmgt::Camera();
 	cameraObject->addComponent(camera);
-	cameraObject->addComponent(new cmgt::CameraMovement(1.f,1.f));
+	cameraObject->addComponent(new cmgt::CameraMovement(3.f,1.f));
 	firstScene->getWorld()->setMainCamera(camera);
 	firstScene->getWorld()->add(cameraObject);
 

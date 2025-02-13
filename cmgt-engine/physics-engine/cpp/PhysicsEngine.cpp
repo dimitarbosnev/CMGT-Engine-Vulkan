@@ -83,13 +83,16 @@ namespace cmgt
         glm::vec3 relative = info.collider2.first.centroid - info.collider1.first.centroid;
 
         //glm::vec3 resolution = relative * (info.peneterationDepth + EPSILON);
-        glm::vec3 resolution = info.collisionNormal * (info.peneterationDepth + EPSILON);
-        if (glm::dot(relative, info.collisionNormal) < 0) {
-            resolution = -resolution;
-        }
+        float mass1 = info.collider1.second->getInverseMass();
+        float mass2 = info.collider2.second->getInverseMass();
+        float totalMass = mass1 + mass2;
+        glm::vec3 resolution1 = info.collisionNormal * (info.peneterationDepth + EPSILON) * (mass1 / totalMass);
+        glm::vec3 resolution2 = info.collisionNormal * (info.peneterationDepth + EPSILON) * (mass2 / totalMass);
 
-        info.collider1.second->getTransform().setWorldPosition(glm::vec3(info.collider1.first.worldTransform[3])-resolution);
-
+        info.collider1.second->reflectVelosity(info.collisionNormal);
+        info.collider2.second->reflectVelosity(info.collisionNormal);
+        info.collider1.second->getTransform().setWorldPosition((glm::vec3(info.collider1.first.worldTransform[3])-resolution1));
+        info.collider2.second->getTransform().setWorldPosition((glm::vec3(info.collider2.first.worldTransform[3])+resolution2) );
     }
 
 
