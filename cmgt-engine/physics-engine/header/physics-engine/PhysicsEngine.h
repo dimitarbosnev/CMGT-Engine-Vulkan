@@ -69,7 +69,7 @@ namespace cmgt
 		void addCollider(Collider* collider){colliders.push_back(collider);}
 		static bool rayCast(const glm::vec3& origin, const glm::vec3& dir, RayInfo* rayInfo);
 		private:
-		glm::vec3 gravity;
+		glm::vec3 gravity = glm::vec3(0,-9.807f,0);
 		//The functions responsible for collision detection
 		static void CollisionResponse(CollisionInfo& info); 
 		// EPA algorithm

@@ -24,7 +24,7 @@ namespace cmgt
 
 	struct Shape;
 	struct RayInfo;
-	class Collider : public Component
+	class Collider : public PhysicsBody
 	{
 	protected:
 		glm::vec3 offset;
@@ -33,7 +33,6 @@ namespace cmgt
 		Collider();
 		virtual ~Collider();
 		//behaviour should be able to update itself every step and MUST be implemented
-		virtual void update(float pStep) override;
 		std::vector<Face> colliderFaces;
 		std::vector<glm::vec3> colliderMesh;
 		//used in the SAT algorithm
@@ -42,9 +41,7 @@ namespace cmgt
 		virtual glm::vec3 getFurthestPoint(const Shape& shape1,glm::vec3 dir);
 		//used for checking rays intersections
 		virtual bool rayIntersectCheck(const glm::vec3& origin, const glm::vec3& dir, RayInfo* rayInfo);
-		PhysicsBody& getPhysicsBody(){return *physicsBody;}
 	private:
-		PhysicsBody* physicsBody;
 		//disallow copy and assignment
 		Collider(const Collider&);
 		Collider& operator=(const Collider&);

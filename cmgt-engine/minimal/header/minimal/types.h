@@ -3,7 +3,7 @@
 
 #define EPSILON std::numeric_limits<float>::epsilon()
 #define MAX std::numeric_limits<float>::max()
-#define PHYSICS_STEP 60
+#define PHYSICS_STEP 60.f
 #define TARGET_FPS 144
 //can be moved to settings
 

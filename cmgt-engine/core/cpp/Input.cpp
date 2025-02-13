@@ -12,7 +12,6 @@ namespace cmgt{
         _previousMousePosition = mousePosition();
     }
 
-    //Input Functions should be called through the window
     bool Input::isKeyPressed(int key) {
         return glfwGetKey(window, key) == GLFW_PRESS;
     }

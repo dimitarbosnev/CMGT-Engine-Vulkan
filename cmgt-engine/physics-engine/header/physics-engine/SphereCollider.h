@@ -14,7 +14,6 @@ namespace cmgt
 	public:
 		SphereCollider();
 		//behaviour should be able to update itself every step and MUST be implemented
-		void update(float pStep) override;
 		void setRadius(float r) {radius = r;}
 		//used in the SAT algorithm
 		std::pair<float, float> getMinMaxValues(const Shape& shape, glm::vec3 axis) override;

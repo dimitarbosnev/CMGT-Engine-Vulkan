@@ -18,8 +18,6 @@ namespace cmgt{
         }
 
     }
-    void MeshCollider::update(float pStep) {
-    }
 
     void MeshCollider::populateCollider(const std::vector<Vertex>& meshData){
         colliderFaces.reserve(meshData.size() / 3);

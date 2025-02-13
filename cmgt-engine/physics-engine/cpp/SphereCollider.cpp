@@ -8,10 +8,6 @@ namespace cmgt{
     SphereCollider::SphereCollider() : Collider(){
     }
 
-
-    void SphereCollider::update(float pStep) {
-    }
-
     std::pair<float, float> SphereCollider::getMinMaxValues(const Shape& shape, glm::vec3 axis) {
         // Initialize with extreme values
         float dot = glm::dot(shape.centroid, axis);
@@ -56,9 +52,9 @@ namespace cmgt{
         //b = 2vd
         float b = 2 * glm::dot(v,d);
         //c = v^2 - r^2
-        float c = glm::dot(v,v) - std::pow(radius,2);
+        float c = glm::dot(v,v) - radius*radius;
 
-        float D = std::pow(b,2) - (4 * a * c);
+        float D = b*b - (4 * a * c);
 
         if(D < 0) return false;
 

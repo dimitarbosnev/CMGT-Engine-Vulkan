@@ -19,8 +19,4 @@ namespace cmgt{
         colliderFaces.push_back(Face(v1,v2,v3));
         colliderFaces.push_back(Face(v4,v2,v3));
     }
-
-
-    void PlaneCollider::update(float pStep) {
-    }
 }

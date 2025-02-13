@@ -8,10 +8,6 @@ namespace cmgt{
     CapsuleCollider::CapsuleCollider() : Collider(){
     }
 
-
-    void CapsuleCollider::update(float pStep) {
-    }
-
     std::pair<float, float> CapsuleCollider::getMinMaxValues(const Shape& shape, glm::vec3 axis) {
 
         glm::mat3 rotationMatrix = getTransform().getWorldRotationMatrix();
@@ -39,7 +35,7 @@ namespace cmgt{
     }
 
     bool CapsuleCollider::rayIntersectCheck(const glm::vec3& S, const glm::vec3& d, RayInfo* rayInfo){
-        //get the centroid
+        //implement capsule when I have to
 
         glm::mat4 worldMatrix = getTransform().getWorldTransform();
 

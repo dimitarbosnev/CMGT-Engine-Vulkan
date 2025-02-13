@@ -13,9 +13,6 @@ namespace cmgt{
         colliderMesh.clear();
     }
 
-    void Collider::update(float pStep) {
-    }
-
     std::pair<float, float> Collider::getMinMaxValues(const Shape& shape, glm::vec3 axis) {
         // Initialize with extreme values
         float minProj = MAX;

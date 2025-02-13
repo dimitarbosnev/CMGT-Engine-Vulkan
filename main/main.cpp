@@ -10,7 +10,9 @@
 #include "physics-engine/MeshCollider.h"
 #include "physics-engine/SphereCollider.h"
 #include "physics-engine/BoxCollider.h"
+#include "physics-engine/PlaneCollider.h"
 #include "minimal/types.h"
+#include "core/Input.h"
 #include <memory>
 #include <string>
 #include <thread>
@@ -58,12 +60,14 @@ void OnGameStart(){
 	childObject2->addComponent(collider2);
 	firstScene->getWorld()->add(childObject2);
 
-	//cmgt::GameObject* mousedObject = new cmgt::GameObject("Child GameObject");
-	//mousedObject->getTransform().Translate(glm::vec3(0, 0, 0));
-	//mousedObject->getTransform().Scale(glm::vec3(.5f));
-	//mousedObject->addComponent(new cmgt::Mesh("sphere_smooth.obj", new cmgt::TestMaterial()));
-	//mousedObject->addComponent(new cmgt::MouseMovement());
-	//firstScene->getWorld()->add(mousedObject);
+	cmgt::GameObject* planeObject = new cmgt::GameObject("Child GameObject");
+	planeObject->getTransform().Translate(glm::vec3(0, -12, 0));
+	planeObject->getTransform().Scale(glm::vec3(6.f));
+	planeObject->addComponent(new cmgt::Mesh("cube_smooth.obj", new cmgt::TestMaterial()));
+	cmgt::MeshCollider* planeColl = new cmgt::MeshCollider();
+	planeColl->setPhysType(cmgt::phys_type::STATIC);
+	planeObject->addComponent(planeColl);
+	firstScene->getWorld()->add(planeObject);
 
 	cmgt::GameObject* cameraObject = new cmgt::GameObject("Camera Object");
 	cameraObject->getTransform().setMatrix(glm::mat4(+0.9,-0.0,-0.5,+0.0,
@@ -82,16 +86,16 @@ void OnGameStart(){
 
 void physics_loop(){
 
- const cmgt::ms phys_step = cmgt::ms(1000 / PHYSICS_STEP); // Time per iteration
-
+ 	const cmgt::ms phys_step = cmgt::ms(1000 / (int)PHYSICS_STEP); // Time per iteration
+	const float phys_tick = PHYSICS_STEP / 1000.f;
     auto phys_clock = cmgt::clock::now();
 		while (!cmgt::Window::get()->isOpened()) {	
-			if(cmgt::clock::now() >= phys_clock){
-				phys_clock += phys_step;
-				float phys_tick = std::chrono::duration<float>(cmgt::clock::now() - phys_clock).count();
-				cmgt::SceneManager::physics_update(phys_tick);
-				cmgt::PhysicsEngine::get()->phys_tick(phys_tick);
-			}
+			phys_clock += phys_step;
+			if(cmgt::Input::isKeyPressed(GLFW_KEY_SPACE))
+			cmgt::SceneManager::physics_update(phys_tick);
+			cmgt::PhysicsEngine::get()->phys_tick(phys_tick);
+			std::cout << phys_tick <<std::endl;
+			std::this_thread::sleep_until(phys_clock);
 		}
 }
 

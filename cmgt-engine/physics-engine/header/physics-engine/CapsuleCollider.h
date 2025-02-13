@@ -12,7 +12,6 @@ namespace cmgt
 	public:
 		CapsuleCollider();
 		//behaviour should be able to update itself every step and MUST be implemented
-		void update(float pStep) override;
 		void setRadius(float r) { radius = r; }
 		void setHeight(float h) { height = h; }
 		void setOrientation(glm::vec3 o) { orientation = glm::normalize(o); }

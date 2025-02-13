@@ -13,7 +13,6 @@ namespace cmgt
 		MeshCollider(std::vector<Vertex> meshData);
 		MeshCollider();
 		//behaviour should be able to update itself every step and MUST be implemented
-		void update(float pStep) override;
 	protected:
 		virtual void OnSetOwner() override;
 	private:

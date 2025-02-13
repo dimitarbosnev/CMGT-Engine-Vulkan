@@ -18,44 +18,45 @@ namespace cmgt
 
     void PhysicsEngine::phys_tick(float pStep)
     {
-        for(int i = 0; i < colliders.size(); i++)
-        for (int j = i + 1; j < colliders.size(); j++) {
+        for(int i = 0; i < colliders.size(); i++){
+            for (int j = i + 1; j < colliders.size(); j++) {
 
-            if(colliders[i] != nullptr && colliders[j] != nullptr){
-                Shape shape1(colliders[i]), shape2(colliders[j]);
-                Simplex simplex; 
+                if(colliders[i] != nullptr && colliders[j] != nullptr){
+                    Shape shape1(colliders[i]), shape2(colliders[j]);
+                    Simplex simplex; 
 
-                #ifdef SAT
-                {
-                    CollisionInfo info(shape1,colliders[i],shape2,colliders[j]);
-                        //auto start = Clock::now();
-                    if(SATcheckCollision(shape1,shape2,&info)){
+                    #ifdef SAT
+                    {
+                        CollisionInfo info(shape1,colliders[i],shape2,colliders[j]);
+                            //auto start = Clock::now();
+                        if(SATcheckCollision(shape1,shape2,&info)){
+                            //auto end = Clock::now();
+                            //std::cout << "COLLISION DETECTED SAT!!!" << std::endl;
+
+                            //auto elapsed = std::chrono::duration_cast<ns>(end - start);
+
+                            //std::cout << "Elapsed time SAT: " << elapsed.count() << " ns\n";
+                            CollisionResponse(info);
+                        }
+                    }
+                    #endif
+
+                    #ifdef GJK
+                    //auto start = Clock::now();
+                    if(GJKcheckCollision(shape1, shape2, simplex)){
                         //auto end = Clock::now();
-                        //std::cout << "COLLISION DETECTED SAT!!!" << std::endl;
-
+                        //std::cout << "COLLISION DETECTED GJK!!!" << std::endl;
+                        CollisionInfo info(shape1,colliders[i],shape2,colliders[j]);  
+                        GetCollisionInfo(shape1,shape2, simplex,&info);
+                        CollisionResponse(info);
                         //auto elapsed = std::chrono::duration_cast<ns>(end - start);
 
-                        //std::cout << "Elapsed time SAT: " << elapsed.count() << " ns\n";
-                        CollisionResponse(info);
+                        //std::cout << "Elapsed time GJK: " << elapsed.count() << " ns\n";
+                        //get the collision normal
+                        //info.collisionNormal = glm::normalize(info.collider2.first.centroid - info.collider1.first.centroid);
                     }
+                    #endif
                 }
-                #endif
-
-                #ifdef GJK
-                //auto start = Clock::now();
-                if(GJKcheckCollision(shape1, shape2, simplex)){
-                    //auto end = Clock::now();
-                    //std::cout << "COLLISION DETECTED GJK!!!" << std::endl;
-                    CollisionInfo info(shape1,colliders[i],shape2,colliders[j]);  
-                    GetCollisionInfo(shape1,shape2, simplex,&info);
-                    CollisionResponse(info);
-                    //auto elapsed = std::chrono::duration_cast<ns>(end - start);
-
-                    //std::cout << "Elapsed time GJK: " << elapsed.count() << " ns\n";
-                    //get the collision normal
-                    //info.collisionNormal = glm::normalize(info.collider2.first.centroid - info.collider1.first.centroid);
-                }
-                #endif
             }
         }
     }
