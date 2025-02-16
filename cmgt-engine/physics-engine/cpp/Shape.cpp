@@ -11,7 +11,7 @@ namespace cmgt{
         //So we check if the vertex is already added
         colliderMesh.reserve(collider->colliderMesh.size());
         for(const glm::vec3& vert : collider->colliderMesh){
-            glm::vec3 point = worldTransform* glm::vec4(vert,1);
+            glm::vec3 point = worldTransform * glm::vec4(vert,1);
             colliderMesh.push_back(point);
         }
         //Centroid

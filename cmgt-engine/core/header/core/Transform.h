@@ -49,12 +49,14 @@ namespace cmgt
 		glm::mat3 getLocalRotationMatrix();
 		glm::mat3 getWorldRotationMatrix();
 		//in local space
-		void Translate(const glm::vec3& pTranslation);
+		void Translate(const glm::vec3& pTranslation, bool ignoreRotation = false);
 		//in local space
 		void Rotate(float pAngle,const glm::vec3& pAxis);
 		//in local space
 		void Scale(const glm::vec3& pScale);
 
+		//in world space
+		void WorldTranslate(const glm::vec3& pTranslation);
 		GameObject* getParent() {
 			std::lock_guard<std::mutex> lock(parent_lock);
 			return _parent;

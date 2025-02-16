@@ -16,25 +16,32 @@ namespace cmgt
 		PhysicsBody();
 		//behaviour should be able to update itself every step and MUST be implemented
 		virtual void physics_update(float pStep) override;
+		virtual void update(float pStep) override;
 		void setMass(float m){ mass = m; }
+		float getMass(){ return mass; }
 		float getInverseMass(){ 
-			if(type == phys_type::DYNAMIC)
-				return 1/mass;
-			else
-				return 0;
-		 }
+			return 1/mass;
+		}
+		glm::mat3 getInertiaTensor() { return inertiaTensor; }
+		void setInertiaTensor(const glm::mat3& newTensor){ inertiaTensor = newTensor; }
 		void setPhysType(phys_type t){ type = t; }
 		phys_type getPhysType() { return type; }
+		void setUseGravity(bool gravity) { applyGravity = gravity; }
+		bool useGravity() { return applyGravity; }
 		void addForce(glm::vec3 force, bool impulse = false);
-		void reflectVelosity(const glm::vec3& collNormal);
+		//void addAngularForce(glm::vec3 force, bool impulse = false);
+		glm::vec3 reflectVelosity(const glm::vec3& collNormal);
 		glm::vec3 velocity = glm::vec3(0);
 		glm::vec3 acceleration = glm::vec3(0);
 		glm::vec3 angularVelosity = glm::vec3(0);
 		//to get rotation axis glm::cross(angularVelosity, the up vector of the transform)
-		glm::vec3 angularAcceleratiom = glm::vec3(0);
+		glm::vec3 angularAcceleration = glm::vec3(0);
+	protected:
 	private:
 		float mass = 1;
 		phys_type type = phys_type::DYNAMIC;
+		glm::mat3 inertiaTensor;
+		bool applyGravity = true;
 		//disallow copy and assignment
 		PhysicsBody(const PhysicsBody&);
 		PhysicsBody& operator=(const PhysicsBody&);

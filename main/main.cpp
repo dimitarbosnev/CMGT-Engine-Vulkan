@@ -16,7 +16,6 @@
 #include <memory>
 #include <string>
 #include <thread>
-
 #define _CRTDBG_MAP_ALLOC
 #include <stdlib.h>
 #include <crtdbg.h>
@@ -37,37 +36,52 @@ void OnRender(){
     
 }
 
+cmgt::GameObject* SpawnPlane(glm::vec3 pos, glm::vec3 axis, float angle){
+	cmgt::GameObject* planeObject = new cmgt::GameObject("Plane GameObject");
+	planeObject->getTransform().Translate(pos);
+	planeObject->getTransform().Scale(glm::vec3(10.f));
+	planeObject->getTransform().Rotate(angle, axis);
+	//planeObject->addComponent(new cmgt::Mesh("plane.obj", new cmgt::TestMaterial()));
+	cmgt::Collider* planeColl = new cmgt::PlaneCollider();
+	planeColl->setPhysType(cmgt::phys_type::STATIC);
+	planeObject->addComponent(planeColl);
+
+	return planeObject;
+}
+
+cmgt::GameObject* SpawnBall(glm::vec3 pos, glm::vec3 scale, glm::vec3 force){
+	cmgt::GameObject* childObject = new cmgt::GameObject("Ball GameObject");
+	childObject->getTransform().Translate(pos);
+	childObject->getTransform().Scale(scale);
+	cmgt::Mesh* cube = new cmgt::Mesh("sphere_smooth.obj", new cmgt::TestMaterial());
+	cmgt::Collider* collider = new cmgt::SphereCollider();
+	collider->addForce(force, true);
+	childObject->addComponent(cube);
+	childObject->addComponent(collider);
+
+	return childObject;
+}
+
 void OnGameStart(){
 	physicsEngnie = new cmgt::PhysicsEngine();
 	cmgt::Scene* firstScene = new cmgt::Scene("First Scene");
 
-	cmgt::GameObject* childObject = new cmgt::GameObject("Child GameObject");
-	childObject->getTransform().Translate(glm::vec3(2, 0, 0));
-	childObject->getTransform().Scale(glm::vec3(1.f));
-	cmgt::Mesh* cube = new cmgt::Mesh("sphere_smooth.obj", new cmgt::TestMaterial());
-	cmgt::Collider* collider = new cmgt::SphereCollider();
-	childObject->addComponent(cube);
-	childObject->addComponent(collider);
-	childObject->addComponent(new cmgt::ObjectMovement(2.f, 2.f));
-	firstScene->getWorld()->add(childObject);
+	firstScene->getWorld()->add(SpawnBall(glm::vec3(2, -2, 0), glm::vec3(1.f), glm::vec3(30,30,0)));
+	firstScene->getWorld()->add(SpawnBall(glm::vec3(0, -4, 2), glm::vec3(1.f), glm::vec3(30,-30,0)));
+	firstScene->getWorld()->add(SpawnBall(glm::vec3(4, -2, 0), glm::vec3(1.f), glm::vec3(30,30,30)));
+	firstScene->getWorld()->add(SpawnBall(glm::vec3(6, -2, 2), glm::vec3(1.f), glm::vec3(0,30,30)));
+	firstScene->getWorld()->add(SpawnBall(glm::vec3(2, -2, 2), glm::vec3(1.f), glm::vec3(0,30,-30)));
+	firstScene->getWorld()->add(SpawnBall(glm::vec3(2, -2, 6), glm::vec3(1.f), glm::vec3(-30,30,0)));
+	firstScene->getWorld()->add(SpawnBall(glm::vec3(6, -2, 6), glm::vec3(1.f), glm::vec3(0,30,0)));
 
-	cmgt::GameObject* childObject2 = new cmgt::GameObject("Child GameObject2");
-	childObject2->getTransform().Translate(glm::vec3(0, 0, 0));
-	childObject2->getTransform().Scale(glm::vec3(.5f));
-	cmgt::Mesh* cube2 = new cmgt::Mesh("sphere_smooth.obj", new cmgt::TestMaterial());
-	cmgt::Collider* collider2 = new cmgt::MeshCollider(cube2->getVertexData());
-	childObject2->addComponent(cube2);
-	childObject2->addComponent(collider2);
-	firstScene->getWorld()->add(childObject2);
+	firstScene->getWorld()->add(SpawnPlane(glm::vec3(0, -20, 0), glm::vec3(1,0,0), .0f));
+	firstScene->getWorld()->add(SpawnPlane(glm::vec3(0, 0, 0), glm::vec3(1,0,0), glm::pi<float>()));
+	firstScene->getWorld()->add(SpawnPlane(glm::vec3(0, -10, 10), glm::vec3(1,0,0), -glm::pi<float>() / 2));
+	firstScene->getWorld()->add(SpawnPlane(glm::vec3(0, -10, -10), glm::vec3(1,0,0), glm::pi<float>() / 2));
+	firstScene->getWorld()->add(SpawnPlane(glm::vec3(-10, -10, 0), glm::vec3(0,0,1), glm::pi<float>() / 2));
+	firstScene->getWorld()->add(SpawnPlane(glm::vec3(10, -10, 0), glm::vec3(0,0,1), -glm::pi<float>() / 2));
 
-	cmgt::GameObject* planeObject = new cmgt::GameObject("Child GameObject");
-	planeObject->getTransform().Translate(glm::vec3(0, -12, 0));
-	planeObject->getTransform().Scale(glm::vec3(6.f));
-	planeObject->addComponent(new cmgt::Mesh("cube_smooth.obj", new cmgt::TestMaterial()));
-	cmgt::MeshCollider* planeColl = new cmgt::MeshCollider();
-	planeColl->setPhysType(cmgt::phys_type::STATIC);
-	planeObject->addComponent(planeColl);
-	firstScene->getWorld()->add(planeObject);
+
 
 	cmgt::GameObject* cameraObject = new cmgt::GameObject("Camera Object");
 	cameraObject->getTransform().setMatrix(glm::mat4(+0.9,-0.0,-0.5,+0.0,
@@ -87,15 +101,18 @@ void OnGameStart(){
 void physics_loop(){
 
  	const cmgt::ms phys_step = cmgt::ms(1000 / (int)PHYSICS_STEP); // Time per iteration
-	const float phys_tick = PHYSICS_STEP / 1000.f;
+	//const float phys_tick = PHYSICS_STEP / 1000.f;
+	std::cout<<std::chrono::duration<float>(phys_step).count()<<std::endl;
     auto phys_clock = cmgt::clock::now();
 		while (!cmgt::Window::get()->isOpened()) {	
-			phys_clock += phys_step;
-			if(cmgt::Input::isKeyPressed(GLFW_KEY_SPACE))
-			cmgt::SceneManager::physics_update(phys_tick);
-			cmgt::PhysicsEngine::get()->phys_tick(phys_tick);
-			std::cout << phys_tick <<std::endl;
-			std::this_thread::sleep_until(phys_clock);
+			if(cmgt::clock::now() >= phys_clock){
+				phys_clock += phys_step;
+				float phys_tick = std::chrono::duration<float>(phys_clock - cmgt::clock::now()).count();
+				std::cout<<phys_tick<<std::endl;
+				if(cmgt::Input::isKeyPressed(GLFW_KEY_SPACE))
+					cmgt::SceneManager::physics_update(phys_tick);
+				cmgt::PhysicsEngine::get()->phys_tick(phys_tick);
+			}
 		}
 }
 

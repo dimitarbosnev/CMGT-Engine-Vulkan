@@ -7,7 +7,7 @@ namespace cmgt{
     MeshCollider::MeshCollider(std::vector<Vertex> meshData) : Collider() {
         populateCollider(meshData);
         _name = "Collider";
-        
+        computeInertiaTensor();
     }
 
     void MeshCollider::OnSetOwner(){

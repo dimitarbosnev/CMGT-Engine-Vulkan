@@ -6,6 +6,7 @@
 namespace cmgt{
 
     CapsuleCollider::CapsuleCollider() : Collider(){
+        computeInertiaTensor();
     }
 
     std::pair<float, float> CapsuleCollider::getMinMaxValues(const Shape& shape, glm::vec3 axis) {
@@ -88,5 +89,48 @@ namespace cmgt{
         }   
 
         return false;
+    }
+
+    //it's copy paste from chat gpt, might not actually work
+    void CapsuleCollider::computeInertiaTensor() {
+    
+        float volCyl = glm::pi<float>() * radius * radius * height;
+        float volSph = 0.8f * glm::pi<float>() * radius * radius * radius;
+        float totalVol = volCyl + volSph;
+    
+        // Mass distribution:
+        float massCyl = getMass() * (volCyl / totalVol);
+        float massSph = getMass() * (volSph / totalVol); // total mass for the full sphere
+        float massHem = massSph / 2.0f;             // mass of one hemisphere
+    
+        // Cylinder inertia tensor about its center (aligned along z):
+        float IzzCyl = 0.5f * massCyl * radius * radius;
+        float IxxCyl = (1.0f / 12.0f) * massCyl * (3.0f * radius * radius + height * height);
+        float IyyCyl = IxxCyl; // symmetric
+    
+        // Approximate inertia for a solid hemisphere about its own center of mass.
+        // These numbers are approximate:
+        float IperpHem_cm = 0.426f * massHem * radius * radius;  // about an axis in the plane of the flat face
+        float IparallelHem_cm = 0.259f * massHem * radius * radius; // about the symmetry axis
+    
+        // Distance from capsule center to hemisphere center-of-mass.
+        // The flat face of the hemisphere is at h/2 from the capsule center.
+        // The center-of-mass of a hemisphere is located at 3r/8 from its flat face.
+        float d = (height / 2.0f) + (3.0f * radius / 8.0f);
+    
+        // Apply parallel axis theorem for each hemisphere (for axes perpendicular to z):
+        float IperpHem = IperpHem_cm + massHem * d * d;
+    
+        // Sum contributions:
+        float Ixx = IxxCyl + 2.0f * IperpHem;
+        float Iyy = IyyCyl + 2.0f * IperpHem;
+        float Izz = IzzCyl + 2.0f * IparallelHem_cm;
+        
+        glm::mat3 inertia = glm::mat3(
+            Ixx, 0.0f, 0.0f,
+            0.0f, Iyy, 0.0f,
+            0.0f, 0.0f, Izz
+        );
+        setInertiaTensor(inertia);
     }
 }

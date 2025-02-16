@@ -3,22 +3,19 @@
 #include "core/GameObject.h"
 
 namespace cmgt{
-    void Transform::setLocalPosition(const glm::vec3& pPosition)  { matrix[3] = glm::vec4(pPosition, 1); }
+    void Transform::setLocalPosition(const glm::vec3& pPosition)  { getMatrix()[3] = glm::vec4(pPosition, 1); }
 
     void Transform::setWorldPosition(const glm::vec3& pPosition)  { 
         glm::mat4 newMatrix = matrix;
         newMatrix[3] = glm::vec4(pPosition, 1); 
 
-        if (_parent != nullptr) 
-        newMatrix = _parent->getTransform().getWorldTransform() * newMatrix;
-        
-        setMatrix(newMatrix);
+        setWorldTransform(newMatrix);
     }
 
     void Transform::setWorldTransform(const glm::mat4& pMatrix){
         glm::mat4 newMatrix = pMatrix;
         if (_parent != nullptr) 
-        newMatrix = _parent->getTransform().getWorldTransform() * pMatrix;
+        newMatrix = glm::inverse(_parent->getTransform().getWorldTransform()) * pMatrix;
 
         setMatrix(newMatrix);
     }
@@ -78,16 +75,29 @@ namespace cmgt{
             glm::vec3(matrix[2]) / glm::length(matrix[2])
         );
     }
-    void Transform::Translate(const glm::vec3& pTranslation) {
-        setMatrix(glm::translate(getMatrix(), -pTranslation));
+    void Transform::Translate(const glm::vec3& pTranslation, bool ignoreRotation) {
+        if(ignoreRotation)
+            setLocalPosition(glm::vec3(getMatrix()[3]) - pTranslation);
+        else
+            setMatrix(glm::translate(getMatrix(), -pTranslation));
     }
 
     void Transform::Rotate(float pAngle, const glm::vec3& pAxis) {
-        setMatrix(glm::rotate(getMatrix(), pAngle,pAxis));
+        if(glm::length(pAxis) < 1){
+            std::cout << "Invalid rotation axis" << std::endl;
+            return;
+        }
+        setMatrix(glm::rotate(getMatrix(), pAngle, pAxis));
     }
 
     void Transform::Scale(const glm::vec3& pScale) {
         setMatrix(glm::scale(getMatrix(), pScale));
+    }
+
+    void Transform::WorldTranslate(const glm::vec3& pTranslation){
+        glm::mat4 worldMatrix = getWorldTransform();
+
+        setWorldPosition(glm::vec3(worldMatrix[3]) - pTranslation);
     }
 
 }

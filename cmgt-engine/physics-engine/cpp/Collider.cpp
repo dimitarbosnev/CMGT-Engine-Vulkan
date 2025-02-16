@@ -103,4 +103,27 @@ namespace cmgt{
 
         return false;
     }
+
+    void Collider::computeInertiaTensor() {
+        glm::mat3 inertia(0.0f);
+    
+        // Assume equal mass per vertex.
+        float perVertexMass = getMass() / static_cast<float>(colliderMesh.size());
+    
+        for (const glm::vec3& v : colliderMesh) {
+            float x = v.x, y = v.y, z = v.z;
+            inertia[0][0] += perVertexMass * (y * y + z * z);
+            inertia[1][1] += perVertexMass * (x * x + z * z);
+            inertia[2][2] += perVertexMass * (x * x + y * y);
+            inertia[0][1] -= perVertexMass * x * y;
+            inertia[0][2] -= perVertexMass * x * z;
+            inertia[1][2] -= perVertexMass * y * z;
+        }
+        // Since inertia tensor is symmetric:
+        inertia[1][0] = inertia[0][1];
+        inertia[2][0] = inertia[0][2];
+        inertia[2][1] = inertia[1][2];
+    
+        setInertiaTensor(inertia);
+    }
 }

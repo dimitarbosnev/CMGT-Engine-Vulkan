@@ -42,10 +42,6 @@ namespace cmgt{
         colliderFaces.push_back(Face(v1,v3,v4));
         colliderFaces.push_back(Face(v5,v1,v2));
 
-
-    }
-
-
-    void BoxCollider::update(float pStep) {
+        computeInertiaTensor();
     }
 }

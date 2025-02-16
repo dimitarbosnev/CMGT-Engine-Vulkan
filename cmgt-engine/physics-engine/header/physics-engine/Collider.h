@@ -41,6 +41,8 @@ namespace cmgt
 		virtual glm::vec3 getFurthestPoint(const Shape& shape1,glm::vec3 dir);
 		//used for checking rays intersections
 		virtual bool rayIntersectCheck(const glm::vec3& origin, const glm::vec3& dir, RayInfo* rayInfo);
+		//used to comute the inertia tensor
+		virtual void computeInertiaTensor();
 	private:
 		//disallow copy and assignment
 		Collider(const Collider&);

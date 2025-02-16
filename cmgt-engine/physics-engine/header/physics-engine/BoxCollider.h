@@ -12,7 +12,6 @@ namespace cmgt
 	public:
 		BoxCollider();
 		//behaviour should be able to update itself every step and MUST be implemented
-		void update(float pStep) override;
 	private:
 
 		//disallow copy and assignment

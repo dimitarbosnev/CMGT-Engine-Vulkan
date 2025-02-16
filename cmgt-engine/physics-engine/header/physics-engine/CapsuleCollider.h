@@ -21,6 +21,8 @@ namespace cmgt
 		glm::vec3 getFurthestPoint(const Shape& shape1,glm::vec3 dir) override;
 		//used for checking rays intersections
 		bool rayIntersectCheck(const glm::vec3& origin, const glm::vec3& dir, RayInfo* rayInfo) override;
+
+		void computeInertiaTensor() override;
 	private:
 		float radius = 1.f;
 		float height = 1.f;

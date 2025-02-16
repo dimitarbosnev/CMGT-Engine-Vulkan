@@ -18,6 +18,8 @@ namespace cmgt
 
     void PhysicsEngine::phys_tick(float pStep)
     {
+    phys_tick_begin:
+        bool occuredCollision = false;
         for(int i = 0; i < colliders.size(); i++){
             for (int j = i + 1; j < colliders.size(); j++) {
 
@@ -30,13 +32,14 @@ namespace cmgt
                         CollisionInfo info(shape1,colliders[i],shape2,colliders[j]);
                             //auto start = Clock::now();
                         if(SATcheckCollision(shape1,shape2,&info)){
+                            occuredCollision = true;
                             //auto end = Clock::now();
                             //std::cout << "COLLISION DETECTED SAT!!!" << std::endl;
 
                             //auto elapsed = std::chrono::duration_cast<ns>(end - start);
 
                             //std::cout << "Elapsed time SAT: " << elapsed.count() << " ns\n";
-                            CollisionResponse(info);
+                            CollisionResponse(info, pStep);
                         }
                     }
                     #endif
@@ -59,6 +62,8 @@ namespace cmgt
                 }
             }
         }
+        //if(occuredCollision)
+            //goto phys_tick_begin;
     }
 
     bool PhysicsEngine::rayCast(const glm::vec3& origin, const glm::vec3& dir, RayInfo* rayInfo) {
@@ -77,22 +82,57 @@ namespace cmgt
 
         return false;
     }
-    void PhysicsEngine::CollisionResponse(CollisionInfo& info){
+    void PhysicsEngine::CollisionResponse(CollisionInfo& info, float phys_tick){
 
         //don't forget to implement for both dynamic and static objects
-        glm::vec3 relative = info.collider2.first.centroid - info.collider1.first.centroid;
-
+        glm::vec3 relative1 = info.collider2.first.centroid - info.collider1.first.centroid;
+        glm::vec3 relative2 = info.collider1.first.centroid - info.collider2.first.centroid;
         //glm::vec3 resolution = relative * (info.peneterationDepth + EPSILON);
         float mass1 = info.collider1.second->getInverseMass();
         float mass2 = info.collider2.second->getInverseMass();
         float totalMass = mass1 + mass2;
-        glm::vec3 resolution1 = info.collisionNormal * (info.peneterationDepth + EPSILON) * (mass1 / totalMass);
-        glm::vec3 resolution2 = info.collisionNormal * (info.peneterationDepth + EPSILON) * (mass2 / totalMass);
+        glm::vec3 resolution1 = info.collisionNormal * (info.peneterationDepth + phys_tick) * (mass1 / totalMass);
+        glm::vec3 resolution2 = info.collisionNormal * (info.peneterationDepth + phys_tick) * (mass2 / totalMass);
+        if(glm::dot(relative1,resolution1) < 0)
+            resolution1 = -resolution1;
+        if(glm::dot(relative2,resolution2) > 0)
+            resolution2 = -resolution2;
+        info.collider1.second->velocity = info.collider1.second->reflectVelosity(info.collisionNormal);
+        info.collider2.second->velocity = info.collider2.second->reflectVelosity(info.collisionNormal);
 
-        info.collider1.second->reflectVelosity(info.collisionNormal);
-        info.collider2.second->reflectVelosity(info.collisionNormal);
-        info.collider1.second->getTransform().setWorldPosition((glm::vec3(info.collider1.first.worldTransform[3])-resolution1));
-        info.collider2.second->getTransform().setWorldPosition((glm::vec3(info.collider2.first.worldTransform[3])+resolution2) );
+        if(info.collider1.second->getPhysType() == phys_type::DYNAMIC)
+            info.collider1.second->getTransform().setWorldPosition((glm::vec3(info.collider1.first.worldTransform[3])-resolution1));
+        if(info.collider2.second->getPhysType() == phys_type::DYNAMIC)
+            info.collider2.second->getTransform().setWorldPosition((glm::vec3(info.collider2.first.worldTransform[3])+resolution2));
+        
+        //std::cout << "Contact Point: " <<  info.contactPoint << std::endl;
+        //{
+        //    //collider1
+        //    Collider* collider = info.collider1.second;
+        //    if(collider->getPhysType() == phys_type::DYNAMIC){
+        //        Shape& shape = info.collider1.first;
+        //        glm::vec3 r = relative1 - collider->velocity;
+        //
+        //        glm::vec3 inertia = glm::cross (collider->getInertiaTensor() * glm::cross (r, info.collisionNormal), r);
+        //
+        //        glm::vec3 deltaAngularVelocity =  inertia * phys_tick;
+        //        collider->angularVelosity += deltaAngularVelocity;
+        //    }
+        //}
+        //
+        //{
+        //    //collider2
+        //    Collider* collider = info.collider2.second;
+        //    if(collider->getPhysType() == phys_type::DYNAMIC){
+        //        Shape& shape = info.collider2.first;
+        //        glm::vec3 r = relative2 - collider->velocity;
+        //        
+        //        glm::vec3 inertia = glm::cross (collider->getInertiaTensor() * glm::cross (r, info.collisionNormal), r);
+        //
+        //        glm::vec3 deltaAngularVelocity =  inertia * phys_tick;
+        //        collider->angularVelosity += deltaAngularVelocity;
+        //    }
+        //}
     }
 
 
@@ -119,7 +159,7 @@ namespace cmgt
 		    glm::vec3 support = getSupportPoint(shape1, shape2, minNormal);
 		    float sDistance = glm::dot(minNormal, support);
  
-		    if (abs(sDistance - minDistance) > EPSILON) {
+		    if (abs(sDistance - minDistance) > -EPSILON) {
 			    minDistance = MAX;
             
                 std::vector<std::pair<size_t, size_t>> uniqueEdges;
@@ -466,27 +506,27 @@ namespace cmgt
         auto [shape1_min, shape1_max] = shape1.getMinMaxValues(axis);
         auto [shape2_min, shape2_max] = shape2.getMinMaxValues(axis);
         //If shapes overlap on aixs return true
-        if(checkAxisOverlap(shape1_min,shape1_max, shape2_min,shape2_max, axis, info)){
-            return true;
-        }
-        //shapes doesn't overlap on axis
-        return false;
-    }
-
-    bool PhysicsEngine::checkAxisOverlap(float min1, float max1, float min2, float max2, glm::vec3 axis, CollisionInfo* info){
-            // If one interval is completely to the left of the other, there's no overlap.
         float newPenetration = 0;
-        if (max1 < min2 || max2 < min1) {
+        if (shape1_max < shape2_min || shape2_max < shape1_min) {
             return false;
         }
 
         // The overlapping (penetration) length is the difference between the lower of the two max values
         // and the higher of the two min values.
-        newPenetration = std::min(max1, max2) - std::max(min1, min2);
+        float min_of_max = std::min(shape1_max, shape2_max);
+        float max_of_min = std::max(shape1_min, shape2_min);
+        newPenetration = min_of_max - max_of_min;
 
+        //glm::vec3 center;
+        //glm::vec3 relative = shape2.centroid - shape1.centroid;
+        //if(glm::dot(relative, axis) > 0)
+            //center = shape1.centroid;
+        //else
+            //center = shape2.centroid;
         if(newPenetration < info->peneterationDepth){
             info->peneterationDepth = newPenetration;
             info->collisionNormal = axis;
+            //info->contactPoint = (((min_of_max + max_of_min) * 0.5f) * axis) + center;
         }
         return true;
     }

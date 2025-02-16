@@ -37,8 +37,8 @@ namespace cmgt{
         //This is how you get the mouse to world
         glm::vec3 dir = SceneManager::get()->getCurrentScene()->getWorld()->getMainCamera()->viewportToWorld(Input::mousePosition());
         RayInfo info;
-        if(PhysicsEngine::rayCast(getTransform().getWorldPosition(), dir, &info))
-            std::cout << "RayCast WORKS!!!" << std::endl;
+        //if(PhysicsEngine::rayCast(getTransform().getWorldPosition(), dir, &info))
+            //std::cout << "RayCast WORKS!!!" << std::endl;
 
         //std::cout<< direction <<std::endl;
         //std::cout<<  worldPos <<std::endl;

@@ -6,6 +6,7 @@
 namespace cmgt{
 
     SphereCollider::SphereCollider() : Collider(){
+        computeInertiaTensor();
     }
 
     std::pair<float, float> SphereCollider::getMinMaxValues(const Shape& shape, glm::vec3 axis) {
@@ -79,5 +80,14 @@ namespace cmgt{
 
         rayInfo->hitPoint = o + (t*d);
         return true;
+    }
+
+    void SphereCollider::computeInertiaTensor() {
+
+        float I = 0.4f * getMass() * radius * radius;
+
+        glm::mat3 inertia = I * glm::mat3(1.0f);
+    
+        setInertiaTensor(inertia);
     }
 }

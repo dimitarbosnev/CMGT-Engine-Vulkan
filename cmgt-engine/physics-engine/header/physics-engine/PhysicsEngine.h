@@ -22,6 +22,7 @@ namespace cmgt
 
 		}
 		glm::vec3 collisionNormal = glm::vec3(0);
+		glm::vec3 contactPoint = glm::vec3(0);
 		float peneterationDepth = 0;
 		bool hasCollision = true;
 		std::pair<Shape&,Collider*> collider1;
@@ -71,7 +72,7 @@ namespace cmgt
 		private:
 		glm::vec3 gravity = glm::vec3(0,-9.807f,0);
 		//The functions responsible for collision detection
-		static void CollisionResponse(CollisionInfo& info); 
+		static void CollisionResponse(CollisionInfo& info, float phys_tick); 
 		// EPA algorithm
 		static void GetCollisionInfo(const Shape& shape1, const Shape& shape2, Simplex& simplex, CollisionInfo* info);
 		static std::pair<std::vector<glm::vec4>, size_t> GetFaceNormals(const std::vector<glm::vec3>& polytope, const std::vector<size_t>& faces);
@@ -85,7 +86,6 @@ namespace cmgt
 		//SAT Algorithm
 		static bool SATcheckCollision(const Shape& shape1, const Shape& shape2, CollisionInfo* info);
 		static bool computeAxis(const Shape& shape1,const Shape& shape2, glm::vec3 axis, CollisionInfo* info);
-		static bool checkAxisOverlap(float min1, float max1, float min2, float max2, glm::vec3 axis, CollisionInfo* info);
 		//
 		//disallow copy and assignment
 		PhysicsEngine(const PhysicsEngine&);
