@@ -85,9 +85,10 @@ namespace cmgt {
 		std::vector<size_t> sizes{};
 		VulkanDescriptorSetLayout descriptorSetLayout = setDesriptorSetLayout(sizes);
 		VulkanInstance* VkInstance = VulkanInstance::get();
+		uniformBuffers.reserve(sizes.size());
 		for (int i = 0; i < sizes.size(); i++) {
 			VulkanBuffer* buffer = new VulkanBuffer(VkInstance->physicalDevice(), VkInstance->device(),sizes[i], MAX_FRAMES_IN_FLIGHT,
-			VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
+			descriptorSetLayout.getBufferUsageBasedOnBindingAt(i), VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 			uniformBuffers.push_back(buffer);
 			buffer->map();
 		}
@@ -161,7 +162,7 @@ namespace cmgt {
 	{
 		for(int i = 0; i < uniformBuffers.size(); i++){
 			uniformBuffers[i]->writeToIndex(pData, imageIndex);
-			uniformBuffers[i]->flushIndex(imageIndex);
+			//uniformBuffers[i]->flushIndex(imageIndex);
 		}
 
 		vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, _pipelineLayout, 0, 1, &descriptorSets[imageIndex], 0, nullptr);
