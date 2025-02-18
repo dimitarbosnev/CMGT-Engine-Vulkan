@@ -3,6 +3,7 @@
 #include "utils/ObjectMovement.h"
 #include "utils/CameraMovement.h"
 #include "utils/MouseMovement.h"
+#include "utils/ColorMaterial.h"
 #include "core/Mesh.h"
 #include "core/GraphicsPipeline.h"
 #include "physics-engine/PhysicsEngine.h"
@@ -108,7 +109,7 @@ void physics_loop(){
 			if(cmgt::clock::now() >= phys_clock){
 				phys_clock += phys_step;
 				float phys_tick = std::chrono::duration<float>(phys_clock - cmgt::clock::now()).count();
-				std::cout<<phys_tick<<std::endl;
+				//std::cout<<phys_tick<<std::endl;
 				if(cmgt::Input::isKeyPressed(GLFW_KEY_SPACE))
 					cmgt::SceneManager::physics_update(phys_tick);
 				cmgt::PhysicsEngine::get()->phys_tick(phys_tick);

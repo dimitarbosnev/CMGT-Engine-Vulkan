@@ -41,9 +41,9 @@ namespace cmgt {
 	class GraphicsPipeline {
 	public:
 		GraphicsPipeline(const GraphicsPipelineInfo& info, 
-		std::function<VulkanDescriptorSetLayout(uint32_t&)> desriptorSetLayout, 
+		std::function<VulkanDescriptorSetLayout(std::vector<size_t>&)> desriptorSetLayout, 
 		std::function<VkPipelineShaderStageCreateInfo*(uint8_t&)> shadersStages,
-		std::function<VkPushConstantRange()> pushConstants,
+		std::function<VkPushConstantRange*(uint8_t&)> pushConstants,
 		std::function<void(const VulkanFrameData&)> uniformData,
 		std::function<void()> deleteShaders);
 		~GraphicsPipeline();
@@ -62,9 +62,9 @@ namespace cmgt {
 		
 		std::function<void(const VulkanFrameData&)> setUniformData;
 		std::function<void()> freeShaders;
-		std::function<VulkanDescriptorSetLayout(uint32_t&)> setDesriptorSetLayout;//have to be set
+		std::function<VulkanDescriptorSetLayout(std::vector<size_t>&)> setDesriptorSetLayout;//have to be set
 		std::function<VkPipelineShaderStageCreateInfo*(uint8_t&)> setPipelineShaderStages;//have to be set
-		std::function<VkPushConstantRange()> setPushConstants;//have to be set
+		std::function<VkPushConstantRange*(uint8_t&)> setPushConstants;//have to be set
 		std::list<Mesh*> renderMeshs;
 		void createPipeline(const GraphicsPipelineInfo& info);
 		VkPipelineLayout _pipelineLayout;
@@ -72,6 +72,7 @@ namespace cmgt {
 		VulkanDescriptorPool descriptorPool;
 		std::vector<VulkanBuffer*> uniformBuffers;
 		std::vector<VkDescriptorSet> descriptorSets;
+		
 		GraphicsPipeline(const GraphicsPipeline&);
 		GraphicsPipeline& operator=(const GraphicsPipeline&);
 	};

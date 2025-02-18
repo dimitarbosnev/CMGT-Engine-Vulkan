@@ -18,7 +18,7 @@ namespace cmgt
 
     void PhysicsEngine::phys_tick(float pStep)
     {
-    phys_tick_begin:
+        auto start = clock::now();
         bool occuredCollision = false;
         for(int i = 0; i < colliders.size(); i++){
             for (int j = i + 1; j < colliders.size(); j++) {
@@ -30,15 +30,9 @@ namespace cmgt
                     #ifdef SAT
                     {
                         CollisionInfo info(shape1,colliders[i],shape2,colliders[j]);
-                            //auto start = Clock::now();
+                            
                         if(SATcheckCollision(shape1,shape2,&info)){
                             occuredCollision = true;
-                            //auto end = Clock::now();
-                            //std::cout << "COLLISION DETECTED SAT!!!" << std::endl;
-
-                            //auto elapsed = std::chrono::duration_cast<ns>(end - start);
-
-                            //std::cout << "Elapsed time SAT: " << elapsed.count() << " ns\n";
                             CollisionResponse(info, pStep);
                         }
                     }
@@ -62,8 +56,9 @@ namespace cmgt
                 }
             }
         }
-        //if(occuredCollision)
-            //goto phys_tick_begin;
+        auto end = clock::now();
+        auto elapsed = std::chrono::duration_cast<mc>(end - start);
+        std::cout << "Elapsed time SAT: " << elapsed.count() << " mc\n";
     }
 
     bool PhysicsEngine::rayCast(const glm::vec3& origin, const glm::vec3& dir, RayInfo* rayInfo) {

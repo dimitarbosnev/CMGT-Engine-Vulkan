@@ -1,5 +1,5 @@
-#ifndef TESTMATERIAL_H
-#define TESTMATERIAL_H
+#ifndef COLORMATERIAL_H
+#define COLORMATERIAL_H
 
 #pragma once
 #include "minimal/glm.h"
@@ -9,7 +9,7 @@
 
 namespace cmgt {
 
-	class TestMaterial : public Material
+	class ColorMaterial : public Material
 	{
 	public:
 		struct PushConstData
@@ -20,10 +20,10 @@ namespace cmgt {
 		struct UniformData {
 			glm::mat4 cameraMatrix;
 			glm::mat4 projMatrix;
-			glm::vec4 ambientLight;
-			glm::vec4 dirLight;
+			int lightCount;
+			LightStruct vector_lights[100];
 		};
-		TestMaterial();
+		ColorMaterial();
 		/**
 		 * Render the given mesh in the given world using the given mvp matrices. Implement in subclass.
 		 */
@@ -46,4 +46,4 @@ namespace cmgt {
 		//"vert.spv","frag.spv"
 	};
 }
-#endif // TESTMATERIAL_H
+#endif // COLORMATERIAL_H

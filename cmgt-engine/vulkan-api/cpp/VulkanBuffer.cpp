@@ -151,7 +151,7 @@ namespace cmgt {
      * @param index Used in offset calculation
      *
      */
-    void VulkanBuffer::writeToIndex(void* data, int index) {
+    void VulkanBuffer::writeToIndex(const void* data, int index) {
         writeToBuffer(data, instanceSize, index * alignmentSize);
     }
 

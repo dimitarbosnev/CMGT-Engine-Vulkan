@@ -73,7 +73,7 @@ namespace cmgt {
 		vkCmdSetScissor(commandBuffers[imageIndex], 0, 1, &scissor);
 		
 		
-		VulkanFrameData frameData(commandBuffers[imageIndex],imageIndex, viewMatrix, projectionMatrix);
+		VulkanFrameData frameData(commandBuffers[imageIndex],imageIndex, viewMatrix, projectionMatrix,lights);
 
 		//Good performance but explore the option for meshes to render themsleves
 		//This way you don't have to keep track of which mesh is visible
@@ -84,6 +84,8 @@ namespace cmgt {
 		vkCmdEndRenderPass(commandBuffers[imageIndex]);
 		if (vkEndCommandBuffer(commandBuffers[imageIndex]) != VK_SUCCESS)
 			throw std::runtime_error("failed to record command buffer!");
+		
+		//lights.clear();
 	}
 
 	void VulkanRenderer::drawFrame(glm::mat4 viewMatrix, glm::mat4 projectionMatrix) {

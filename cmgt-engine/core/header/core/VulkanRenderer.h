@@ -14,8 +14,8 @@
 #include<vector>
 #include<list>
 namespace cmgt {
+	typedef std::array<LightStruct,100> Lights;
 	class GraphicsPipeline;
-
 	class VulkanRenderer : public Singelton<VulkanRenderer>{
 		public:
 			VulkanRenderer();
@@ -23,7 +23,7 @@ namespace cmgt {
 			void recordCommandBuffer(uint8_t imageIndex, glm::mat4 viewMatrix, glm::mat4 projectionMatrix);
 			void drawFrame(glm::mat4 viewMatrix, glm::mat4 projectionMatrix);
 			std::list<GraphicsPipeline*> pipelines;
-			
+			std::array<LightStruct,100> lights;
 		private:
 			//Event OnSwapchainRecreate;
 			std::vector<VkCommandBuffer> commandBuffers;

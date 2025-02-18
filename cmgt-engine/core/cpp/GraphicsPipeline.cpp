@@ -49,9 +49,9 @@ namespace cmgt {
 	}
 
 	GraphicsPipeline::GraphicsPipeline(const GraphicsPipelineInfo& info, 
-		std::function<VulkanDescriptorSetLayout(uint32_t&)> desriptorSetLayout, 
+		std::function<VulkanDescriptorSetLayout(std::vector<size_t>&)> desriptorSetLayout, 
 		std::function<VkPipelineShaderStageCreateInfo*(uint8_t&)> shadersStages,
-		std::function<VkPushConstantRange()> pushConstants,
+		std::function<VkPushConstantRange*(uint8_t&)> pushConstants,
 		std::function<void(const VulkanFrameData&)> uniformData,
 		std::function<void()> deleteShaders) : 
 		setDesriptorSetLayout(desriptorSetLayout), setPipelineShaderStages(shadersStages), setPushConstants(pushConstants), setUniformData(uniformData), freeShaders(deleteShaders),
@@ -80,13 +80,13 @@ namespace cmgt {
 	}
 	void GraphicsPipeline::createPipelineLayout() {
 
-		VkPushConstantRange range = setPushConstants();
-		uint32_t uniformSize;
-		VulkanDescriptorSetLayout descriptorSetLayout = setDesriptorSetLayout(uniformSize);
-
+		uint8_t i;
+		VkPushConstantRange* ranges = setPushConstants(i);
+		std::vector<size_t> sizes{};
+		VulkanDescriptorSetLayout descriptorSetLayout = setDesriptorSetLayout(sizes);
 		VulkanInstance* VkInstance = VulkanInstance::get();
-		for (int i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
-		VulkanBuffer* buffer = new VulkanBuffer(VkInstance->physicalDevice(), VkInstance->device(),uniformSize, 1,
+		for (int i = 0; i < sizes.size(); i++) {
+			VulkanBuffer* buffer = new VulkanBuffer(VkInstance->physicalDevice(), VkInstance->device(),sizes[i], MAX_FRAMES_IN_FLIGHT,
 			VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
 			uniformBuffers.push_back(buffer);
 			buffer->map();
@@ -94,8 +94,10 @@ namespace cmgt {
 
 		descriptorSets.resize(MAX_FRAMES_IN_FLIGHT);
 		for (int i = 0; i < descriptorSets.size(); i++) {
-			VkDescriptorBufferInfo bufferInfo = uniformBuffers[i]->descriptorInfo();
-			VulkanDescriptorWriter(descriptorSetLayout, descriptorPool).writeBuffer(0, &bufferInfo).build(descriptorSets[i]);
+			for (int y = 0; y < sizes.size(); y++){
+				VkDescriptorBufferInfo bufferInfo = uniformBuffers[y]->descriptorInfo();
+				VulkanDescriptorWriter(descriptorSetLayout, descriptorPool).writeBuffer(y, &bufferInfo).build(descriptorSets[i]);
+			}
 		}
 
 		std::vector<VkDescriptorSetLayout> descriptorSetLayouts{ descriptorSetLayout.getDescriptorSetLayout() };
@@ -103,10 +105,12 @@ namespace cmgt {
 		pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
 		pipelineLayoutInfo.setLayoutCount = static_cast<uint32_t>(descriptorSetLayouts.size());
 		pipelineLayoutInfo.pSetLayouts = descriptorSetLayouts.data();
-		pipelineLayoutInfo.pushConstantRangeCount = 1;
-		pipelineLayoutInfo.pPushConstantRanges = &range;
+		pipelineLayoutInfo.pushConstantRangeCount = i;
+		pipelineLayoutInfo.pPushConstantRanges = ranges;
 		if (vkCreatePipelineLayout(VulkanInstance::get()->device(), &pipelineLayoutInfo, nullptr, &_pipelineLayout) != VK_SUCCESS)
 			throw std::runtime_error("failed to create pipelin layout");
+		
+		delete[] ranges;
 	}
 	
 
@@ -155,8 +159,10 @@ namespace cmgt {
 
 	void GraphicsPipeline::writeUniformBuffers(const short& imageIndex, const VkCommandBuffer& commandBuffer, const void* pData)
 	{
-		uniformBuffers[imageIndex]->writeToBuffer(pData);
-		uniformBuffers[imageIndex]->flush();
+		for(int i = 0; i < uniformBuffers.size(); i++){
+			uniformBuffers[i]->writeToIndex(pData, imageIndex);
+			uniformBuffers[i]->flushIndex(imageIndex);
+		}
 
 		vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, _pipelineLayout, 0, 1, &descriptorSets[imageIndex], 0, nullptr);
 	}

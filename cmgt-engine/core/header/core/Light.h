@@ -5,32 +5,26 @@
 #include <string>
 #include "minimal/glm.h"
 #include "core/Component.h"
-
+#include "minimal/types.h"
 namespace cmgt {
 
 	class GameObject;
-
-	enum LightType {
-		Ambient = 0,
-		Directional = 1,
-		Point = 2,
-	};
 	class Light : public Component
 	{
 	public:
-		Light(LightType type = Ambient);
+		Light(LightType type = LightType::Ambient);
 		~Light() override;
 
 		virtual void update(float pStep) override;
 
 		void setLightColor(glm::vec3 color) {
-			this->_color = glm::vec4(color, _color.w);
+			this->_color = color;
 		};
 		void setLightColor(float r, float g, float b) {
 			this->setLightColor(glm::vec3(r, g, b));
 		};
 		void setIntencity(float intencity) {
-			_color.w = intencity;
+			_intencity = intencity;
 		};
 		void setRange(float range) {
 			_range = range;
@@ -47,22 +41,29 @@ namespace cmgt {
 		};
 
 		//override set parent to register/deregister light...
-		/*
-		* ambient light = [color,intencity]
-		*
-		* directional light = [color, intencity]
-		*					  [direction, empty]
-		*
-		* point light = [color, intencity]
-		*				[position,  range]
-		*/
+
 	protected:
 		virtual void OnSetOwner() override;
-		glm::vec4 _color = glm::vec4(1);
-		glm::vec3 _direction = glm::vec3(1);
-		float _range;
-		LightType _type;
+		LightType _type = LightType::Ambient;
+		glm::vec3 _color = glm::vec3(0);
+		glm::vec3 _direction = glm::vec3(0);
+		glm::vec3 _position = glm::vec3(0);
+		glm::vec3 _cut_off_angle = glm::vec3(0);
+		float _intencity = 0;
+		float _range = 0;
 
 	};
+
+
+	/*
+	* ambient light = [color,intencity]
+						[empty,empty]
+	*
+	* directional light = [color, intencity]
+	*					  [direction, empty]
+	*
+	* point light = [color, intencity]
+	*				[position,  range]
+	*/
 }
 #endif // LIGHT_H

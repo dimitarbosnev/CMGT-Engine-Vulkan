@@ -47,7 +47,19 @@ namespace cmgt {
 		bindingDescription[0].stride = sizeof(Vertex);
 		bindingDescription[0].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
 		return bindingDescription;
-	}
+	}	
+	};
+
+	enum class LightType { Ambient = 0, Directional = 1,Point = 2, Spotlight = 3};
+	//based on the light type we know which variables to acess
+	struct LightStruct{
+		LightType type = LightType::Ambient;
+		glm::vec3 color = glm::vec3(0);
+		glm::vec3 direction = glm::vec3(0);
+		glm::vec3 position = glm::vec3(0);
+		glm::vec3 cut_off_angle = glm::vec3(0);
+		float intencity = 0;
+		float range = 0;
 	};
 
 	template<typename T>

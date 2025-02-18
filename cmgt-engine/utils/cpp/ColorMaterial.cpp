@@ -1,41 +1,54 @@
 
-#include "utils/TestMaterial.h"
+#include "utils/ColorMaterial.h"
 #include "minimal/paths.h"
 #include "core/Globals.h"
 #include<iostream>
 namespace cmgt {	
-	TestMaterial::TestMaterial()
+	ColorMaterial::ColorMaterial()
 	{
-		_name = "TestMaterial";
+		_name = "ColorMaterial";
 		//For Everymaterial the pipeline should be initalized
 		if(pipeline == nullptr){
 			initPipeline();
 		}
 	}
-	void TestMaterial::bindPushConstants(const VulkanFrameData& frameData, const glm::mat4 pModelMatrix){
+	void ColorMaterial::bindPushConstants(const VulkanFrameData& frameData, const glm::mat4 pModelMatrix){
 
 		PushConstData data;
 		data.mvpMatrix = frameData.projectionMatrix * frameData.viewMatrix * pModelMatrix;
 		data.normalMatrix = glm::transpose(glm::inverse(pModelMatrix));
 
 		vkCmdPushConstants(frameData.commandBuffer, pipeline->pipelineLayout(), VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(PushConstData), &data);
+
+		/*
+			// For the vertex stage, update starting at offset 0.
+			vkCmdPushConstants(	commandBuffer, pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT,
+			    				0, sizeof(VertexPushConstants),
+			    				&vertexConstants
+			);
+
+			// For the fragment stage, update starting at offset equal to the size of vertex push constants.
+			vkCmdPushConstants( commandBuffer, pipelineLayout, VK_SHADER_STAGE_FRAGMENT_BIT, 
+								sizeof(VertexPushConstants), sizeof(FragmentPushConstants),
+			    				&fragmentConstants
+			);
+		*/
 	}
-	void TestMaterial::bindUniformBuffers(const VulkanFrameData& frameData){
+	void ColorMaterial::bindUniformBuffers(const VulkanFrameData& frameData){
 
 		UniformData uniformData;
 		uniformData.cameraMatrix = frameData.viewMatrix;
 		uniformData.projMatrix = frameData.projectionMatrix;
-		uniformData.dirLight = glm::vec4(glm::normalize(glm::vec3(1, -1, 1)), 1);
-		uniformData.ambientLight = glm::vec4(1, 1, 1, .2f);
-
+		uniformData.lightCount = frameData.lights.size();
+		//uniformData.vector_lights = frameData.lights.data();
 		pipeline->writeUniformBuffers(frameData.imageIndex, frameData.commandBuffer,&uniformData);
 	}
-	void TestMaterial::initPipeline(){
+	void ColorMaterial::initPipeline(){
 
 		std::cout << "Initalizing Shaders...\n";
-		CreateShader("BasicVertexShader.vert", &vertexShaderModule);
+		CreateShader("ColorShader.vert", &vertexShaderModule);
 		std::cout << "\t Vertex Shader Initalized!\n";
-		CreateShader("BasicFragmentShader.frag", &fragmentShaderModule);
+		CreateShader("ColorShader.frag", &fragmentShaderModule);
 		std::cout << "\t Fragment Shader Initalized!\n";
 
 		pipeline = new GraphicsPipeline(GraphicsPipeline::defaultGraphicsPipelineInfo(), createDescriptorSetLayout, bindPipelineShaderStages, setupPushConsts, bindUniformBuffers,freePipeline);
@@ -43,11 +56,11 @@ namespace cmgt {
 	}
 
 	//has to be called somewhere
-	void TestMaterial::freePipeline(){
+	void ColorMaterial::freePipeline(){
 		vkDestroyShaderModule(VulkanInstance::get()->device(), vertexShaderModule, nullptr);
 		vkDestroyShaderModule(VulkanInstance::get()->device(), fragmentShaderModule, nullptr);
 	}
-	VkPipelineShaderStageCreateInfo* TestMaterial::bindPipelineShaderStages(uint8_t& num)
+	VkPipelineShaderStageCreateInfo* ColorMaterial::bindPipelineShaderStages(uint8_t& num)
 	{
 		num = 2;
 		VkPipelineShaderStageCreateInfo* shaderStages = new VkPipelineShaderStageCreateInfo[num];
@@ -70,12 +83,12 @@ namespace cmgt {
 		return shaderStages;
 	}
 
-	VulkanDescriptorSetLayout TestMaterial::createDescriptorSetLayout(std::vector<size_t>& sizes){
+	VulkanDescriptorSetLayout ColorMaterial::createDescriptorSetLayout(std::vector<size_t>& sizes){
 		sizes.push_back(sizeof(UniformData));
 		return VulkanDescriptorSetLayout::Builder().addBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT).build();
 	}
 
-	VkPushConstantRange* TestMaterial::setupPushConsts(uint8_t& num)
+	VkPushConstantRange* ColorMaterial::setupPushConsts(uint8_t& num)
 	{
 		num = 1;
 		VkPushConstantRange* range= new VkPushConstantRange[num];
