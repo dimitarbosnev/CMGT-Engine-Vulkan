@@ -39,9 +39,9 @@ namespace cmgt {
 		UniformData uniformData;
 		uniformData.cameraMatrix = frameData.viewMatrix;
 		uniformData.projMatrix = frameData.projectionMatrix;
-		uniformData.lightCount = frameData.lights.size();
+		//uniformData.lightCount = frameData.lights.size();
 		//uniformData.vector_lights = frameData.lights.data();
-		pipeline->writeUniformBuffers(frameData.imageIndex, frameData.commandBuffer,&uniformData);
+		//pipeline->writeUniformBuffers(frameData.imageIndex, frameData.commandBuffer,&uniformData);
 	}
 	void ColorMaterial::initPipeline(){
 
@@ -84,8 +84,8 @@ namespace cmgt {
 	}
 
 	VulkanDescriptorSetLayout ColorMaterial::createDescriptorSetLayout(std::vector<size_t>& sizes){
-		sizes.push_back(sizeof(UniformData));
-		return VulkanDescriptorSetLayout::Builder().addBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT).build();
+		//sizes.push_back(sizeof(UniformData));
+		return VulkanDescriptorSetLayout::Builder().build();
 	}
 
 	VkPushConstantRange* ColorMaterial::setupPushConsts(uint8_t& num)

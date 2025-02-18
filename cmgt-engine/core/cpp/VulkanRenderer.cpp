@@ -7,14 +7,23 @@
 #include<array>
 #include <stdexcept>
 namespace cmgt {
-	VulkanRenderer::VulkanRenderer() : Singelton<VulkanRenderer>(this) {
+	VulkanRenderer::VulkanRenderer() : Singelton<VulkanRenderer>(this), GlobalDescriptorSetLayout(VulkanDescriptorSetLayout::Builder()
+	.addBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT).build()) 
+	//.addBinding(1, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT).build()) 
+	{
 		createCommandBuffers();
+		createDescriptorSets();
+
 	}
 	VulkanRenderer::~VulkanRenderer() {
 		for(GraphicsPipeline* pipeline : pipelines){
 			delete pipeline;
 		}
+		for(VulkanBuffer* buffer : GlobalDescriptorBuffers){
+			delete buffer;
+		}
 		pipelines.clear();
+		delete GlobalDescriptorPool;
 	}
 
 	void VulkanRenderer::createCommandBuffers() {
@@ -28,6 +37,56 @@ namespace cmgt {
 
 		if (vkAllocateCommandBuffers(VulkanInstance::get()->device(), &allocInfo, commandBuffers.data()) != VK_SUCCESS)
 			throw std::runtime_error("failed to allocate command buffers!");
+	}
+
+	void VulkanRenderer::createDescriptorSets(){
+
+		VulkanDescriptorPool::Builder poolBuilder(VulkanDescriptorPool::Builder().setMaxSets(MAX_FRAMES_IN_FLIGHT));
+		
+		for (int i = 0; i < sizes.size(); i++){
+			poolBuilder.addPoolSize(GlobalDescriptorSetLayout.getDescriptorSetLayoutBindingAt(i).descriptorType, MAX_FRAMES_IN_FLIGHT);
+		}
+		GlobalDescriptorPool = new VulkanDescriptorPool(poolBuilder.build());
+
+		VulkanInstance* VkInstance = VulkanInstance::get();
+		GlobalDescriptorBuffers.reserve(sizes.size());
+		for (int i = 0; i < sizes.size(); i++) {
+			VulkanBuffer* buffer = new VulkanBuffer(VkInstance->physicalDevice(), VkInstance->device(),sizes[i], MAX_FRAMES_IN_FLIGHT,
+			GlobalDescriptorSetLayout.getBufferUsageBasedOnBindingAt(i), VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+			GlobalDescriptorBuffers.push_back(buffer);
+			buffer->map();
+		}
+
+		GlobalDescriptorSets.resize(MAX_FRAMES_IN_FLIGHT);
+		for (int i = 0; i < GlobalDescriptorSets.size(); i++) {
+			VulkanDescriptorWriter writer(GlobalDescriptorSetLayout, *GlobalDescriptorPool);
+
+			for (int y = 0; y < sizes.size(); y++){
+				VkDescriptorBufferInfo bufferInfo = GlobalDescriptorBuffers[y]->descriptorInfo();
+				writer.writeBuffer(y, &bufferInfo);
+					
+			}
+
+			if(!writer.build(GlobalDescriptorSets[i])){
+				throw std::runtime_error("failed to build descriptor set!");
+			}
+		}
+	}
+
+	void VulkanRenderer::writeDescriptorBuffers(const VulkanFrameData& frameData){
+
+		std::vector<const void*> data;
+		GlobalUniformData uniformData;
+		uniformData.cameraMatrix = frameData.viewMatrix;
+		uniformData.projMatrix = frameData.projectionMatrix;
+		uniformData.dirLight = glm::vec4(glm::normalize(glm::vec3(1, -1, 1)), 1);
+		uniformData.ambientLight = glm::vec4(1, 1, 1, .2f);
+		data.push_back(&uniformData);
+
+		for(int i = 0; i < GlobalDescriptorBuffers.size(); i++){
+			GlobalDescriptorBuffers[i]->writeToIndex(data[i], frameData.imageIndex);
+			//descriptorBuffers[i]->flushIndex(imageIndex);
+		}
 	}
 
 	void VulkanRenderer::freeCommandBuffers() {
@@ -77,7 +136,10 @@ namespace cmgt {
 
 		//Good performance but explore the option for meshes to render themsleves
 		//This way you don't have to keep track of which mesh is visible
+
+		writeDescriptorBuffers(frameData);
 		for(GraphicsPipeline* pipeline : pipelines){
+			vkCmdBindDescriptorSets(commandBuffers[imageIndex], VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline->pipelineLayout(), 0, 1, &GlobalDescriptorSets[imageIndex], 0, nullptr);
 			pipeline->recordFrameCommandBuffer(frameData);
 		}
 		

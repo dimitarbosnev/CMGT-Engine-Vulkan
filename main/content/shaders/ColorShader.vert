@@ -25,8 +25,8 @@ layout(push_constant) uniform Push {
 layout(set = 0, binding = 0) uniform UBOS{
 	mat4 cameraMatrix;
 	mat4 projMatrix;
-    int lightCount;
-    LightStruct vector_lights;
+    vec4 ambientLight;
+	vec4 dirLight;
 }ubo;
 
 void main() {

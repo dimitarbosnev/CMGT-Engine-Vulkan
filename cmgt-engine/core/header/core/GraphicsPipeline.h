@@ -51,8 +51,8 @@ namespace cmgt {
 		void bind(VkCommandBuffer commandBuffer);
 		static void defaultGraphicsPipelineInfo(GraphicsPipelineInfo& configInfo);
 		static GraphicsPipelineInfo defaultGraphicsPipelineInfo();
-		VkPipelineLayout pipelineLayout() {return _pipelineLayout;}
-		void writeUniformBuffers(const short& imageIndex, const VkCommandBuffer& commandBuffer, const void* pData);
+		VkPipelineLayout& pipelineLayout() {return _pipelineLayout;}
+		void writeUniformBuffers(const short& imageIndex, const VkCommandBuffer& commandBuffer, std::vector<const void*>& pData);
 		void recordFrameCommandBuffer(const VulkanFrameData& frameData);
 		void createPipelineLayout();
 		void createPipeline();
@@ -69,10 +69,9 @@ namespace cmgt {
 		void createPipeline(const GraphicsPipelineInfo& info);
 		VkPipelineLayout _pipelineLayout;
 		VkPipeline graphicsPipeline;
-		VulkanDescriptorPool descriptorPool;
-		std::vector<VulkanBuffer*> uniformBuffers;
+		std::vector<VulkanBuffer*> descriptorBuffers;
 		std::vector<VkDescriptorSet> descriptorSets;
-		
+		VulkanDescriptorPool* descriptorPool;
 		GraphicsPipeline(const GraphicsPipeline&);
 		GraphicsPipeline& operator=(const GraphicsPipeline&);
 	};

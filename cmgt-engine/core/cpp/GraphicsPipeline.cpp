@@ -54,9 +54,8 @@ namespace cmgt {
 		std::function<VkPushConstantRange*(uint8_t&)> pushConstants,
 		std::function<void(const VulkanFrameData&)> uniformData,
 		std::function<void()> deleteShaders) : 
-		setDesriptorSetLayout(desriptorSetLayout), setPipelineShaderStages(shadersStages), setPushConstants(pushConstants), setUniformData(uniformData), freeShaders(deleteShaders),
-		//Can be set through the Material but it's useless right now
-		descriptorPool(VulkanDescriptorPool::Builder().setMaxSets(MAX_FRAMES_IN_FLIGHT).addPoolSize(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, MAX_FRAMES_IN_FLIGHT).build()) {
+		setDesriptorSetLayout(desriptorSetLayout), setPipelineShaderStages(shadersStages), setPushConstants(pushConstants), 
+		setUniformData(uniformData), freeShaders(deleteShaders) {
 		std::cout << " Creating Graphics Pipeline...\n";
 		createPipelineLayout();
 
@@ -71,9 +70,10 @@ namespace cmgt {
 		//clear meshes
 		renderMeshs.clear();
 		//clear buffers
-		for (VulkanBuffer* buffer : uniformBuffers)
+		for (VulkanBuffer* buffer : descriptorBuffers)
 			delete buffer;
-		uniformBuffers.clear();
+		descriptorBuffers.clear();
+		delete descriptorPool;
 		vkDestroyPipelineLayout(VulkanInstance::get()->device(), _pipelineLayout, nullptr);
 		vkDestroyPipeline(VulkanInstance::get()->device(), graphicsPipeline, nullptr);
 		std::cout << "Pipeline destroyed" << std::endl;
@@ -84,24 +84,39 @@ namespace cmgt {
 		VkPushConstantRange* ranges = setPushConstants(i);
 		std::vector<size_t> sizes{};
 		VulkanDescriptorSetLayout descriptorSetLayout = setDesriptorSetLayout(sizes);
+
+		VulkanDescriptorPool::Builder poolBuilder(VulkanDescriptorPool::Builder().setMaxSets(MAX_FRAMES_IN_FLIGHT));
+
+		for (int i = 0; i < sizes.size(); i++){
+			poolBuilder.addPoolSize(descriptorSetLayout.getDescriptorSetLayoutBindingAt(i).descriptorType, MAX_FRAMES_IN_FLIGHT);
+		}
+		
+		descriptorPool = new VulkanDescriptorPool(poolBuilder.build());
+
 		VulkanInstance* VkInstance = VulkanInstance::get();
-		uniformBuffers.reserve(sizes.size());
+		descriptorBuffers.reserve(sizes.size());
 		for (int i = 0; i < sizes.size(); i++) {
 			VulkanBuffer* buffer = new VulkanBuffer(VkInstance->physicalDevice(), VkInstance->device(),sizes[i], MAX_FRAMES_IN_FLIGHT,
 			descriptorSetLayout.getBufferUsageBasedOnBindingAt(i), VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
-			uniformBuffers.push_back(buffer);
+			descriptorBuffers.push_back(buffer);
 			buffer->map();
 		}
 
 		descriptorSets.resize(MAX_FRAMES_IN_FLIGHT);
 		for (int i = 0; i < descriptorSets.size(); i++) {
+			VulkanDescriptorWriter writer(descriptorSetLayout, *descriptorPool);
+			
 			for (int y = 0; y < sizes.size(); y++){
-				VkDescriptorBufferInfo bufferInfo = uniformBuffers[y]->descriptorInfo();
-				VulkanDescriptorWriter(descriptorSetLayout, descriptorPool).writeBuffer(y, &bufferInfo).build(descriptorSets[i]);
+				VkDescriptorBufferInfo bufferInfo = descriptorBuffers[y]->descriptorInfo();
+				writer.writeBuffer(y, &bufferInfo);		
+			}
+
+			if(!writer.build(descriptorSets[i])){
+				throw std::runtime_error("failed to build descriptor set!");
 			}
 		}
 
-		std::vector<VkDescriptorSetLayout> descriptorSetLayouts{ descriptorSetLayout.getDescriptorSetLayout() };
+		std::vector<VkDescriptorSetLayout> descriptorSetLayouts{ VulkanRenderer::get()->getDescriptorSetLayout(), descriptorSetLayout.getDescriptorSetLayout() };
 		VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
 		pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
 		pipelineLayoutInfo.setLayoutCount = static_cast<uint32_t>(descriptorSetLayouts.size());
@@ -158,14 +173,17 @@ namespace cmgt {
 		renderMeshs.push_back(mesh);
 	}
 
-	void GraphicsPipeline::writeUniformBuffers(const short& imageIndex, const VkCommandBuffer& commandBuffer, const void* pData)
+	void GraphicsPipeline::writeUniformBuffers(const short& imageIndex, const VkCommandBuffer& commandBuffer, std::vector<const void*>& pData)
 	{
-		for(int i = 0; i < uniformBuffers.size(); i++){
-			uniformBuffers[i]->writeToIndex(pData, imageIndex);
-			//uniformBuffers[i]->flushIndex(imageIndex);
+		if(pData.size() != descriptorBuffers.size())
+		throw std::runtime_error("Bad Data");
+
+		for(int i = 0; i < descriptorBuffers.size(); i++){
+			descriptorBuffers[i]->writeToIndex(pData[i], imageIndex);
+			//descriptorBuffers[i]->flushIndex(imageIndex);
 		}
 
-		vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, _pipelineLayout, 0, 1, &descriptorSets[imageIndex], 0, nullptr);
+		vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, _pipelineLayout, 1, 1, &descriptorSets[imageIndex], 0, nullptr);
 	}
 
 	void GraphicsPipeline::recordFrameCommandBuffer(const VulkanFrameData& frameData){
