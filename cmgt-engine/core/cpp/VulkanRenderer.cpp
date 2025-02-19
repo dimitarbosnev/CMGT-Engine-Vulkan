@@ -6,14 +6,15 @@
 #include "core/GraphicsPipeline.h"
 #include<array>
 #include <stdexcept>
+
 namespace cmgt {
 	VulkanRenderer::VulkanRenderer() : Singelton<VulkanRenderer>(this), GlobalDescriptorSetLayout(VulkanDescriptorSetLayout::Builder()
-	.addBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT).build()) 
-	//.addBinding(1, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT).build()) 
+	.addBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT)	
+	.addBinding(1, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT).build()) 
 	{
+		lights.reserve(MAX_AMOUT_LIGHTS);
 		createCommandBuffers();
 		createDescriptorSets();
-
 	}
 	VulkanRenderer::~VulkanRenderer() {
 		for(GraphicsPipeline* pipeline : pipelines){
@@ -61,10 +62,9 @@ namespace cmgt {
 		for (int i = 0; i < GlobalDescriptorSets.size(); i++) {
 			VulkanDescriptorWriter writer(GlobalDescriptorSetLayout, *GlobalDescriptorPool);
 
-			for (int y = 0; y < sizes.size(); y++){
+			for (int y = sizes.size()-1; y >= 0; y--){
 				VkDescriptorBufferInfo bufferInfo = GlobalDescriptorBuffers[y]->descriptorInfo();
-				writer.writeBuffer(y, &bufferInfo);
-					
+				writer.writeBuffer(y, &bufferInfo);			
 			}
 
 			if(!writer.build(GlobalDescriptorSets[i])){
@@ -79,14 +79,18 @@ namespace cmgt {
 		GlobalUniformData uniformData;
 		uniformData.cameraMatrix = frameData.viewMatrix;
 		uniformData.projMatrix = frameData.projectionMatrix;
-		uniformData.dirLight = glm::vec4(glm::normalize(glm::vec3(1, -1, 1)), 1);
 		uniformData.ambientLight = glm::vec4(1, 1, 1, .2f);
+		uniformData.dirLight = glm::vec4(glm::normalize(glm::vec3(1, -1, 1)), 1);
+		uniformData.lightCount = lights.size();
 		data.push_back(&uniformData);
+		data.push_back(lights.data());
 
-		for(int i = 0; i < GlobalDescriptorBuffers.size(); i++){
-			GlobalDescriptorBuffers[i]->writeToIndex(data[i], frameData.imageIndex);
-			//descriptorBuffers[i]->flushIndex(imageIndex);
-		}
+		GlobalDescriptorBuffers[0]->writeToIndex(&uniformData, frameData.imageIndex);
+		GlobalDescriptorBuffers[1]->writeToIndex(lights.data(), frameData.imageIndex);
+		//for(int i = 0; i < GlobalDescriptorBuffers.size(); i++){
+		//	GlobalDescriptorBuffers[i]->writeToIndex(data[i], frameData.imageIndex);
+		//	//descriptorBuffers[i]->flushIndex(imageIndex);
+		//}
 	}
 
 	void VulkanRenderer::freeCommandBuffers() {
@@ -132,14 +136,14 @@ namespace cmgt {
 		vkCmdSetScissor(commandBuffers[imageIndex], 0, 1, &scissor);
 		
 		
-		VulkanFrameData frameData(commandBuffers[imageIndex],imageIndex, viewMatrix, projectionMatrix,lights);
+		VulkanFrameData frameData(commandBuffers[imageIndex],imageIndex, viewMatrix, projectionMatrix);
 
 		//Good performance but explore the option for meshes to render themsleves
 		//This way you don't have to keep track of which mesh is visible
 
 		writeDescriptorBuffers(frameData);
 		for(GraphicsPipeline* pipeline : pipelines){
-			vkCmdBindDescriptorSets(commandBuffers[imageIndex], VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline->pipelineLayout(), 0, 1, &GlobalDescriptorSets[imageIndex], 0, nullptr);
+			vkCmdBindDescriptorSets(frameData.commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline->pipelineLayout(), 0, 1, &GlobalDescriptorSets[frameData.imageIndex], 0, nullptr);
 			pipeline->recordFrameCommandBuffer(frameData);
 		}
 		

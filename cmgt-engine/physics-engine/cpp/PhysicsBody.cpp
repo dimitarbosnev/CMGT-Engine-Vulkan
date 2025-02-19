@@ -57,7 +57,7 @@ namespace cmgt{
 
     glm::vec3 PhysicsBody::reflectVelosity(const glm::vec3& collNormal){
         //bounciness value can be added here
-        float bounciness = 1.f;
+        float bounciness = 1.0f;
         return bounciness * (-2.f* glm::dot(velocity, collNormal) * collNormal + velocity);
     }
 }

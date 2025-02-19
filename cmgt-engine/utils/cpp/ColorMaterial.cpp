@@ -36,9 +36,9 @@ namespace cmgt {
 	}
 	void ColorMaterial::bindUniformBuffers(const VulkanFrameData& frameData){
 
-		UniformData uniformData;
-		uniformData.cameraMatrix = frameData.viewMatrix;
-		uniformData.projMatrix = frameData.projectionMatrix;
+		//UniformData uniformData;
+		//uniformData.cameraMatrix = frameData.viewMatrix;
+		//uniformData.projMatrix = frameData.projectionMatrix;
 		//uniformData.lightCount = frameData.lights.size();
 		//uniformData.vector_lights = frameData.lights.data();
 		//pipeline->writeUniformBuffers(frameData.imageIndex, frameData.commandBuffer,&uniformData);

@@ -106,9 +106,9 @@ namespace cmgt {
 		for (int i = 0; i < descriptorSets.size(); i++) {
 			VulkanDescriptorWriter writer(descriptorSetLayout, *descriptorPool);
 			
-			for (int y = 0; y < sizes.size(); y++){
+			for (int y = sizes.size()-1; y >= 0; y--){
 				VkDescriptorBufferInfo bufferInfo = descriptorBuffers[y]->descriptorInfo();
-				writer.writeBuffer(y, &bufferInfo);		
+				writer.writeBuffer(y, &bufferInfo);			
 			}
 
 			if(!writer.build(descriptorSets[i])){

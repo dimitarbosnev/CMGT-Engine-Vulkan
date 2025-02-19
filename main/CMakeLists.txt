@@ -39,6 +39,7 @@ set(SHADER_OUTPUT_DIR ${OUT_CONTENT_FOLDER}/shaders)
 
 # Gather all shader files
 file(GLOB SHADERS
+    #${PROJ_CONTENT_FOLDER}/shaders/*.glsl
     ${PROJ_CONTENT_FOLDER}/shaders/*.vert
     ${PROJ_CONTENT_FOLDER}/shaders/*.frag
     ${PROJ_CONTENT_FOLDER}/shaders/*.comp

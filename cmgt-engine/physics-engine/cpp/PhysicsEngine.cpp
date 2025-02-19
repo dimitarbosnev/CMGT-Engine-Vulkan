@@ -58,7 +58,7 @@ namespace cmgt
         }
         auto end = clock::now();
         auto elapsed = std::chrono::duration_cast<mc>(end - start);
-        std::cout << "Elapsed time SAT: " << elapsed.count() << " mc\n";
+        //std::cout << "Elapsed time SAT: " << elapsed.count() << " mc\n";
     }
 
     bool PhysicsEngine::rayCast(const glm::vec3& origin, const glm::vec3& dir, RayInfo* rayInfo) {
@@ -86,8 +86,8 @@ namespace cmgt
         float mass1 = info.collider1.second->getInverseMass();
         float mass2 = info.collider2.second->getInverseMass();
         float totalMass = mass1 + mass2;
-        glm::vec3 resolution1 = info.collisionNormal * (info.peneterationDepth + phys_tick) * (mass1 / totalMass);
-        glm::vec3 resolution2 = info.collisionNormal * (info.peneterationDepth + phys_tick) * (mass2 / totalMass);
+        glm::vec3 resolution1 = info.collisionNormal * (info.peneterationDepth + 0.001f) * (mass1 / totalMass);
+        glm::vec3 resolution2 = info.collisionNormal * (info.peneterationDepth +  0.001f) * (mass2 / totalMass);
         if(glm::dot(relative1,resolution1) < 0)
             resolution1 = -resolution1;
         if(glm::dot(relative2,resolution2) > 0)
@@ -451,46 +451,46 @@ namespace cmgt
         }
 
         glm::vec3 axis7 = glm::normalize(glm::cross(shape1.worldTransform[0].xyz(),shape2.worldTransform[0].xyz())); //shape 1 X-axis cross shape 2 X-axis
-        if(glm::length(axis7) == 1 &&!computeAxis(shape1,shape2,axis7,info)){
+        if(glm::length(axis7) >= 1 &&!computeAxis(shape1,shape2,axis7,info)){
             return false;
         }
 
         glm::vec3 axis8 = glm::normalize(glm::cross(shape1.worldTransform[0].xyz(),shape2.worldTransform[1].xyz())); //shape 1 X-axis cross shape 2 Y-axis
-        if(glm::length(axis8) == 1 && !computeAxis(shape1,shape2,axis8,info) ){
+        if(glm::length(axis8) >= 1 && !computeAxis(shape1,shape2,axis8,info) ){
             return false;
         }
 
         glm::vec3 axis9 = glm::normalize(glm::cross(shape1.worldTransform[0].xyz(),shape2.worldTransform[2].xyz())); //shape 1 X-axis cross shape 2 Z-axis
-        if(glm::length(axis9) == 1 && !computeAxis(shape1,shape2,axis9,info)){
+        if(glm::length(axis9) >= 1 && !computeAxis(shape1,shape2,axis9,info)){
             return false;
         }
 
         glm::vec3 axis10 = glm::normalize(glm::cross(shape1.worldTransform[1].xyz(),shape2.worldTransform[0].xyz())); //shape 1 Y-axis cross shape 2 X-axis
-        if(glm::length(axis10) == 1 && !computeAxis(shape1,shape2,axis10,info)){
+        if(glm::length(axis10) >= 1 && !computeAxis(shape1,shape2,axis10,info)){
             return false;
         }
 
         glm::vec3 axis11 = glm::normalize(glm::cross(shape1.worldTransform[1].xyz(),shape2.worldTransform[1].xyz())); //shape 1 Y-axis cross shape 2 Y-axis
-        if(glm::length(axis11) == 1 && !computeAxis(shape1,shape2,axis11,info)){
+        if(glm::length(axis11) >= 1 && !computeAxis(shape1,shape2,axis11,info)){
             return false;
         }
         glm::vec3 axis12 = glm::normalize(glm::cross(shape1.worldTransform[1].xyz(),shape2.worldTransform[2].xyz())); //shape 1 Y-axis cross shape 2 Z-axis
-        if(glm::length(axis12) == 1 && !computeAxis(shape1,shape2,axis12,info)){
+        if(glm::length(axis12) >= 1 && !computeAxis(shape1,shape2,axis12,info)){
             return false;
         }
 
         glm::vec3 axis13 = glm::normalize(glm::cross(shape1.worldTransform[2].xyz(),shape2.worldTransform[0].xyz())); //shape 1 Z-axis cross shape 2 X-axis
-        if(glm::length(axis13) == 1 && !computeAxis(shape1,shape2,axis13,info)){
+        if(glm::length(axis13) >= 1 && !computeAxis(shape1,shape2,axis13,info)){
             return false;
         }
 
         glm::vec3 axis14 = glm::normalize(glm::cross(shape1.worldTransform[2].xyz(),shape2.worldTransform[1].xyz())); //shape 1 Z-axis cross shape 2 Y-axis
-        if(glm::length(axis14) == 1 && !computeAxis(shape1,shape2,axis14,info)){
+        if(glm::length(axis14) >= 1 && !computeAxis(shape1,shape2,axis14,info)){
             return false;
         }
 
         glm::vec3 axis15 = glm::normalize(glm::cross(shape1.worldTransform[2].xyz(),shape2.worldTransform[2].xyz())); //shape 1 Z-axis cross shape 2 Z-axis
-        if(glm::length(axis15) == 1 && !computeAxis(shape1,shape2,axis15,info)){
+        if(glm::length(axis15) >= 1 && !computeAxis(shape1,shape2,axis15,info)){
             return false;
         }
 
@@ -512,12 +512,6 @@ namespace cmgt
         float max_of_min = std::max(shape1_min, shape2_min);
         newPenetration = min_of_max - max_of_min;
 
-        //glm::vec3 center;
-        //glm::vec3 relative = shape2.centroid - shape1.centroid;
-        //if(glm::dot(relative, axis) > 0)
-            //center = shape1.centroid;
-        //else
-            //center = shape2.centroid;
         if(newPenetration < info->peneterationDepth){
             info->peneterationDepth = newPenetration;
             info->collisionNormal = axis;

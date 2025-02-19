@@ -14,6 +14,8 @@
 #include<string>
 #include<vector>
 #include<list>
+
+#define MAX_AMOUT_LIGHTS 100
 namespace cmgt {
 	typedef std::array<LightStruct,100> Lights;
 	class GraphicsPipeline;
@@ -24,6 +26,7 @@ namespace cmgt {
 			glm::mat4 projMatrix;
 			glm::vec4 ambientLight;
 			glm::vec4 dirLight;
+			uint32_t lightCount;
 		};
 			VulkanRenderer();
 			~VulkanRenderer();
@@ -31,9 +34,9 @@ namespace cmgt {
 			void drawFrame(glm::mat4 viewMatrix, glm::mat4 projectionMatrix);
 			VkDescriptorSetLayout getDescriptorSetLayout(){ return GlobalDescriptorSetLayout.getDescriptorSetLayout(); }
 			std::list<GraphicsPipeline*> pipelines;
-			std::array<LightStruct,100> lights;
+			std::vector<LightStruct> lights;
 			private:
-			std::vector<size_t> sizes{ sizeof(GlobalUniformData) };
+			std::vector<size_t> sizes{ sizeof(GlobalUniformData), sizeof(LightStruct)*MAX_AMOUT_LIGHTS};
 			std::vector<VulkanBuffer*> GlobalDescriptorBuffers;
 			std::vector<VkDescriptorSet> GlobalDescriptorSets;
 			VulkanDescriptorSetLayout GlobalDescriptorSetLayout;
