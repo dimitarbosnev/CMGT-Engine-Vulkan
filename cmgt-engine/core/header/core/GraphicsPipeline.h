@@ -69,7 +69,7 @@ namespace cmgt {
 		void createPipeline(const GraphicsPipelineInfo& info);
 		VkPipelineLayout _pipelineLayout;
 		VkPipeline graphicsPipeline;
-		std::vector<VulkanBuffer*> descriptorBuffers;
+		std::unordered_map<uint32_t,VulkanBuffer*> descriptorBuffers;
 		std::vector<VkDescriptorSet> descriptorSets;
 		VulkanDescriptorPool* descriptorPool;
 		GraphicsPipeline(const GraphicsPipeline&);

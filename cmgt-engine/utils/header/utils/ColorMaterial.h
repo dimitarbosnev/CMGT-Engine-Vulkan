@@ -14,20 +14,18 @@ namespace cmgt {
 	public:
 		struct PushConstData
 		{
-			glm::mat4 mvpMatrix;
 			glm::mat4 normalMatrix;
+			alignas(16) glm::vec3 color;
 		};
 		struct UniformData {
-			glm::mat4 cameraMatrix;
-			glm::mat4 projMatrix;
-			int lightCount;
-			LightStruct vector_lights[100];
+
 		};
 		ColorMaterial();
 		/**
 		 * Render the given mesh in the given world using the given mvp matrices. Implement in subclass.
 		 */
 	public:
+		glm::vec3 color = glm::vec3(0.7f);
 		GraphicsPipeline* getPipeline() override {return pipeline;}
 	private:
 		void bindPushConstants(const VulkanFrameData& frameData, const glm::mat4 pModelMatrix) override;

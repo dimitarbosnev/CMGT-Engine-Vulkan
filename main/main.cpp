@@ -42,7 +42,7 @@ cmgt::GameObject* SpawnPlane(glm::vec3 pos, glm::vec3 axis, float angle){
 	planeObject->getTransform().Translate(pos);
 	planeObject->getTransform().Scale(glm::vec3(10.f));
 	planeObject->getTransform().Rotate(angle, axis);
-	//planeObject->addComponent(new cmgt::Mesh("plane.obj", new cmgt::TestMaterial()));
+	planeObject->addComponent(new cmgt::Mesh("plane.obj", new cmgt::ColorMaterial()));
 	cmgt::Collider* planeColl = new cmgt::PlaneCollider();
 	planeColl->setPhysType(cmgt::phys_type::STATIC);
 	planeObject->addComponent(planeColl);

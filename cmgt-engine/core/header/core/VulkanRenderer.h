@@ -35,7 +35,7 @@ namespace cmgt {
 			std::vector<LightStruct> lights;
 			private:
 			std::vector<size_t> sizes{ sizeof(GlobalUniformData), sizeof(LightStruct)*MAX_AMOUT_LIGHTS};
-			std::vector<VulkanBuffer*> GlobalDescriptorBuffers;
+			std::unordered_map<uint32_t,VulkanBuffer*> GlobalDescriptorBuffers;
 			std::vector<VkDescriptorSet> GlobalDescriptorSets;
 			VulkanDescriptorSetLayout GlobalDescriptorSetLayout;
 			VulkanDescriptorPool* GlobalDescriptorPool;

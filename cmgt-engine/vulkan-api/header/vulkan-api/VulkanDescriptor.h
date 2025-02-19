@@ -29,8 +29,8 @@ namespace cmgt {
 		~VulkanDescriptorSetLayout();
 
 		VkDescriptorSetLayout getDescriptorSetLayout() const { return descriptorSetLayout; }
-		VkBufferUsageFlags getBufferUsageBasedOnBindingAt(uint32_t index);
 		const VkDescriptorSetLayoutBinding& getDescriptorSetLayoutBindingAt(uint32_t index) const { return bindings.at(index); }
+		const std::unordered_map<uint32_t, VkDescriptorSetLayoutBinding>& getBindingsMap() const { return bindings; }
 	private:
 		VkDescriptorSetLayout descriptorSetLayout;
 		std::unordered_map<uint32_t, VkDescriptorSetLayoutBinding> bindings;

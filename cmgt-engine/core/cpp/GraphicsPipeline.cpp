@@ -70,8 +70,8 @@ namespace cmgt {
 		//clear meshes
 		renderMeshs.clear();
 		//clear buffers
-		for (VulkanBuffer* buffer : descriptorBuffers)
-			delete buffer;
+		for (auto buffer : descriptorBuffers)
+			delete buffer.second;
 		descriptorBuffers.clear();
 		delete descriptorPool;
 		vkDestroyPipelineLayout(VulkanInstance::get()->device(), _pipelineLayout, nullptr);
@@ -94,28 +94,30 @@ namespace cmgt {
 		descriptorPool = new VulkanDescriptorPool(poolBuilder.build());
 
 		VulkanInstance* VkInstance = VulkanInstance::get();
-		descriptorBuffers.reserve(sizes.size());
-		for (int i = 0; i < sizes.size(); i++) {
-			VulkanBuffer* buffer = new VulkanBuffer(VkInstance->physicalDevice(), VkInstance->device(),sizes[i], MAX_FRAMES_IN_FLIGHT,
-			descriptorSetLayout.getBufferUsageBasedOnBindingAt(i), VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
-			descriptorBuffers.push_back(buffer);
+		descriptorBuffers.reserve(descriptorSetLayout.getBindingsMap().size());
+		for (auto binding : descriptorSetLayout.getBindingsMap()) {
+			VulkanBuffer* buffer = new VulkanBuffer(VkInstance->physicalDevice(), VkInstance->device(),sizes[binding.first], MAX_FRAMES_IN_FLIGHT,
+			getBufferUsage(binding.second), VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+			descriptorBuffers[binding.first] = buffer;
 			buffer->map();
 		}
 
 		descriptorSets.resize(MAX_FRAMES_IN_FLIGHT);
-		for (int i = 0; i < descriptorSets.size(); i++) {
-			VulkanDescriptorWriter writer(descriptorSetLayout, *descriptorPool);
-			
-			for (int y = sizes.size()-1; y >= 0; y--){
-				VkDescriptorBufferInfo bufferInfo = descriptorBuffers[y]->descriptorInfo();
-				writer.writeBuffer(y, &bufferInfo);			
-			}
 
+		std::unordered_map<uint32_t,VkDescriptorBufferInfo> bufferInfos;
+		bufferInfos.reserve(descriptorBuffers.size());
+		for (auto buffer : descriptorBuffers) {
+			bufferInfos[buffer.first] = buffer.second->descriptorInfo();
+		}
+		for (int i = 0; i < descriptorSets.size(); i++) {
+			VulkanDescriptorWriter writer(descriptorSetLayout, *descriptorPool);	
+			for (auto buffer : descriptorBuffers) {
+				writer.writeBuffer(buffer.first, &bufferInfos[buffer.first]);		
+			}
 			if(!writer.build(descriptorSets[i])){
 				throw std::runtime_error("failed to build descriptor set!");
 			}
 		}
-
 		std::vector<VkDescriptorSetLayout> descriptorSetLayouts{ VulkanRenderer::get()->getDescriptorSetLayout(), descriptorSetLayout.getDescriptorSetLayout() };
 		VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
 		pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;

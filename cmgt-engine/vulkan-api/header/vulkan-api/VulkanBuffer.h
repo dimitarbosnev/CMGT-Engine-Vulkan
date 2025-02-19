@@ -5,6 +5,8 @@
 
 namespace cmgt {
 
+    VkBufferUsageFlags getBufferUsage(const VkDescriptorSetLayoutBinding& binding);
+
     class VulkanBuffer {
     public:
         VulkanBuffer(

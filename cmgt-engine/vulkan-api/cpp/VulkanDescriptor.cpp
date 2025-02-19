@@ -53,33 +53,6 @@ namespace cmgt {
 		vkDestroyDescriptorSetLayout(VulkanInstance::get()->device(), descriptorSetLayout, nullptr);
 	}
 
-	VkBufferUsageFlags VulkanDescriptorSetLayout::getBufferUsageBasedOnBindingAt(uint32_t index){
-		const VkDescriptorSetLayoutBinding& binding = getDescriptorSetLayoutBindingAt(index);
-
-		VkBufferUsageFlags flag{};
-		
-		switch (binding.descriptorType)
-		{
-		case VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER:
-		case VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC:
-			flag = VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT;
-			break;
-		
-		case VK_DESCRIPTOR_TYPE_STORAGE_BUFFER:
-		case VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC:
-			flag = VK_BUFFER_USAGE_STORAGE_BUFFER_BIT;
-			break;
-		
-		case VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER:
-			flag = VK_BUFFER_USAGE_UNIFORM_TEXEL_BUFFER_BIT;
-			break;
-
-		case VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER:
-			flag = VK_BUFFER_USAGE_STORAGE_TEXEL_BUFFER_BIT;
-			break;
-		}
-		return flag;
-	}
 
 	// *************** Descriptor Pool Builder *********************
 

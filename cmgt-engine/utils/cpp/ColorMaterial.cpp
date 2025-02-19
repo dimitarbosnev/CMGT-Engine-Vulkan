@@ -15,24 +15,10 @@ namespace cmgt {
 	void ColorMaterial::bindPushConstants(const VulkanFrameData& frameData, const glm::mat4 pModelMatrix){
 
 		PushConstData data;
-		data.mvpMatrix = frameData.projectionMatrix * frameData.viewMatrix * pModelMatrix;
-		data.normalMatrix = glm::transpose(glm::inverse(pModelMatrix));
+		data.normalMatrix = pModelMatrix;
+		data.color = color;
 
-		vkCmdPushConstants(frameData.commandBuffer, pipeline->pipelineLayout(), VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(PushConstData), &data);
-
-		/*
-			// For the vertex stage, update starting at offset 0.
-			vkCmdPushConstants(	commandBuffer, pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT,
-			    				0, sizeof(VertexPushConstants),
-			    				&vertexConstants
-			);
-
-			// For the fragment stage, update starting at offset equal to the size of vertex push constants.
-			vkCmdPushConstants( commandBuffer, pipelineLayout, VK_SHADER_STAGE_FRAGMENT_BIT, 
-								sizeof(VertexPushConstants), sizeof(FragmentPushConstants),
-			    				&fragmentConstants
-			);
-		*/
+		vkCmdPushConstants(frameData.commandBuffer, pipeline->pipelineLayout(), VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(PushConstData), &data);	
 	}
 	void ColorMaterial::bindUniformBuffers(const VulkanFrameData& frameData){
 

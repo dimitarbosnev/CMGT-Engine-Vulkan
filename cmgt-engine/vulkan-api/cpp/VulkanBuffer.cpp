@@ -6,6 +6,39 @@
 #include <exception>
 namespace cmgt {
 
+    VkBufferUsageFlags getBufferUsage(const VkDescriptorSetLayoutBinding& binding){
+
+		VkBufferUsageFlags flag{};
+		
+		switch (binding.descriptorType)
+		{
+		case VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER:
+		case VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC:
+		{
+			flag = VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT;
+			break;
+		}
+		
+		case VK_DESCRIPTOR_TYPE_STORAGE_BUFFER:
+		case VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC:
+		{
+			flag = VK_BUFFER_USAGE_STORAGE_BUFFER_BIT;
+			break;
+		}
+		case VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER:
+		{
+			flag = VK_BUFFER_USAGE_UNIFORM_TEXEL_BUFFER_BIT;
+			break;
+		}
+		case VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER:
+		{
+			flag = VK_BUFFER_USAGE_STORAGE_TEXEL_BUFFER_BIT;
+			break;
+		}
+		}
+		return flag;
+	}
+    
     VkDeviceSize VulkanBuffer::getAlignment(VkDeviceSize instanceSize, VkDeviceSize minOffsetAlignment) {
         if (minOffsetAlignment > 0) {
             return (instanceSize + minOffsetAlignment - 1) & ~(minOffsetAlignment - 1);
