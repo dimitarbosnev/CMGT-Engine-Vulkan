@@ -10,8 +10,6 @@ struct Light{
 layout(std140, set = 0, binding = 0) uniform GlobalUniforms{
 	mat4 cameraMatrix;
 	mat4 projMatrix;
-    vec4 ambientLight;
-	vec4 dirLight;
     uint lightCount;
 }globals;
 

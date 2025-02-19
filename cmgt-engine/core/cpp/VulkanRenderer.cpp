@@ -79,8 +79,6 @@ namespace cmgt {
 		GlobalUniformData uniformData;
 		uniformData.cameraMatrix = frameData.viewMatrix;
 		uniformData.projMatrix = frameData.projectionMatrix;
-		uniformData.ambientLight = glm::vec4(1, 1, 1, .2f);
-		uniformData.dirLight = glm::vec4(glm::normalize(glm::vec3(1, -1, 1)), 1);
 		uniformData.lightCount = lights.size();
 		data.push_back(&uniformData);
 		data.push_back(lights.data());

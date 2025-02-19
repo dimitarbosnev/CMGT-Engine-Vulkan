@@ -24,8 +24,6 @@ namespace cmgt {
 		struct GlobalUniformData {
 			glm::mat4 cameraMatrix;
 			glm::mat4 projMatrix;
-			glm::vec4 ambientLight;
-			glm::vec4 dirLight;
 			uint32_t lightCount;
 		};
 			VulkanRenderer();

@@ -13,5 +13,5 @@ layout(push_constant) uniform Push {
 } push;
 
 void main() {
-    outColor = vec4(.3,.6,.6,1) * vec4(max(dot(globals.dirLight.xyz,fragNormal),0)*globals.dirLight.w + globals.ambientLight.xyz*globals.ambientLight.w,1);
+    //outColor = vec4(.3,.6,.6,1) * vec4(max(dot(globals.dirLight.xyz,fragNormal),0)*globals.dirLight.w + globals.ambientLight.xyz*globals.ambientLight.w,1);
 }

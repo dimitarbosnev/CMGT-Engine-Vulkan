@@ -22,13 +22,13 @@ namespace cmgt {
 	}
 	void TestMaterial::bindUniformBuffers(const VulkanFrameData& frameData){
 
-		//UniformData uniformData;
+		UniformData uniformData;
 		//uniformData.cameraMatrix = frameData.viewMatrix;
 		//uniformData.projMatrix = frameData.projectionMatrix;
-		//uniformData.dirLight = glm::vec4(glm::normalize(glm::vec3(1, -1, 1)), 1);
-		//uniformData.ambientLight = glm::vec4(1, 1, 1, .2f);
-		//std::vector<const void*> data {&uniformData};
-		//pipeline->writeUniformBuffers(frameData.imageIndex, frameData.commandBuffer,data);
+		uniformData.dirLight = glm::vec4(glm::normalize(glm::vec3(1, -1, 1)), 1);
+		uniformData.ambientLight = glm::vec4(1, 1, 1, .2f);
+		std::vector<const void*> data {&uniformData};
+		pipeline->writeUniformBuffers(frameData.imageIndex, frameData.commandBuffer,data);
 	}
 	void TestMaterial::initPipeline(){
 
@@ -71,9 +71,9 @@ namespace cmgt {
 	}
 
 	VulkanDescriptorSetLayout TestMaterial::createDescriptorSetLayout(std::vector<size_t>& sizes){
-		//sizes.push_back(sizeof(UniformData));
-		//return VulkanDescriptorSetLayout::Builder().addBinding(0,VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT).build();
-		return VulkanDescriptorSetLayout::Builder().build();
+		sizes.push_back(sizeof(UniformData));
+		return VulkanDescriptorSetLayout::Builder().addBinding(0,VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT).build();
+		//return VulkanDescriptorSetLayout::Builder().build();
 	}
 
 	VkPushConstantRange* TestMaterial::setupPushConsts(uint8_t& num)

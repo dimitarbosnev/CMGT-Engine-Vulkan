@@ -18,10 +18,8 @@ namespace cmgt {
 			glm::mat4 normalMatrix;
 		};
 		struct UniformData {
-			glm::mat4 cameraMatrix;
-			glm::mat4 projMatrix;
-			glm::vec4 ambientLight;
 			glm::vec4 dirLight;
+			glm::vec4 ambientLight;
 		};
 		TestMaterial();
 		/**
