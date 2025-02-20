@@ -5,6 +5,7 @@
 #include "utils/MouseMovement.h"
 #include "utils/ColorMaterial.h"
 #include "core/Mesh.h"
+#include "core/Light.h"
 #include "core/GraphicsPipeline.h"
 #include "physics-engine/PhysicsEngine.h"
 #include "physics-engine/PhysicsBody.h"
@@ -14,6 +15,7 @@
 #include "physics-engine/PlaneCollider.h"
 #include "minimal/types.h"
 #include "core/Input.h"
+#include "minimal/log.h"
 #include <memory>
 #include <string>
 #include <thread>
@@ -83,6 +85,12 @@ void OnGameStart(){
 	firstScene->getWorld()->add(SpawnPlane(glm::vec3(10, -10, 0), glm::vec3(0,0,1), -glm::pi<float>() / 2));
 
 
+	cmgt::GameObject* ambientLight = new cmgt::GameObject("Light Object");
+	cmgt::Light* light_ambinet = new cmgt::Light();
+	light_ambinet->setIntencity(0.3f);
+	light_ambinet->setLightColor(glm::vec3(1, 1, 1));
+	ambientLight->addComponent(light_ambinet);
+	firstScene->getWorld()->add(ambientLight);
 
 	cmgt::GameObject* cameraObject = new cmgt::GameObject("Camera Object");
 	cameraObject->getTransform().setMatrix(glm::mat4(+0.9,-0.0,-0.5,+0.0,
@@ -122,6 +130,7 @@ int main() {
 
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 	//_CrtSetBreakAlloc(200); //replase 200 with the coresponding number from the memory leack report :]
+	cmgt::Log::init();
 	cmgt::InitGlobals();
 	OnGameStart();
 	std::thread physics_thread(physics_loop);
@@ -163,5 +172,6 @@ int main() {
 
     DestroyGame();
 	cmgt::FreeGlobals();
+	cmgt::Log::close();
     return EXIT_SUCCESS;
 }

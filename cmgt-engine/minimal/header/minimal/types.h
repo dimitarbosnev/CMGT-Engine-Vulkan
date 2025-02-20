@@ -50,10 +50,11 @@ namespace cmgt {
 	}	
 	};
 
-	enum class LightType { Ambient = 0, Directional = 1,Point = 2, Spotlight = 3};
+	enum class LightType : uint8_t { Ambient = 0, Directional = 1,Point = 2, Spotlight = 3};
 	//based on the light type we know which variables to acess
+	#pragma pack(push, 1)
 	struct LightStruct{
-		LightType type = LightType::Ambient;
+		uint32_t type = 0;
 		glm::vec3 color = glm::vec3(0);
 		glm::vec3 direction = glm::vec3(0);
 		glm::vec3 position = glm::vec3(0);
@@ -61,6 +62,7 @@ namespace cmgt {
 		float intencity = 0;
 		float range = 0;
 	};
+	#pragma pack(pop)
 
 	template<typename T>
 	class Singelton{

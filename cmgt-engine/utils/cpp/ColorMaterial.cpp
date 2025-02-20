@@ -2,6 +2,7 @@
 #include "utils/ColorMaterial.h"
 #include "minimal/paths.h"
 #include "core/Globals.h"
+#include "minimal/log.h"
 #include<iostream>
 namespace cmgt {	
 	ColorMaterial::ColorMaterial()
@@ -31,14 +32,20 @@ namespace cmgt {
 	}
 	void ColorMaterial::initPipeline(){
 
-		std::cout << "Initalizing Shaders...\n";
-		CreateShader("ColorShader.vert", &vertexShaderModule);
-		std::cout << "\t Vertex Shader Initalized!\n";
-		CreateShader("ColorShader.frag", &fragmentShaderModule);
-		std::cout << "\t Fragment Shader Initalized!\n";
+		Log::msg("Initalizing Shaders...");
 
+		CreateShader("ColorShader.vert", &vertexShaderModule);
+		Log::msg("\t Vertex Shader Initalized!");
+
+		CreateShader("ColorShader.frag", &fragmentShaderModule);
+		Log::msg("\t Fragment Shader Initalized!");
+
+		Log::msg("Initalizing ColorMaterial Pipeline...");
 		pipeline = new GraphicsPipeline(GraphicsPipeline::defaultGraphicsPipelineInfo(), createDescriptorSetLayout, bindPipelineShaderStages, setupPushConsts, bindUniformBuffers,freePipeline);
 		
+		Log::msg("Initalizing ColorMaterial Complete!");
+
+		Log::flush_buffer();
 	}
 
 	//has to be called somewhere

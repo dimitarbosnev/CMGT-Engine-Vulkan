@@ -8,7 +8,7 @@
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #define GLM_FORCE_SWIZZLE
 #define GLM_ENABLE_EXPERIMENTAL
-#define GLM_FORCE_STD140
+//#define GLM_FORCE_STD140
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
 /* the functions:

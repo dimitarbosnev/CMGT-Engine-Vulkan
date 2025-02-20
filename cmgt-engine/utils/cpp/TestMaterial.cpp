@@ -2,6 +2,7 @@
 #include "utils/TestMaterial.h"
 #include "minimal/paths.h"
 #include "core/Globals.h"
+#include "minimal/log.h"
 #include<iostream>
 namespace cmgt {	
 	TestMaterial::TestMaterial()
@@ -32,14 +33,20 @@ namespace cmgt {
 	}
 	void TestMaterial::initPipeline(){
 
-		std::cout << "Initalizing Shaders...\n";
-		CreateShader("BasicVertexShader.vert", &vertexShaderModule);
-		std::cout << "\t Vertex Shader Initalized!\n";
-		CreateShader("BasicFragmentShader.frag", &fragmentShaderModule);
-		std::cout << "\t Fragment Shader Initalized!\n";
+		Log::msg("Initalizing Shaders...");
 
+		CreateShader("BasicVertexShader.vert", &vertexShaderModule);
+		Log::msg("\t Vertex Shader Initalized!");
+
+		CreateShader("BasicFragmentShader.frag", &fragmentShaderModule);
+		Log::msg("\t Fragment Shader Initalized!");
+
+		Log::msg("Initalizing TestMaterial Pipeline...");
 		pipeline = new GraphicsPipeline(GraphicsPipeline::defaultGraphicsPipelineInfo(), createDescriptorSetLayout, bindPipelineShaderStages, setupPushConsts, bindUniformBuffers,freePipeline);
 		
+		Log::msg("Initalizing TestMaterial Complete!");
+
+		Log::flush_buffer();
 	}
 
 	//has to be called somewhere

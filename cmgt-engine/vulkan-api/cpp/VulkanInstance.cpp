@@ -1,5 +1,6 @@
 
 #include "vulkan-api/VulkanInstance.h"
+#include "minimal/log.h"
 #include<cstdlib>
 #include <algorithm> 
 #include<iostream>
@@ -23,7 +24,7 @@ namespace cmgt {
 			}
 		}
 
-		throw std::runtime_error("failed to find suitable memory type!");
+		throw std::runtime_error(Log::error_critical("failed to find suitable memory type!"));
 	}
 
 	void createBuffer(VkPhysicalDevice physicalDevice, VkDevice device, VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory) {
@@ -34,7 +35,7 @@ namespace cmgt {
 		bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
 		if (vkCreateBuffer(device, &bufferInfo, nullptr, &buffer) != VK_SUCCESS) {
-			throw std::runtime_error("failed to create vertex buffer!");
+			throw std::runtime_error(Log::error_critical("failed to create vertex buffer!"));
 		}
 
 		VkMemoryRequirements memRequirements;
@@ -46,7 +47,7 @@ namespace cmgt {
 		allocInfo.memoryTypeIndex = findMemoryType(physicalDevice, memRequirements.memoryTypeBits, properties);
 
 		if (vkAllocateMemory(device, &allocInfo, nullptr, &bufferMemory) != VK_SUCCESS) {
-			throw std::runtime_error("failed to allocate vertex buffer memory!");
+			throw std::runtime_error(Log::error_critical("failed to allocate vertex buffer memory!"));
 		}
 
 		vkBindBufferMemory(device, buffer, bufferMemory, 0);
@@ -123,7 +124,7 @@ namespace cmgt {
 
 	void createImageWithInfo(const VkImageCreateInfo& imageInfo, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory,VkPhysicalDevice physicalDevice, VkDevice device) {
 		if (vkCreateImage(device, &imageInfo, nullptr, &image) != VK_SUCCESS) {
-			throw std::runtime_error("failed to create image!");
+			throw std::runtime_error(Log::error_critical("failed to create image!"));
 		}
 
 		VkMemoryRequirements memRequirements;
@@ -135,11 +136,11 @@ namespace cmgt {
 		allocInfo.memoryTypeIndex = findMemoryType(physicalDevice, memRequirements.memoryTypeBits, properties);
 
 		if (vkAllocateMemory(device, &allocInfo, nullptr, &imageMemory) != VK_SUCCESS) {
-			throw std::runtime_error("failed to allocate image memory!");
+			throw std::runtime_error(Log::error_critical("failed to allocate image memory!"));
 		}
 
 		if (vkBindImageMemory(device, image, imageMemory, 0) != VK_SUCCESS) {
-			throw std::runtime_error("failed to bind image memory!");
+			throw std::runtime_error(Log::error_critical("failed to bind image memory!"));
 		}
 	}
 
@@ -152,7 +153,7 @@ namespace cmgt {
 		VkDebugUtilsMessageTypeFlagsEXT messageType,
 		const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
 		void* pUserData) {
-		std::cerr << "validation layer: " << pCallbackData->pMessage << std::endl;
+		Log::error( pCallbackData->pMessage);
 
 		return VK_FALSE;
 	}
@@ -190,7 +191,7 @@ namespace cmgt {
 		if (enableValidationLayers) {
 		auto path = std::filesystem::current_path();
  		std::string set = "VK_ADD_LAYER_PATH=" + path.string();
-		std::cout << set << std::endl;
+		Log::msg(set);
   		_putenv(set.c_str());
 		}
 		createInstance();
@@ -217,7 +218,7 @@ namespace cmgt {
 
 	void VulkanInstance::createInstance() {
 		if (enableValidationLayers && !checkValidationLayerSupport()) {
-			throw std::runtime_error("validation layers requested, but not available!");
+			throw std::runtime_error(Log::error_critical("validation layers requested, but not available!"));
 		}
 
 		VkApplicationInfo appInfo = {};
@@ -250,32 +251,47 @@ namespace cmgt {
 		}
 
 		if (vkCreateInstance(&createInfo, nullptr, &_instance) != VK_SUCCESS) {
-			throw std::runtime_error("failed to create instance!");
+			throw std::runtime_error(Log::error_critical("failed to create instance!"));
 		}
 
 		hasGflwRequiredInstanceExtensions();
 	}
 	void VulkanInstance::pickPhysicalDevice() {
-		std::cout << "Initialize Physical Device...\n";
+		Log::msg("Initialize Physical Device...");
 
 		uint32_t deviceCount = 0;
 		vkEnumeratePhysicalDevices(_instance, &deviceCount, nullptr);
 		if (deviceCount == 0)
-			throw std::runtime_error("failed to find GPUs with Vulkan support!");
+			throw std::runtime_error(Log::error_critical("failed to find GPUs with Vulkan support!"));
 
 		std::vector<VkPhysicalDevice> devices(deviceCount);
 		vkEnumeratePhysicalDevices(_instance, &deviceCount, devices.data());
-		std::cout << "Device count: " << deviceCount << std::endl;
+		{
+			std::stringstream ss;
+			ss << "Device count: " << deviceCount;
+			Log::msg(ss.str());
+		}
 
 		std::vector<std::pair<VkPhysicalDevice, int>> candidates;
 		for (const auto& device : devices) {
 			int score = deviceScore(device);
 			VkPhysicalDeviceProperties properties;
 			vkGetPhysicalDeviceProperties(device, &properties);
-
-			std::cout << "Device Name: " << properties.deviceName;
-			std::cout << "\t Device ID: " << properties.deviceID;
-			std::cout << "\t Device Score: " << score << std::endl;
+			{
+				std::stringstream ss;
+				ss <<"Device Name: " << properties.deviceName;
+				Log::msg(ss.str());
+			}
+			{
+				std::stringstream ss;
+				ss << "\t Device ID: " << properties.deviceID;
+				Log::msg(ss.str());
+			}
+			{
+				std::stringstream ss;
+				ss <<"\t Device Score: " << score;
+				Log::msg(ss.str());
+			}
 
 			std::pair<VkPhysicalDevice, int> currentPair = std::make_pair(device, score);
 			candidates.push_back(currentPair);
@@ -285,13 +301,13 @@ namespace cmgt {
 		sort(candidates.begin(), candidates.end(), valueSort);
 		// Check if the best candidate is suitable at all
 		if (candidates.begin()->second > 0) {
-			std::cout << "\t \t Selected Device Score: " << candidates.begin()->second << std::endl;
+			Log::msg("\t \t Selected Device Score: " + candidates.begin()->second);
 			_physicalDevice = candidates.begin()->first;
 		}
 		else {
-			throw std::runtime_error("failed to find a suitable GPU!");
+			throw std::runtime_error(Log::error_critical("failed to find a suitable GPU!"));
 		}
-		std::cout << "Physical Device Initialized!\n";
+		Log::msg("Physical Device Initialized!");
 	}
 
 	int VulkanInstance::deviceScore(VkPhysicalDevice device) {
@@ -310,7 +326,7 @@ namespace cmgt {
 		// Maximum possible size of textures affects graphics quality
 		score += deviceProperties.limits.maxImageDimension2D;
 		score += deviceProperties.limits.sampledImageColorSampleCounts;
-		std::cout << "Push constant size: " << deviceProperties.limits.maxPushConstantsSize << std::endl;
+		Log::msg("Push constant size: " + deviceProperties.limits.maxPushConstantsSize);
 		score += deviceProperties.limits.maxPushConstantsSize;
 		// Application can't function without geometry shaders
 		if (!deviceFeatures.geometryShader) {
@@ -360,7 +376,7 @@ namespace cmgt {
 		}
 
 		if (vkCreateDevice(_physicalDevice, &createInfo, nullptr, &_device) != VK_SUCCESS) {
-			throw std::runtime_error("failed to create logical device!");
+			throw std::runtime_error(Log::error_critical("failed to create logical device!"));
 		}
 
 		vkGetDeviceQueue(_device, indices.graphicsFamily, 0, &_graphicsQueue);
@@ -376,7 +392,7 @@ namespace cmgt {
 		poolInfo.flags = VK_COMMAND_POOL_CREATE_TRANSIENT_BIT | VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
 
 		if (vkCreateCommandPool(_device, &poolInfo, nullptr, &commandPool) != VK_SUCCESS) {
-			throw std::runtime_error("failed to create command pool!");
+			throw std::runtime_error(Log::error_critical("failed to create command pool!"));
 		}
 	}
 
@@ -416,7 +432,7 @@ namespace cmgt {
 		VkDebugUtilsMessengerCreateInfoEXT createInfo;
 		populateDebugMessengerCreateInfo(createInfo);
 		if (CreateDebugUtilsMessengerEXT(_instance, &createInfo, nullptr, &debugMessenger) != VK_SUCCESS) {
-			throw std::runtime_error("failed to set up debug messenger!");
+			throw std::runtime_error(Log::error_critical("failed to set up debug messenger!"));
 		}
 	}
 	void VulkanInstance::createSurface(){
@@ -464,19 +480,23 @@ namespace cmgt {
 		std::vector<VkExtensionProperties> extensions(extensionCount);
 		vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, extensions.data());
 
-		std::cout << "available extensions:" << std::endl;
+		Log::msg("available extensions:");
 		std::unordered_set<std::string> available;
 		for (const auto& extension : extensions) {
-			std::cout << "\t" << extension.extensionName << std::endl;
+			std::stringstream ss;
+			ss << "\t" << extension.extensionName;
+			Log::msg(ss.str());
 			available.insert(extension.extensionName);
 		}
 
-		std::cout << "required extensions:" << std::endl;
+		Log::msg("required extensions:");
 		auto requiredExtensions = getRequiredExtensions();
 		for (const auto& required : requiredExtensions) {
-			std::cout << "\t" << required << std::endl;
+			std::stringstream ss;
+			ss << "\t" << required;
+			Log::msg(ss.str());
 			if (available.find(required) == available.end()) {
-				throw std::runtime_error("Missing required glfw extension");
+				throw std::runtime_error(Log::error_critical("Missing required glfw extension"));
 			}
 		}
 	}
@@ -515,14 +535,14 @@ namespace cmgt {
 			if (queueFamily.queueCount > 0 && queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT) {
 				indices.graphicsFamily = i;
 				indices.graphicsFamilyHasValue = true;
-				std::cout << "Graphics Family: " << indices.graphicsFamily << std::endl;
+				Log::msg("Graphics Family: " + indices.graphicsFamily);
 			}
 			VkBool32 presentSupport = false;
 			vkGetPhysicalDeviceSurfaceSupportKHR(device, i, _surface, &presentSupport);
 			if (queueFamily.queueCount > 0 && presentSupport) {
 				indices.presentFamily = i;
 				indices.presentFamilyHasValue = true;
-				std::cout << "Present Family: " << indices.presentFamily << std::endl;
+				Log::msg("Present Family: " + indices.presentFamily);
 			}
 			if (indices.isComplete()) {
 				break;
@@ -574,6 +594,6 @@ namespace cmgt {
 				return format;
 			}
 		}
-		throw std::runtime_error("failed to find supported format!");
+		throw std::runtime_error(Log::error_critical("failed to find supported format!"));
 	}
 }

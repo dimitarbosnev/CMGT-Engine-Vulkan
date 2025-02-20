@@ -32,8 +32,9 @@ namespace cmgt {
 			void drawFrame(glm::mat4 viewMatrix, glm::mat4 projectionMatrix);
 			VkDescriptorSetLayout getDescriptorSetLayout(){ return GlobalDescriptorSetLayout.getDescriptorSetLayout(); }
 			std::list<GraphicsPipeline*> pipelines;
-			std::vector<LightStruct> lights;
+			void scheduleLight(LightStruct light);
 			private:
+			std::vector<LightStruct> lights;
 			std::vector<size_t> sizes{ sizeof(GlobalUniformData), sizeof(LightStruct)*MAX_AMOUT_LIGHTS};
 			std::unordered_map<uint32_t,VulkanBuffer*> GlobalDescriptorBuffers;
 			std::vector<VkDescriptorSet> GlobalDescriptorSets;

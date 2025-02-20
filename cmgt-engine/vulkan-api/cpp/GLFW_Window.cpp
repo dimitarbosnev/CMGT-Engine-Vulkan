@@ -1,5 +1,6 @@
 
 #include "vulkan-api/GLFW_Window.h"
+#include "minimal/log.h"
 namespace cmgt{
     GLFWindow::GLFWindow(int pWidth, int pHeight, const std::string& pName) : Window(pWidth,pHeight,pName){
         InitWindow();
@@ -8,7 +9,7 @@ namespace cmgt{
         FreeWindow();
      }
      void GLFWindow::InitWindow() {
-        std::cout << "Initializing Window...\n";
+        Log::msg("Initializing Window...");
         glfwInit();
 
         glfwWindowHint(GLFW_CLIENT_API,GLFW_NO_API);
@@ -19,7 +20,9 @@ namespace cmgt{
         glfwSetWindowUserPointer(window, this);
         //glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
         glfwSetFramebufferSizeCallback(window, resizeWindowCallBack);
-        std::cout << "Window Initialized!\n";
+        Log::msg("Window Initialized!");
+
+        Log::flush_buffer();
     }
 
     void GLFWindow::resizeWindowCallBack(GLFWwindow* pWindow, int pWidth, int pHeight) {
@@ -49,11 +52,11 @@ namespace cmgt{
     }
 
     void GLFWindow::initVKSurface(VkInstance& instance,VkSurfaceKHR& surface) {
-        std::cout << "Initialize Surface...\n";
+        Log::msg("Initialize Surface...");
         if (glfwCreateWindowSurface(instance, window, nullptr, &surface) != VK_SUCCESS) {
-            throw std::runtime_error("failed to create window surface!");
+            throw std::runtime_error(Log::error_critical("failed to create window surface!"));
         }
-        std::cout << "Surface initialized!\n";
+        Log::msg("Surface initialized!");
     }
     std::vector<const char*> GLFWindow::getInstanceExtentions(){
         uint32_t glfwExtensionCount = 0;

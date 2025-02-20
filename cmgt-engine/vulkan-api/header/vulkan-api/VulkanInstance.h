@@ -36,10 +36,10 @@ namespace cmgt {
 
 	class VulkanInstance : public Singelton<VulkanInstance>{
 	public:
-#ifdef NDEBUG
-		const bool enableValidationLayers = false;
-#else
+#ifndef NDEBUG
 		const bool enableValidationLayers = true;
+#else
+		const bool enableValidationLayers = false;
 #endif
 		VulkanInstance();
 		~VulkanInstance();

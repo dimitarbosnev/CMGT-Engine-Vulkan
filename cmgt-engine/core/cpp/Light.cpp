@@ -20,7 +20,7 @@ namespace cmgt {
 	{
 		//diffrent types of light classes can be made
 		LightStruct light;
-		light.type = _type;
+		light.type = static_cast<uint32_t>(_type);
 		light.color = _color;
 		light.position = getTransform().getWorldPosition();
 		light.direction = _direction;
@@ -28,7 +28,7 @@ namespace cmgt {
 		light.intencity = _intencity;
 		light.range = _range;
 
-		//VulkanRenderer::get()->lights.
+		VulkanRenderer::get()->scheduleLight(light);
 	}
 
 

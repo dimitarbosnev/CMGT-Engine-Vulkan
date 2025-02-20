@@ -1,5 +1,6 @@
 
 #include "vulkan-api/VulkanSwapchain.h"
+#include "minimal/log.h"
 #include <array>
 #include <cstdlib>
 #include <cstring>
@@ -17,6 +18,8 @@ namespace cmgt {
 		createDepthResources();
 		createFramebuffers();
 		createSyncObjects();
+
+		Log::flush_buffer();
 	}
 
 	void VulkanSwapchain::destroySwapchain(){
@@ -53,7 +56,7 @@ namespace cmgt {
 
 	VulkanSwapchain::~VulkanSwapchain() {
 		destroySwapchain();
-		std::cout << "Swapchain deleted!" << std::endl;
+		Log::msg("Swapchain deleted!");
 	}
 
 	VkResult VulkanSwapchain::acquireNextImage(uint32_t& imageIndex) {
@@ -103,7 +106,7 @@ namespace cmgt {
 		vkResetFences(VkInstance->device(), 1, &inFlightFences[currentFrame]);
 		if (vkQueueSubmit(VkInstance->graphicsQueue(), 1, &submitInfo, inFlightFences[currentFrame]) !=
 			VK_SUCCESS) {
-			throw std::runtime_error("failed to submit draw command buffer!");
+			throw std::runtime_error(Log::error_critical("failed to submit draw command buffer!"));
 		}
 
 		VkPresentInfoKHR presentInfo = {};
@@ -172,7 +175,7 @@ namespace cmgt {
 		createInfo.clipped = VK_TRUE;
 
 		if (vkCreateSwapchainKHR(VkInstance->device(), &createInfo, nullptr, &swapChain) != VK_SUCCESS) {
-			throw std::runtime_error("failed to create swap chain!");
+			throw std::runtime_error(Log::error_critical("failed to create swap chain!"));
 		}
 
 		// we only specified a minimum number of images in the swap chain, so the implementation is
@@ -201,9 +204,8 @@ namespace cmgt {
 			viewInfo.subresourceRange.baseArrayLayer = 0;
 			viewInfo.subresourceRange.layerCount = 1;
 
-			if (vkCreateImageView(VulkanInstance::get()->device(), &viewInfo, nullptr, &swapChainImageViews[i]) !=
-				VK_SUCCESS) {
-				throw std::runtime_error("failed to create texture image view!");
+			if (vkCreateImageView(VulkanInstance::get()->device(), &viewInfo, nullptr, &swapChainImageViews[i]) != VK_SUCCESS) {
+				throw std::runtime_error(Log::error_critical("failed to create texture image view!"));
 			}
 		}
 	}
@@ -265,7 +267,7 @@ namespace cmgt {
 		renderPassInfo.pDependencies = &dependency;
 
 		if (vkCreateRenderPass(VulkanInstance::get()->device(), &renderPassInfo, nullptr, &renderPass) != VK_SUCCESS) {
-			throw std::runtime_error("failed to create render pass!");
+			throw std::runtime_error(Log::error_critical("failed to create render pass!"));
 		}
 	}
 
@@ -284,12 +286,8 @@ namespace cmgt {
 			framebufferInfo.height = swapChainExtent.height;
 			framebufferInfo.layers = 1;
 
-			if (vkCreateFramebuffer(
-				VulkanInstance::get()->device(),
-				&framebufferInfo,
-				nullptr,
-				&swapChainFramebuffers[i]) != VK_SUCCESS) {
-				throw std::runtime_error("failed to create framebuffer!");
+			if (vkCreateFramebuffer(VulkanInstance::get()->device(), &framebufferInfo, nullptr, &swapChainFramebuffers[i]) != VK_SUCCESS) {
+				throw std::runtime_error(Log::error_critical("failed to create framebuffer!"));
 			}
 		}
 	}
@@ -334,7 +332,7 @@ namespace cmgt {
 			viewInfo.subresourceRange.layerCount = 1;
 
 			if (vkCreateImageView(VkInstance->device(), &viewInfo, nullptr, &depthImageViews[i]) != VK_SUCCESS) {
-				throw std::runtime_error("failed to create texture image view!");
+				throw std::runtime_error(Log::error_critical("failed to create texture image view!"));
 			}
 		}
 	}
@@ -359,7 +357,7 @@ namespace cmgt {
 				vkCreateSemaphore(VkInstance->device(), &semaphoreInfo, nullptr, &renderFinishedSemaphores[i]) !=
 				VK_SUCCESS ||
 				vkCreateFence(VkInstance->device(), &fenceInfo, nullptr, &inFlightFences[i]) != VK_SUCCESS) {
-				throw std::runtime_error("failed to create synchronization objects for a frame!");
+				throw std::runtime_error(Log::error_critical("failed to create synchronization objects for a frame!"));
 			}
 		}
 	}
@@ -398,7 +396,7 @@ namespace cmgt {
 		   }
 		 }*/
 
-		std::cout << "Present mode: Immediate" << std::endl;
+		Log::msg("Present mode: Immediate");
 		return VK_PRESENT_MODE_IMMEDIATE_KHR;
 
 		//std::cout << "Present mode: MailBox" << std::endl;

@@ -4,6 +4,7 @@
 #include "vulkan-api/VulkanBuffer.h"
 #include "vulkan-api/Window.h"
 #include "core/GraphicsPipeline.h"
+#include "minimal/log.h"
 #include<array>
 #include <stdexcept>
 
@@ -78,20 +79,15 @@ namespace cmgt {
 
 	void VulkanRenderer::writeDescriptorBuffers(const VulkanFrameData& frameData){
 
-		std::vector<const void*> data;
 		GlobalUniformData uniformData;
 		uniformData.cameraMatrix = frameData.viewMatrix;
 		uniformData.projMatrix = frameData.projectionMatrix;
 		uniformData.lightCount = lights.size();
-		data.push_back(&uniformData);
-		data.push_back(lights.data());
 
 		GlobalDescriptorBuffers[0]->writeToIndex(&uniformData, frameData.imageIndex);
 		GlobalDescriptorBuffers[1]->writeToIndex(lights.data(), frameData.imageIndex);
-		//for(int i = 0; i < GlobalDescriptorBuffers.size(); i++){
-		//	GlobalDescriptorBuffers[i]->writeToIndex(data[i], frameData.imageIndex);
-		//	//descriptorBuffers[i]->flushIndex(imageIndex);
-		//}
+		//GlobalDescriptorBuffers[1]->flushIndex(frameData.imageIndex);
+		lights.clear();
 	}
 
 	void VulkanRenderer::freeCommandBuffers() {
@@ -152,7 +148,7 @@ namespace cmgt {
 		if (vkEndCommandBuffer(commandBuffers[imageIndex]) != VK_SUCCESS)
 			throw std::runtime_error("failed to record command buffer!");
 		
-		//lights.clear();
+		lights.clear();
 	}
 
 	void VulkanRenderer::drawFrame(glm::mat4 viewMatrix, glm::mat4 projectionMatrix) {
@@ -199,5 +195,12 @@ namespace cmgt {
 		}
 		
 		//OnSwapchainRecreate.trigger();
+	}
+
+	void VulkanRenderer::scheduleLight(LightStruct light){
+		if(lights.size() < MAX_AMOUT_LIGHTS)
+			lights.push_back(light);
+		else
+			Log::warning("Reached the maximum amount of lights. This light will not be scheduled for render");
 	}
 }

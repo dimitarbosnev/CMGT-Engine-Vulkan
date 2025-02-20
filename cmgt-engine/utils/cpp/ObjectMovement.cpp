@@ -12,19 +12,15 @@ namespace cmgt{
         glm::mat4 worldPos = getTransform().getWorldTransform();
         if (Input::isKeyPressed(GLFW_KEY_W)) {
             _owner->getTransform().Translate(glm::vec3(0, 0, _moveSpeed) * pStep);
-            std::cout << worldPos[3] << std::endl;
         }
         if (Input::isKeyPressed(GLFW_KEY_S)) {
             _owner->getTransform().Translate(glm::vec3(0, 0, -_moveSpeed) * pStep);
-            std::cout << worldPos[3] << std::endl;
         }
         if (Input::isKeyPressed(GLFW_KEY_A)) {
             _owner->getTransform().Translate(glm::vec3(-_moveSpeed, 0, 0) * pStep);
-            std::cout << worldPos[3] << std::endl;
         }
         if (Input::isKeyPressed(GLFW_KEY_D)) {
             _owner->getTransform().Translate(glm::vec3(_moveSpeed, 0, 0) * pStep);
-            std::cout <<worldPos[3] << std::endl;
         }
         if (Input::isMousePressed(GLFW_MOUSE_BUTTON_LEFT)) {
             glm::vec2 deltaPos = Input::deltaMousePosition();
