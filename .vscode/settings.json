@@ -127,5 +127,15 @@
         "stdfloat": "cpp",
         "*.fxh": "cpp",
         "cassert": "cpp"
-    }
+    },
+    "testMate.cpp.test.advancedExecutables": [
+      {
+        "pattern": "{build,Build,BUILD,out,Out,OUT,bin}/**/*{test,Test,TEST}*",
+        "cwd": "${workspaceFolder}",
+        "env": {
+        "ExampleENV1": "You can use variables here too, like ${relPath}",
+        "PATH": "${os_env:PATH}${osPathEnvSep}/adding/new/item/to/PATH/env"
+        }
+      }
+    ]
 }
