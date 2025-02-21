@@ -5,72 +5,92 @@
 #include <map>
 #include <functional>
 namespace cmgt {
-    template<typename Class>
+   
+    template<typename C>
     class Event{
+    private:
+        std::multimap<C*,void(C::*)()> listeners;
     public:
-        Event() = default;
-        ~Event() = default;
-        inline void add(void(Class::*function)(), Class* sub){
-            subscribers.emplace(function,sub);
+        void subscribe(C* sub,void(C::*func)()){
+            listeners.emplace(sub,func);
         }
-
-        inline void remove(void(Class::*function)(), Class* sub){
-            subscribers.erase(function);
-        }
-
-        inline void trigger(){
-            for(std::pair<void(Class::*)(),Class*> event : subscribers){
-                (event.second->*event.first)();
+    
+        void unsubscribe(C* sub,void(C::*func)()){
+            
+            for (auto it = listeners.begin(); it != listeners.end(); it++){
+                if(it->first == sub && it->second == func){
+                    listeners.erase(it);
+                    break;
+                }
             }
         }
-    private:
-        std::map<void(Class::*)(),Class*> subscribers;
+        
+        void call_event(){
+            for(auto sub : listeners){
+                //TODO: Consider using smart pointers in your project for high level stuff such as this
+                //probably forgot to unsubscribe something
+                //or a lambda you used got out of scope
+                (sub.first->*sub.second)();
+            }
+        }
     };
-
-    template<typename Class, typename Type>
+    
+    template<typename C, typename T>
     class EventType{
+    private:
+        std::multimap<C*,void(C::*)(T)> listeners;
     public:
-        EventType() = default;
-        ~EventType() = default;
-        inline void add(Class* sub, void(Class::*function)(Type)){
-            auto pair = std::pair<Class*,void(Class::*)(Type)>(sub,function);
-            subscribers.push_back(pair);
+        void subscribe(C* sub,void(C::*func)(T)){
+            listeners.emplace(sub,func);
         }
-
-        //TODO: Figure out how to remove it
-        //inline void remove(Class* sub, void(Class::*function)(Type)){
-        //    subscribers.erase(sub);
-        //}
-
-        inline void trigger(Type type){
-            for(auto event : subscribers){
-                (event.first->*event.second)(type);
+    
+        void unsubscribe(C* sub,void(C::*func)(T)){
+            
+            for (auto it = listeners.begin(); it != listeners.end(); it++){
+                if(it->first == sub && it->second == func){
+                    listeners.erase(it);
+                    break;
+                }
             }
         }
-    private:
-        std::list<std::pair<Class*,void(Class::*)(Type)>> subscribers;
+    
+        void call_event(T data){
+            for(auto sub : listeners){
+                //TODO: Consider using smart pointers in your project for high level stuff such as this
+                //probably forgot to unsubscribe something
+                //or a lambda you used got out of scope
+                (sub.first->*sub.second)(data);
+            }
+        }
     };
-
-    template<typename T>
+    
+    template<typename C, typename T>
     class EventBus{
+    private:
+        inline static std::multimap<C*,void(C::*)(T)> listeners;
     public:
         EventBus() = delete;
         ~EventBus() = delete;
-        inline static void add(void(*function)(T)){
-            subscribers.push_back(function);
+    
+        static void subscribe(C* sub,void(C::*func)(T)){
+            listeners.emplace(sub,func);
         }
-
-        inline static void remove(void(*function)(T)){
-            subscribers.remove(function);
-        }
-
-        inline static void trigger(T data){
-            for(void(*function)(T) : subscribers){
-                function(data);
+    
+        static void unsubscribe(C* sub,void(C::*func)(T)){
+            
+            for (auto it = listeners.begin(); it != listeners.end(); it++){
+                if(it->first == sub && it->second == func){
+                    listeners.erase(it);
+                    break;
+                }
             }
         }
-    private:
-        inline static std::list<void(*)(T)> subscribers;
+    
+        static void call_event(T data){
+            for(auto sub : listeners){
+                (sub.first->*sub.second)(data);
+            }
+        }
     };
 
 }
