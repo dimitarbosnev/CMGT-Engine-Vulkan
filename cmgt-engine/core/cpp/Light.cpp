@@ -3,8 +3,9 @@
 #include "core/GameObject.h"
 #include "core/World.h"
 #include "core/VulkanRenderer.h"
+#include "minimal/log.h"
 namespace cmgt {
-	Light::Light(LightType type) {
+	Light::Light(LightType type) : _type(type) {
 	}
 
 	Light::~Light() {}
@@ -20,14 +21,16 @@ namespace cmgt {
 	{
 		//diffrent types of light classes can be made
 		LightStruct light;
-		light.type = static_cast<uint32_t>(_type);
+		light.type = _type;
+		std::stringstream ss;
+		ss << "Light type is: " << light.type;
+		Log::msg(ss.str());
+		light.intencity = _intencity;
+		light.range = _range;
 		light.color = _color;
 		light.position = getTransform().getWorldPosition();
 		light.direction = _direction;
 		light.cut_off_angle = _cut_off_angle;
-		light.intencity = _intencity;
-		light.range = _range;
-
 		VulkanRenderer::get()->scheduleLight(light);
 	}
 

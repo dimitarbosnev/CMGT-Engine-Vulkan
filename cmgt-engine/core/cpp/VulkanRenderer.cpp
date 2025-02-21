@@ -86,8 +86,9 @@ namespace cmgt {
 
 		GlobalDescriptorBuffers[0]->writeToIndex(&uniformData, frameData.imageIndex);
 		GlobalDescriptorBuffers[1]->writeToIndex(lights.data(), frameData.imageIndex);
-		//GlobalDescriptorBuffers[1]->flushIndex(frameData.imageIndex);
-		lights.clear();
+		std::stringstream ss;
+		ss <<" Number of lights: " << lights.size();
+		Log::msg(ss.str());
 	}
 
 	void VulkanRenderer::freeCommandBuffers() {
@@ -140,6 +141,7 @@ namespace cmgt {
 
 		writeDescriptorBuffers(frameData);
 		for(GraphicsPipeline* pipeline : pipelines){
+			pipeline->bind(frameData.commandBuffer);
 			vkCmdBindDescriptorSets(frameData.commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline->pipelineLayout(), 0, 1, &GlobalDescriptorSets[frameData.imageIndex], 0, nullptr);
 			pipeline->recordFrameCommandBuffer(frameData);
 		}
@@ -148,7 +150,6 @@ namespace cmgt {
 		if (vkEndCommandBuffer(commandBuffers[imageIndex]) != VK_SUCCESS)
 			throw std::runtime_error("failed to record command buffer!");
 		
-		lights.clear();
 	}
 
 	void VulkanRenderer::drawFrame(glm::mat4 viewMatrix, glm::mat4 projectionMatrix) {
@@ -162,7 +163,6 @@ namespace cmgt {
 		}
 		if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR)
 			throw std::runtime_error("failed to accure swap chain image");
-
 		recordCommandBuffer(imageIndex,viewMatrix,projectionMatrix);
 		result = VkSwapchain->submitCommandBuffers(commandBuffers[imageIndex], imageIndex);
 
@@ -173,6 +173,8 @@ namespace cmgt {
 		}
 		if (result != VK_SUCCESS)
 			throw std::runtime_error("failed to present swap chian image!");
+		
+		lights.clear();
 	}
 
 	void VulkanRenderer::recreateSwapchain() {

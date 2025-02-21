@@ -11,5 +11,5 @@ layout(push_constant) uniform Push {
 } push;
 
 void main() {
-    outColor = processLights(vec4(push.color,1),fragNormal);
+    outColor = vec4(push.color,1) * processLights(fragNormal);
 }

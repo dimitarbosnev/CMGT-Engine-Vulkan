@@ -56,7 +56,7 @@ cmgt::GameObject* SpawnBall(glm::vec3 pos, glm::vec3 scale, glm::vec3 force){
 	cmgt::GameObject* childObject = new cmgt::GameObject("Ball GameObject");
 	childObject->getTransform().Translate(pos);
 	childObject->getTransform().Scale(scale);
-	cmgt::Mesh* cube = new cmgt::Mesh("sphere_smooth.obj", new cmgt::TestMaterial());
+	cmgt::Mesh* cube = new cmgt::Mesh("sphere_smooth.obj", new cmgt::ColorMaterial());
 	cmgt::Collider* collider = new cmgt::SphereCollider();
 	collider->addForce(force, true);
 	childObject->addComponent(cube);
@@ -77,20 +77,31 @@ void OnGameStart(){
 	firstScene->getWorld()->add(SpawnBall(glm::vec3(2, -2, 6), glm::vec3(1.f), glm::vec3(-30,30,0)));
 	firstScene->getWorld()->add(SpawnBall(glm::vec3(6, -2, 6), glm::vec3(1.f), glm::vec3(0,30,0)));
 
-	firstScene->getWorld()->add(SpawnPlane(glm::vec3(0, -20, 0), glm::vec3(1,0,0), .0f));
-	firstScene->getWorld()->add(SpawnPlane(glm::vec3(0, 0, 0), glm::vec3(1,0,0), glm::pi<float>()));
-	firstScene->getWorld()->add(SpawnPlane(glm::vec3(0, -10, 10), glm::vec3(1,0,0), -glm::pi<float>() / 2));
-	firstScene->getWorld()->add(SpawnPlane(glm::vec3(0, -10, -10), glm::vec3(1,0,0), glm::pi<float>() / 2));
-	firstScene->getWorld()->add(SpawnPlane(glm::vec3(-10, -10, 0), glm::vec3(0,0,1), glm::pi<float>() / 2));
-	firstScene->getWorld()->add(SpawnPlane(glm::vec3(10, -10, 0), glm::vec3(0,0,1), -glm::pi<float>() / 2));
+	//firstScene->getWorld()->add(SpawnPlane(glm::vec3(0, -20, 0), glm::vec3(1,0,0), .0f));
+	//firstScene->getWorld()->add(SpawnPlane(glm::vec3(0, 0, 0), glm::vec3(1,0,0), glm::pi<float>()));
+	//firstScene->getWorld()->add(SpawnPlane(glm::vec3(0, -10, 10), glm::vec3(1,0,0), -glm::pi<float>() / 2));
+	//firstScene->getWorld()->add(SpawnPlane(glm::vec3(0, -10, -10), glm::vec3(1,0,0), glm::pi<float>() / 2));
+	//firstScene->getWorld()->add(SpawnPlane(glm::vec3(-10, -10, 0), glm::vec3(0,0,1), glm::pi<float>() / 2));
+	//firstScene->getWorld()->add(SpawnPlane(glm::vec3(10, -10, 0), glm::vec3(0,0,1), -glm::pi<float>() / 2));
 
+	{
+		cmgt::GameObject* ambientLight = new cmgt::GameObject("Light Object");
+		cmgt::Light* light_ambinet = new cmgt::Light();
+		light_ambinet->setIntencity(0.3f);
+		light_ambinet->setLightColor(glm::vec3(1, 1, 1));
+		ambientLight->addComponent(light_ambinet);
+		firstScene->getWorld()->add(ambientLight);
+	}
 
-	cmgt::GameObject* ambientLight = new cmgt::GameObject("Light Object");
-	cmgt::Light* light_ambinet = new cmgt::Light();
-	light_ambinet->setIntencity(0.3f);
-	light_ambinet->setLightColor(glm::vec3(1, 1, 1));
-	ambientLight->addComponent(light_ambinet);
-	firstScene->getWorld()->add(ambientLight);
+	{
+		cmgt::GameObject* dirLight = new cmgt::GameObject("Light Object");
+		cmgt::Light* light_dir = new cmgt::Light(cmgt::LightType::Directional);
+		light_dir->setIntencity(1.f);
+		light_dir->setLightColor(glm::vec3(1, 1, 1));
+		light_dir->setDirection(glm::normalize(glm::vec3(1, -1, 1)));
+		dirLight->addComponent(light_dir);
+		firstScene->getWorld()->add(dirLight);
+	}
 
 	cmgt::GameObject* cameraObject = new cmgt::GameObject("Camera Object");
 	cameraObject->getTransform().setMatrix(glm::mat4(+0.9,-0.0,-0.5,+0.0,
@@ -145,8 +156,10 @@ int main() {
 		game_clock = cmgt::clock::now();
 
 		if (second >= 1)
-		{
-			std::cout << "FPS: " << fps << std::endl;
+		{	
+			std::stringstream ss;
+			ss << "FPS: " << fps;
+			cmgt::Log::msg(ss.str());
 			second = 0;
 			fps = 0;
 		}

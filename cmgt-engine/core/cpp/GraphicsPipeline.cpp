@@ -189,7 +189,6 @@ namespace cmgt {
 	}
 
 	void GraphicsPipeline::recordFrameCommandBuffer(const VulkanFrameData& frameData){
-		bind(frameData.commandBuffer);
 
 		//Write UniformData
 		setUniformData(frameData);

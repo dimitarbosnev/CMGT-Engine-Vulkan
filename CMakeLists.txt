@@ -10,7 +10,7 @@ set(CMAKE_BINARY_DIR ${CMAKE_SOURCE_DIR}/bin/binary)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin/archive)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin/run)
-set(VULKAN_SHADER_COMPILER ${CMAKE_SOURCE_DIR}/build/vcpkg_installed/x64-windows-static-md/tools/shaderc/glslc.exe)
+set(VULKAN_SHADER_COMPILER $ENV{VULKAN_SDK}/Bin/glslc.exe)
 
 
 add_subdirectory(main)

@@ -188,12 +188,12 @@ namespace cmgt {
 
 	// class member functions
 	VulkanInstance::VulkanInstance() : Singelton<VulkanInstance>(this){
-		if (enableValidationLayers) {
-		auto path = std::filesystem::current_path();
- 		std::string set = "VK_ADD_LAYER_PATH=" + path.string();
-		Log::msg(set);
-  		_putenv(set.c_str());
-		}
+		//if (enableValidationLayers) {
+		//auto path = std::filesystem::current_path();
+ 		//std::string set = "VK_ADD_LAYER_PATH=" + path.string();
+		//Log::msg(set);
+  		//_putenv(set.c_str());
+		//}
 		createInstance();
 		setupDebugMessenger();
 		createSurface();

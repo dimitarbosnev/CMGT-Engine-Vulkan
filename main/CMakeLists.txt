@@ -23,15 +23,15 @@ target_link_libraries(${PROJ_NAME}
 # CUSTOM COMMANDS FOR PROJECTS
 
 # Define a custom target for copying DLL and JSON files
-add_custom_target(${PROJ_NAME}_CopyVkLayerFiles
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            ${CMAKE_SOURCE_DIR}/build/vcpkg_installed/x64-windows-static-md/bin/VkLayer_khronos_validation.dll
-            ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/VkLayer_khronos_validation.dll
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            ${CMAKE_SOURCE_DIR}/build/vcpkg_installed/x64-windows-static-md/bin/VkLayer_khronos_validation.json
-            ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/VkLayer_khronos_validation.json
-    COMMENT "Copying VkLayer files if they have changed"
-)
+#add_custom_target(${PROJ_NAME}_CopyVkLayerFiles
+#    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+#            ${CMAKE_SOURCE_DIR}/build/vcpkg_installed/x64-windows-static-md/bin/VkLayer_khronos_validation.dll
+#            ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/VkLayer_khronos_validation.dll
+#    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+#            ${CMAKE_SOURCE_DIR}/build/vcpkg_installed/x64-windows-static-md/bin/VkLayer_khronos_validation.json
+#            ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/VkLayer_khronos_validation.json
+#    COMMENT "Copying VkLayer files if they have changed"
+#)
 
 # Define a custom target for creating the shaders directory
 # Define the output directory for compiled shaders
@@ -95,7 +95,7 @@ add_custom_target(${PROJ_NAME}_CopyTextures
 
 # Ensure the main project depends on these custom targets
 add_dependencies(${PROJ_NAME}
-${PROJ_NAME}_CopyVkLayerFiles
+#${PROJ_NAME}_CopyVkLayerFiles
 ${PROJ_NAME}_CompileShaders
 ${PROJ_NAME}_CopyModels
 ${PROJ_NAME}_CopyTextures

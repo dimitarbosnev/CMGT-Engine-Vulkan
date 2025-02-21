@@ -108,19 +108,19 @@ namespace cmgt {
 			VK_SUCCESS) {
 			throw std::runtime_error(Log::error_critical("failed to submit draw command buffer!"));
 		}
-
 		VkPresentInfoKHR presentInfo = {};
 		presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
-
+		
 		presentInfo.waitSemaphoreCount = 1;
 		presentInfo.pWaitSemaphores = signalSemaphores;
-
+		
 		VkSwapchainKHR swapChains[] = { swapChain };
 		presentInfo.swapchainCount = 1;
 		presentInfo.pSwapchains = swapChains;
-
+		
 		presentInfo.pImageIndices = &imageIndex;
-
+		
+		//std::cin.get();
 		auto result = vkQueuePresentKHR(VkInstance->presentQueue(), &presentInfo);
 
 		currentFrame = (currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
