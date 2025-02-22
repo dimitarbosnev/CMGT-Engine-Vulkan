@@ -28,6 +28,7 @@ namespace cmgt {
 			vkDestroyImageView(VkInstance->device(), imageView, nullptr);
 		}
 		swapChainImageViews.clear();
+		imagesInFlight.clear();
 
 		if (swapChain != nullptr) {
 			vkDestroySwapchainKHR(VkInstance->device(), swapChain, nullptr);
@@ -360,6 +361,18 @@ namespace cmgt {
 				throw std::runtime_error(Log::error_critical("failed to create synchronization objects for a frame!"));
 			}
 		}
+	}
+
+	void VulkanSwapchain::recreateSwapChain(){
+		destroySwapchain();
+		
+		createSwapChain();
+		createImageViews();
+		createRenderPass();
+		createDepthResources();
+		createFramebuffers();
+		createSyncObjects();
+		Log::flush_buffer();
 	}
 
 	VkSurfaceFormatKHR VulkanSwapchain::chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats) {

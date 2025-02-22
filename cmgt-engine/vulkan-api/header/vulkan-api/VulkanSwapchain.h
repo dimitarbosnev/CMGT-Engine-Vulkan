@@ -14,8 +14,7 @@ namespace cmgt {
 
 		VulkanSwapchain();
 		~VulkanSwapchain();
-		void destroySwapchain();
-
+		
 		VkFramebuffer getFrameBuffer(int index) { return swapChainFramebuffers[index]; }
 		VkRenderPass getRenderPass() { return renderPass; }
 		VkImageView getImageView(int index) { return swapChainImageViews[index]; }
@@ -24,23 +23,24 @@ namespace cmgt {
 		VkExtent2D getSwapChainExtent() { return swapChainExtent; }
 		uint32_t width() { return swapChainExtent.width; }
 		uint32_t height() { return swapChainExtent.height; }
-
+		
 		float extentAspectRatio() {
 			return static_cast<float>(swapChainExtent.width) / static_cast<float>(swapChainExtent.height);
 		}
 		VkFormat findDepthFormat();
-
+		
 		VkResult acquireNextImage(uint32_t& imageIndex);
 		VkResult submitCommandBuffers(const VkCommandBuffer& buffers, uint32_t& imageIndex);
-		void createSwapChain();
-
+		void recreateSwapChain();
 	private:
+		void createSwapChain();
 		void createImageViews();
 		void createDepthResources();
 		void createRenderPass();
 		void createFramebuffers();
 		void createSyncObjects();
-
+		
+		void destroySwapchain();
 		// Helper functions
 		VkSurfaceFormatKHR chooseSwapSurfaceFormat(
 			const std::vector<VkSurfaceFormatKHR>& availableFormats);

@@ -189,8 +189,7 @@ namespace cmgt {
 		vkDeviceWaitIdle(VulkanInstance::get()->device());
 
 		VulkanSwapchain* VkSwapchain = VulkanSwapchain::get();
-		VkSwapchain->destroySwapchain();
-		VkSwapchain->createSwapChain();
+		VkSwapchain->recreateSwapChain();
 		if (VkSwapchain->imageCount() != commandBuffers.size()) {
 			freeCommandBuffers();
 			createCommandBuffers();
