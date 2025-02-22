@@ -14,7 +14,11 @@ layout(std140, set = 0, binding = 0) uniform GlobalUniforms{
     uint lightCount;
 }globals;
 
-layout(std430, set = 0, binding = 1) readonly buffer LightBuffer {
+layout(std430, set = 0, binding = 1) readonly buffer MatrixBuffer {
+    mat4 matrix[];
+}object;
+
+layout(std430, set = 0, binding = 2) readonly buffer LightBuffer {
     Light light_array[];
 }lights;
 

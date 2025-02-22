@@ -33,9 +33,12 @@ namespace cmgt {
 			VkDescriptorSetLayout getDescriptorSetLayout(){ return GlobalDescriptorSetLayout.getDescriptorSetLayout(); }
 			std::list<GraphicsPipeline*> pipelines;
 			void scheduleLight(LightStruct light);
+			void scheduleMatrix(glm::mat4 matrix);
+			uint32_t meshIndex() { return objectMatrices.size(); }
 			private:
 			std::vector<LightStruct> lights;
-			std::vector<size_t> sizes{ sizeof(GlobalUniformData), sizeof(LightStruct) * MAX_AMOUT_LIGHTS};
+			std::vector<glm::mat4> objectMatrices;
+			std::vector<size_t> sizes{ sizeof(GlobalUniformData), sizeof(glm::mat4) * MAX_AMOUT_LIGHTS, sizeof(LightStruct) * MAX_AMOUT_LIGHTS};
 			std::unordered_map<uint32_t,VulkanBuffer*> GlobalDescriptorBuffers;
 			std::vector<VkDescriptorSet> GlobalDescriptorSets;
 			VulkanDescriptorSetLayout GlobalDescriptorSetLayout;
