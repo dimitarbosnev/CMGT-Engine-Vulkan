@@ -13,7 +13,6 @@ layout(push_constant) uniform Push {
 } push;
 
 void main() {
-    mat4 modelMatrix = object.matrix[gl_InstanceIndex];
-    gl_Position = (globals.projMatrix * globals.viewMatrix * modelMatrix) * vec4(position,1.0);
-    fragNormal = transpose(inverse(mat3(modelMatrix))) * normal;
+    gl_Position = (globals.projMatrix * globals.viewMatrix * push.modelMatrix) * vec4(position,1.0);
+    fragNormal = transpose(inverse(mat3(push.modelMatrix))) * normal;
 }

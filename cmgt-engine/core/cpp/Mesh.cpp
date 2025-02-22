@@ -60,20 +60,19 @@ namespace cmgt {
 	}
 
 	void Mesh::render(const VulkanFrameData& frameData) {
-		
+
 		VkBuffer buffers[] = { vertexBuffer->getBuffer() };
 		VkDeviceSize offsets[] = { 0 };
 		vkCmdBindVertexBuffers(frameData.commandBuffer, 0, 1, buffers, offsets);
 		if (hasIndexBuffer) vkCmdBindIndexBuffer(frameData.commandBuffer, indexBuffer->getBuffer(), 0, VK_INDEX_TYPE_UINT32);
-		
-		_material->bindPushConstants(frameData, getTransform().getWorldTransform()); 
-		if (hasIndexBuffer) vkCmdDrawIndexed(frameData.commandBuffer, indexCount, 1, 0, 0, instanceIndex);
-		else vkCmdDraw(frameData.commandBuffer, vertexCount, 1, 0, instanceIndex);
+
+		_material->bindPushConstants(frameData, getTransform().getWorldTransform());
+
+		if (hasIndexBuffer) vkCmdDrawIndexed(frameData.commandBuffer, indexCount, 1, 0, 0, 0);
+		else vkCmdDraw(frameData.commandBuffer, vertexCount, 1, 0, 0);
 	}
 	void Mesh::update(float dt) {
 		_material->getPipeline()->scheduleToRender(this);
-		instanceIndex = VulkanRenderer::get()->meshIndex();
-		VulkanRenderer::get()->scheduleMatrix(getTransform().getWorldTransform());
 	}
 	
 	void Mesh::Builder::loadModel(const std::string& filePath) {

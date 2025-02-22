@@ -42,7 +42,6 @@ namespace cmgt {
 		void createIndexBuffers(const std::vector<uint32_t>& indices);
 
 	private:
-		uint32_t instanceIndex;
 		std::vector<Vertex> vertexData;
 		Mesh(const Mesh&);
 		Mesh& operator=(const Mesh&);

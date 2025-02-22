@@ -11,8 +11,7 @@
 namespace cmgt {
 	VulkanRenderer::VulkanRenderer() : Singelton<VulkanRenderer>(this), GlobalDescriptorSetLayout(VulkanDescriptorSetLayout::Builder()
 	.addBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT)	
-	.addBinding(1, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT)
-	.addBinding(2, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT).build()) 
+	.addBinding(1, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT).build()) 
 	{
 		lights.reserve(MAX_AMOUT_LIGHTS);
 		createCommandBuffers();
@@ -86,11 +85,10 @@ namespace cmgt {
 		uniformData.lightCount = lights.size();
 
 		GlobalDescriptorBuffers[0]->writeToIndex(&uniformData, frameData.imageIndex);
-		GlobalDescriptorBuffers[1]->writeToIndex(objectMatrices.data(), frameData.imageIndex);
-		GlobalDescriptorBuffers[2]->writeToIndex(lights.data(), frameData.imageIndex);
+		GlobalDescriptorBuffers[1]->writeToIndex(lights.data(), frameData.imageIndex);
 		std::stringstream ss;
 		ss <<" Number of lights: " << lights.size();
-		//Log::msg(ss.str());
+		Log::msg(ss.str());
 	}
 
 	void VulkanRenderer::freeCommandBuffers() {
@@ -177,7 +175,6 @@ namespace cmgt {
 			throw std::runtime_error("failed to present swap chian image!");
 		
 		lights.clear();
-		objectMatrices.clear();
 	}
 
 	void VulkanRenderer::recreateSwapchain() {
@@ -206,12 +203,5 @@ namespace cmgt {
 			lights.push_back(light);
 		else
 			Log::warning("Reached the maximum amount of lights. This light will not be scheduled for render");
-	}
-
-	void VulkanRenderer::scheduleMatrix(glm::mat4 matrix){
-		if(objectMatrices.size() < MAX_AMOUT_LIGHTS)
-		objectMatrices.push_back(matrix);
-		else
-			Log::warning("Reached the maximum amount of matricies. This object will not be scheduled for render");
 	}
 }
