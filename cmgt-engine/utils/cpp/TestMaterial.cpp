@@ -77,9 +77,8 @@ namespace cmgt {
 		return shaderStages;
 	}
 
-	VulkanDescriptorSetLayout TestMaterial::createDescriptorSetLayout(std::vector<size_t>& sizes){
-		sizes.push_back(sizeof(UniformData));
-		return VulkanDescriptorSetLayout::Builder().addBinding(0,VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT).build();
+	VulkanUniformObject::Builder TestMaterial::createDescriptorSetLayout(){
+		return VulkanUniformObject::Builder().addBinding(0,VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, sizeof(UniformData));
 		//return VulkanDescriptorSetLayout::Builder().build();
 	}
 

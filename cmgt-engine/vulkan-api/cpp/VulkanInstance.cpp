@@ -27,7 +27,7 @@ namespace cmgt {
 		throw std::runtime_error(Log::error_critical("failed to find suitable memory type!"));
 	}
 
-	void createBuffer(VkPhysicalDevice physicalDevice, VkDevice device, VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory) {
+	void createBuffer(VkDevice device, VkDeviceSize size, VkBufferUsageFlags usage, VkBuffer& buffer) {
 		VkBufferCreateInfo bufferInfo{};
 		bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
 		bufferInfo.size = size;
@@ -36,8 +36,10 @@ namespace cmgt {
 
 		if (vkCreateBuffer(device, &bufferInfo, nullptr, &buffer) != VK_SUCCESS) {
 			throw std::runtime_error(Log::error_critical("failed to create vertex buffer!"));
-		}
+		}	
+	}
 
+	void allocateBuffer(VkPhysicalDevice physicalDevice, VkDevice device, VkDeviceSize size, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory){
 		VkMemoryRequirements memRequirements;
 		vkGetBufferMemoryRequirements(device, buffer, &memRequirements);
 
@@ -51,6 +53,11 @@ namespace cmgt {
 		}
 
 		vkBindBufferMemory(device, buffer, bufferMemory, 0);
+	}
+
+	void createBuffer(VkPhysicalDevice physicalDevice, VkDevice device, VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory){
+		createBuffer(device,size,usage,buffer);
+		allocateBuffer(physicalDevice,device,size,properties,buffer,bufferMemory);
 	}
 
 	VkCommandBuffer beginSingleTimeCommands(VkDevice device, VkCommandPool commandPool) {

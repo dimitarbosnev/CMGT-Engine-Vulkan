@@ -76,11 +76,10 @@ namespace cmgt {
 		return shaderStages;
 	}
 
-	VulkanDescriptorSetLayout ColorMaterial::createDescriptorSetLayout(std::vector<size_t>& sizes){
-		//sizes.push_back(sizeof(UniformData));
-		return VulkanDescriptorSetLayout::Builder().build();
+	VulkanUniformObject::Builder ColorMaterial::createDescriptorSetLayout(){
+		return VulkanUniformObject::Builder();
+		//return VulkanDescriptorSetLayout::Builder().build();
 	}
-
 	VkPushConstantRange* ColorMaterial::setupPushConsts(uint8_t& num)
 	{
 		num = 1;

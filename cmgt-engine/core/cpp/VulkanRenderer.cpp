@@ -9,23 +9,19 @@
 #include <stdexcept>
 
 namespace cmgt {
-	VulkanRenderer::VulkanRenderer() : Singelton<VulkanRenderer>(this), GlobalDescriptorSetLayout(VulkanDescriptorSetLayout::Builder()
-	.addBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT)	
-	.addBinding(1, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT).build()) 
+	VulkanRenderer::VulkanRenderer() : Singelton<VulkanRenderer>(this), GlobalUniformSets(VulkanUniformObject::Builder()
+	.addBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, sizeof(GlobalUniformData))	
+	.addBinding(1, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, sizeof(LightStruct) * MAX_AMOUT_LIGHTS),VulkanInstance::get())
 	{
 		lights.reserve(MAX_AMOUT_LIGHTS);
 		createCommandBuffers();
-		createDescriptorSets();
+		//createDescriptorSets();
 	}
 	VulkanRenderer::~VulkanRenderer() {
 		for(GraphicsPipeline* pipeline : pipelines){
 			delete pipeline;
 		}
-		for(auto buffer : GlobalDescriptorBuffers){
-			delete buffer.second;
-		}
 		pipelines.clear();
-		delete GlobalDescriptorPool;
 	}
 
 	void VulkanRenderer::createCommandBuffers() {
@@ -41,42 +37,6 @@ namespace cmgt {
 			throw std::runtime_error("failed to allocate command buffers!");
 	}
 
-	void VulkanRenderer::createDescriptorSets(){
-
-		VulkanDescriptorPool::Builder poolBuilder(VulkanDescriptorPool::Builder().setMaxSets(MAX_FRAMES_IN_FLIGHT));
-		
-		for (int i = 0; i < sizes.size(); i++){
-			poolBuilder.addPoolSize(GlobalDescriptorSetLayout.getDescriptorSetLayoutBindingAt(i).descriptorType, MAX_FRAMES_IN_FLIGHT);
-		}
-		GlobalDescriptorPool = new VulkanDescriptorPool(poolBuilder.build());
-
-		VulkanInstance* VkInstance = VulkanInstance::get();
-		GlobalDescriptorBuffers.reserve(GlobalDescriptorSetLayout.getBindingsMap().size());
-		for (auto binding : GlobalDescriptorSetLayout.getBindingsMap()) {
-			VulkanBuffer* buffer = new VulkanBuffer(VkInstance->physicalDevice(), VkInstance->device(),sizes[binding.first], MAX_FRAMES_IN_FLIGHT,
-			getBufferUsage(binding.second), VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
-			GlobalDescriptorBuffers[binding.first] = buffer;
-			buffer->map();
-		}
-
-		GlobalDescriptorSets.resize(MAX_FRAMES_IN_FLIGHT);
-
-		std::unordered_map<uint32_t,VkDescriptorBufferInfo> bufferInfos;
-		bufferInfos.reserve(GlobalDescriptorBuffers.size());
-		for (auto buffer : GlobalDescriptorBuffers) {
-			bufferInfos[buffer.first] = buffer.second->descriptorInfo();
-		}
-		for (int i = 0; i < GlobalDescriptorSets.size(); i++) {
-			VulkanDescriptorWriter writer(GlobalDescriptorSetLayout, *GlobalDescriptorPool);	
-			for (auto buffer : GlobalDescriptorBuffers) {
-				writer.writeBuffer(buffer.first, &bufferInfos[buffer.first]);		
-			}
-			if(!writer.build(GlobalDescriptorSets[i])){
-				throw std::runtime_error("failed to build descriptor set!");
-			}
-		}
-	}
-
 	void VulkanRenderer::writeDescriptorBuffers(const VulkanFrameData& frameData){
 
 		GlobalUniformData uniformData;
@@ -84,8 +44,8 @@ namespace cmgt {
 		uniformData.projMatrix = frameData.projectionMatrix;
 		uniformData.lightCount = lights.size();
 
-		GlobalDescriptorBuffers[0]->writeToIndex(&uniformData, frameData.imageIndex);
-		GlobalDescriptorBuffers[1]->writeToIndex(lights.data(), frameData.imageIndex);
+		GlobalUniformSets.getBufferAt(0)->writeToIndex(&uniformData, frameData.imageIndex);
+		GlobalUniformSets.getBufferAt(1)->writeToIndex(lights.data(), frameData.imageIndex);
 		std::stringstream ss;
 		ss <<" Number of lights: " << lights.size();
 		Log::msg(ss.str());
@@ -142,7 +102,7 @@ namespace cmgt {
 		writeDescriptorBuffers(frameData);
 		for(GraphicsPipeline* pipeline : pipelines){
 			pipeline->bind(frameData.commandBuffer);
-			vkCmdBindDescriptorSets(frameData.commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline->pipelineLayout(), 0, 1, &GlobalDescriptorSets[frameData.imageIndex], 0, nullptr);
+			vkCmdBindDescriptorSets(frameData.commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline->pipelineLayout(), 0, 1, &GlobalUniformSets.getDescriptorSet(frameData.imageIndex), 0, nullptr);
 			pipeline->recordFrameCommandBuffer(frameData);
 		}
 		

@@ -45,6 +45,7 @@ namespace cmgt {
         VkMemoryPropertyFlags getMemoryPropertyFlags() const { return memoryPropertyFlags; }
         VkDeviceSize getBufferSize() const { return bufferSize; }
 
+        void resizeBuffer(VkDeviceSize newSize, VkDeviceSize minOffsetAlignment = 1);
     private:
         static VkDeviceSize getAlignment(VkDeviceSize instanceSize, VkDeviceSize minOffsetAlignment);
 

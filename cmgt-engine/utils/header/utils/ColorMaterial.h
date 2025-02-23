@@ -34,7 +34,7 @@ namespace cmgt {
 		static void initPipeline();
 		static void freePipeline();
 		static VkPipelineShaderStageCreateInfo* bindPipelineShaderStages(uint8_t& num);
-		static VulkanDescriptorSetLayout createDescriptorSetLayout(std::vector<size_t>& sizes);
+		static VulkanUniformObject::Builder createDescriptorSetLayout();
 		static VkPushConstantRange* setupPushConsts(uint8_t& num);
 
 		inline static VkShaderModule vertexShaderModule = nullptr;

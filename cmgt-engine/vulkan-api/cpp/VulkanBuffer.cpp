@@ -220,4 +220,18 @@ namespace cmgt {
         return invalidate(alignmentSize, index * alignmentSize);
     }
 
+    void VulkanBuffer::resizeBuffer(VkDeviceSize newSize, VkDeviceSize minOffsetAlignment){
+        //first unmap the memory and free it
+        unmap();
+        vkFreeMemory(vkDevice, memory, nullptr);
+        //set the new instance size
+        instanceSize = newSize;
+
+        //calculate new alignment and buffer size
+        alignmentSize = getAlignment(instanceSize, minOffsetAlignment);
+        bufferSize = alignmentSize * instanceCount;
+        //allocate new memory
+        allocateBuffer(vkPhysicalDevice,vkDevice,bufferSize, memoryPropertyFlags, buffer, memory);
+    }
+
 }  // namespace cmgt

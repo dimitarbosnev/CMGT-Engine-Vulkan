@@ -44,7 +44,7 @@ cmgt::GameObject* SpawnPlane(glm::vec3 pos, glm::vec3 axis, float angle){
 	planeObject->getTransform().Translate(pos);
 	planeObject->getTransform().Scale(glm::vec3(10.f));
 	planeObject->getTransform().Rotate(angle, axis);
-	planeObject->addComponent(new cmgt::Mesh("plane.obj", new cmgt::ColorMaterial()));
+	//planeObject->addComponent(new cmgt::Mesh("plane.obj", new cmgt::ColorMaterial()));
 	cmgt::Collider* planeColl = new cmgt::PlaneCollider();
 	planeColl->setPhysType(cmgt::phys_type::STATIC);
 	planeObject->addComponent(planeColl);
@@ -77,12 +77,12 @@ void OnGameStart(){
 	firstScene->getWorld()->add(SpawnBall(glm::vec3(2, -2, 6), glm::vec3(1.f), glm::vec3(-30,30,0)));
 	firstScene->getWorld()->add(SpawnBall(glm::vec3(6, -2, 6), glm::vec3(1.f), glm::vec3(0,30,0)));
 
-	//firstScene->getWorld()->add(SpawnPlane(glm::vec3(0, -20, 0), glm::vec3(1,0,0), .0f));
-	//firstScene->getWorld()->add(SpawnPlane(glm::vec3(0, 0, 0), glm::vec3(1,0,0), glm::pi<float>()));
-	//firstScene->getWorld()->add(SpawnPlane(glm::vec3(0, -10, 10), glm::vec3(1,0,0), -glm::pi<float>() / 2));
-	//firstScene->getWorld()->add(SpawnPlane(glm::vec3(0, -10, -10), glm::vec3(1,0,0), glm::pi<float>() / 2));
-	//firstScene->getWorld()->add(SpawnPlane(glm::vec3(-10, -10, 0), glm::vec3(0,0,1), glm::pi<float>() / 2));
-	//firstScene->getWorld()->add(SpawnPlane(glm::vec3(10, -10, 0), glm::vec3(0,0,1), -glm::pi<float>() / 2));
+	firstScene->getWorld()->add(SpawnPlane(glm::vec3(0, -20, 0), glm::vec3(1,0,0), .0f));
+	firstScene->getWorld()->add(SpawnPlane(glm::vec3(0, 0, 0), glm::vec3(1,0,0), glm::pi<float>()));
+	firstScene->getWorld()->add(SpawnPlane(glm::vec3(0, -10, 10), glm::vec3(1,0,0), -glm::pi<float>() / 2));
+	firstScene->getWorld()->add(SpawnPlane(glm::vec3(0, -10, -10), glm::vec3(1,0,0), glm::pi<float>() / 2));
+	firstScene->getWorld()->add(SpawnPlane(glm::vec3(-10, -10, 0), glm::vec3(0,0,1), glm::pi<float>() / 2));
+	firstScene->getWorld()->add(SpawnPlane(glm::vec3(10, -10, 0), glm::vec3(0,0,1), -glm::pi<float>() / 2));
 
 	{
 		cmgt::GameObject* ambientLight = new cmgt::GameObject("Light Object");

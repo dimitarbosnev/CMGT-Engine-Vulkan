@@ -49,7 +49,7 @@ namespace cmgt {
 	}
 
 	GraphicsPipeline::GraphicsPipeline(const GraphicsPipelineInfo& info, 
-		std::function<VulkanDescriptorSetLayout(std::vector<size_t>&)> desriptorSetLayout, 
+		std::function<VulkanUniformObject::Builder()> desriptorSetLayout, 
 		std::function<VkPipelineShaderStageCreateInfo*(uint8_t&)> shadersStages,
 		std::function<VkPushConstantRange*(uint8_t&)> pushConstants,
 		std::function<void(const VulkanFrameData&)> uniformData,
@@ -70,10 +70,7 @@ namespace cmgt {
 		//clear meshes
 		renderMeshs.clear();
 		//clear buffers
-		for (auto buffer : descriptorBuffers)
-			delete buffer.second;
-		descriptorBuffers.clear();
-		delete descriptorPool;
+		delete uniformSets;
 		vkDestroyPipelineLayout(VulkanInstance::get()->device(), _pipelineLayout, nullptr);
 		vkDestroyPipeline(VulkanInstance::get()->device(), graphicsPipeline, nullptr);
 		std::cout << "Pipeline destroyed" << std::endl;
@@ -82,43 +79,11 @@ namespace cmgt {
 
 		uint8_t i;
 		VkPushConstantRange* ranges = setPushConstants(i);
-		std::vector<size_t> sizes{};
-		VulkanDescriptorSetLayout descriptorSetLayout = setDesriptorSetLayout(sizes);
 
-		VulkanDescriptorPool::Builder poolBuilder(VulkanDescriptorPool::Builder().setMaxSets(MAX_FRAMES_IN_FLIGHT));
+		VulkanUniformObject::Builder builder = setDesriptorSetLayout();
+		uniformSets = new VulkanUniformObject(builder,VulkanInstance::get());
 
-		for (int i = 0; i < sizes.size(); i++){
-			poolBuilder.addPoolSize(descriptorSetLayout.getDescriptorSetLayoutBindingAt(i).descriptorType, MAX_FRAMES_IN_FLIGHT);
-		}
-		
-		descriptorPool = new VulkanDescriptorPool(poolBuilder.build());
-
-		VulkanInstance* VkInstance = VulkanInstance::get();
-		descriptorBuffers.reserve(descriptorSetLayout.getBindingsMap().size());
-		for (auto binding : descriptorSetLayout.getBindingsMap()) {
-			VulkanBuffer* buffer = new VulkanBuffer(VkInstance->physicalDevice(), VkInstance->device(),sizes[binding.first], MAX_FRAMES_IN_FLIGHT,
-			getBufferUsage(binding.second), VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
-			descriptorBuffers[binding.first] = buffer;
-			buffer->map();
-		}
-
-		descriptorSets.resize(MAX_FRAMES_IN_FLIGHT);
-
-		std::unordered_map<uint32_t,VkDescriptorBufferInfo> bufferInfos;
-		bufferInfos.reserve(descriptorBuffers.size());
-		for (auto buffer : descriptorBuffers) {
-			bufferInfos[buffer.first] = buffer.second->descriptorInfo();
-		}
-		for (int i = 0; i < descriptorSets.size(); i++) {
-			VulkanDescriptorWriter writer(descriptorSetLayout, *descriptorPool);	
-			for (auto buffer : descriptorBuffers) {
-				writer.writeBuffer(buffer.first, &bufferInfos[buffer.first]);		
-			}
-			if(!writer.build(descriptorSets[i])){
-				throw std::runtime_error("failed to build descriptor set!");
-			}
-		}
-		std::vector<VkDescriptorSetLayout> descriptorSetLayouts{ VulkanRenderer::get()->getDescriptorSetLayout(), descriptorSetLayout.getDescriptorSetLayout() };
+		std::vector<VkDescriptorSetLayout> descriptorSetLayouts{ VulkanRenderer::get()->getDescriptorSetLayout(), uniformSets->getLayout() };
 		VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
 		pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
 		pipelineLayoutInfo.setLayoutCount = static_cast<uint32_t>(descriptorSetLayouts.size());
@@ -177,15 +142,15 @@ namespace cmgt {
 
 	void GraphicsPipeline::writeUniformBuffers(const short& imageIndex, const VkCommandBuffer& commandBuffer, std::vector<const void*>& pData)
 	{
-		if(pData.size() != descriptorBuffers.size())
+		if(pData.size() != uniformSets->bindingsSize())
 		throw std::runtime_error("Bad Data");
 
-		for(int i = 0; i < descriptorBuffers.size(); i++){
-			descriptorBuffers[i]->writeToIndex(pData[i], imageIndex);
+		for(int i = 0; i < uniformSets->bindingsSize(); i++){
+			uniformSets->getBufferAt(i)->writeToIndex(pData[i], imageIndex);
 			//descriptorBuffers[i]->flushIndex(imageIndex);
 		}
 
-		vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, _pipelineLayout, 1, 1, &descriptorSets[imageIndex], 0, nullptr);
+		vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, _pipelineLayout, 1, 1, &uniformSets->getDescriptorSet(imageIndex), 0, nullptr);
 	}
 
 	void GraphicsPipeline::recordFrameCommandBuffer(const VulkanFrameData& frameData){

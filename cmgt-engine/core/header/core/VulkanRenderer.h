@@ -4,7 +4,7 @@
 #pragma once
 #include "vulkan-api/VulkanInstance.h"
 #include "vulkan-api/VulkanSwapchain.h"
-#include "vulkan-api/VulkanDescriptor.h"
+#include "vulkan-api/VulkanUniformObject.h"
 #include "vulkan-api/VulkanFrameData.h"
 #include "vulkan-api/VulkanBuffer.h"
 #include "vulkan-api/Window.h"
@@ -30,19 +30,15 @@ namespace cmgt {
 			~VulkanRenderer();
 			void recordCommandBuffer(uint8_t imageIndex, glm::mat4 viewMatrix, glm::mat4 projectionMatrix);
 			void drawFrame(glm::mat4 viewMatrix, glm::mat4 projectionMatrix);
-			VkDescriptorSetLayout getDescriptorSetLayout(){ return GlobalDescriptorSetLayout.getDescriptorSetLayout(); }
+			VkDescriptorSetLayout getDescriptorSetLayout(){ return GlobalUniformSets.getLayout(); }
 			std::list<GraphicsPipeline*> pipelines;
 			void scheduleLight(LightStruct light);
 			private:
 			std::vector<LightStruct> lights;
-			std::vector<size_t> sizes{ sizeof(GlobalUniformData), sizeof(LightStruct) * MAX_AMOUT_LIGHTS};
-			std::unordered_map<uint32_t,VulkanBuffer*> GlobalDescriptorBuffers;
-			std::vector<VkDescriptorSet> GlobalDescriptorSets;
-			VulkanDescriptorSetLayout GlobalDescriptorSetLayout;
-			VulkanDescriptorPool* GlobalDescriptorPool;
+			VulkanUniformObject GlobalUniformSets;
+
 			std::vector<VkCommandBuffer> commandBuffers;
 			void createCommandBuffers();
-			void createDescriptorSets();
 			void freeCommandBuffers();
 			void recreateSwapchain();
 			void writeDescriptorBuffers(const VulkanFrameData& frameData);

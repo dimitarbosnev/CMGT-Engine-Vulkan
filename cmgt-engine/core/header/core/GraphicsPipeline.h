@@ -7,7 +7,7 @@
 #include "minimal/types.h"
 #include "minimal/events.h"
 #include "vulkan-api/VulkanInstance.h"
-#include "vulkan-api/VulkanDescriptor.h"
+#include "vulkan-api/VulkanUniformObject.h"
 #include "vulkan-api/VulkanFrameData.h"
 #include "vulkan-api/VulkanSwapchain.h"
 #include "vulkan-api/VulkanBuffer.h"
@@ -41,7 +41,7 @@ namespace cmgt {
 	class GraphicsPipeline {
 	public:
 		GraphicsPipeline(const GraphicsPipelineInfo& info, 
-		std::function<VulkanDescriptorSetLayout(std::vector<size_t>&)> desriptorSetLayout, 
+		std::function<VulkanUniformObject::Builder()> desriptorSetLayout, 
 		std::function<VkPipelineShaderStageCreateInfo*(uint8_t&)> shadersStages,
 		std::function<VkPushConstantRange*(uint8_t&)> pushConstants,
 		std::function<void(const VulkanFrameData&)> uniformData,
@@ -62,16 +62,14 @@ namespace cmgt {
 		
 		std::function<void(const VulkanFrameData&)> setUniformData;
 		std::function<void()> freeShaders;
-		std::function<VulkanDescriptorSetLayout(std::vector<size_t>&)> setDesriptorSetLayout;//have to be set
+		std::function<VulkanUniformObject::Builder()> setDesriptorSetLayout;//have to be set
 		std::function<VkPipelineShaderStageCreateInfo*(uint8_t&)> setPipelineShaderStages;//have to be set
 		std::function<VkPushConstantRange*(uint8_t&)> setPushConstants;//have to be set
 		std::list<Mesh*> renderMeshs;
 		void createPipeline(const GraphicsPipelineInfo& info);
 		VkPipelineLayout _pipelineLayout;
 		VkPipeline graphicsPipeline;
-		std::unordered_map<uint32_t,VulkanBuffer*> descriptorBuffers;
-		std::vector<VkDescriptorSet> descriptorSets;
-		VulkanDescriptorPool* descriptorPool;
+		VulkanUniformObject* uniformSets;
 		GraphicsPipeline(const GraphicsPipeline&);
 		GraphicsPipeline& operator=(const GraphicsPipeline&);
 	};
