@@ -41,9 +41,9 @@ namespace cmgt {
 	class GraphicsPipeline {
 	public:
 		GraphicsPipeline(const GraphicsPipelineInfo& info, 
-		std::function<VulkanUniformObject::Builder()> desriptorSetLayout, 
-		std::function<VkPipelineShaderStageCreateInfo*(uint8_t&)> shadersStages,
-		std::function<VkPushConstantRange*(uint8_t&)> pushConstants,
+		VulkanUniformObject::Builder& uniformBuilder,
+		std::vector<VkPipelineShaderStageCreateInfo>& shadersStages,
+		std::vector<VkPushConstantRange>& pushConstantRanges,
 		std::function<void(const VulkanFrameData&)> uniformData,
 		std::function<void()> deleteShaders);
 		~GraphicsPipeline();
@@ -54,22 +54,18 @@ namespace cmgt {
 		VkPipelineLayout& pipelineLayout() {return _pipelineLayout;}
 		void writeUniformBuffers(const short& imageIndex, const VkCommandBuffer& commandBuffer, std::vector<const void*>& pData);
 		void recordFrameCommandBuffer(const VulkanFrameData& frameData);
-		void createPipelineLayout();
-		void createPipeline();
+		void createPipelineLayout(std::vector<VkPushConstantRange>& ranges);
 		void scheduleToRender(Mesh* mesh);
 		
 	private:
 		
 		std::function<void(const VulkanFrameData&)> setUniformData;
 		std::function<void()> freeShaders;
-		std::function<VulkanUniformObject::Builder()> setDesriptorSetLayout;//have to be set
-		std::function<VkPipelineShaderStageCreateInfo*(uint8_t&)> setPipelineShaderStages;//have to be set
-		std::function<VkPushConstantRange*(uint8_t&)> setPushConstants;//have to be set
 		std::list<Mesh*> renderMeshs;
-		void createPipeline(const GraphicsPipelineInfo& info);
+		void createPipeline(const GraphicsPipelineInfo& info, std::vector<VkPipelineShaderStageCreateInfo>& shadersStages);
 		VkPipelineLayout _pipelineLayout;
 		VkPipeline graphicsPipeline;
-		VulkanUniformObject* uniformSets;
+		VulkanUniformObject uniformSets;
 		GraphicsPipeline(const GraphicsPipeline&);
 		GraphicsPipeline& operator=(const GraphicsPipeline&);
 	};

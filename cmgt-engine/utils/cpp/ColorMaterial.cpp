@@ -41,8 +41,10 @@ namespace cmgt {
 		Log::msg("\t Fragment Shader Initalized!");
 
 		Log::msg("Initalizing ColorMaterial Pipeline...");
-		pipeline = new GraphicsPipeline(GraphicsPipeline::defaultGraphicsPipelineInfo(), createDescriptorSetLayout, bindPipelineShaderStages, setupPushConsts, bindUniformBuffers,freePipeline);
-		
+		std::vector<VkPipelineShaderStageCreateInfo> shaderStages = bindPipelineShaderStages();
+		VulkanUniformObject::Builder builder = createDescriptorSetLayout();
+		std::vector<VkPushConstantRange> pushConstants = setupPushConsts();
+		pipeline = new GraphicsPipeline(GraphicsPipeline::defaultGraphicsPipelineInfo(), builder, shaderStages, pushConstants, bindUniformBuffers,freePipeline);
 		Log::msg("Initalizing ColorMaterial Complete!");
 
 		Log::flush_buffer();
@@ -53,10 +55,9 @@ namespace cmgt {
 		vkDestroyShaderModule(VulkanInstance::get()->device(), vertexShaderModule, nullptr);
 		vkDestroyShaderModule(VulkanInstance::get()->device(), fragmentShaderModule, nullptr);
 	}
-	VkPipelineShaderStageCreateInfo* ColorMaterial::bindPipelineShaderStages(uint8_t& num)
+	std::vector<VkPipelineShaderStageCreateInfo> ColorMaterial::bindPipelineShaderStages()
 	{
-		num = 2;
-		VkPipelineShaderStageCreateInfo* shaderStages = new VkPipelineShaderStageCreateInfo[num];
+		std::vector<VkPipelineShaderStageCreateInfo> shaderStages(2);
 		shaderStages[0].sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
 		shaderStages[0].stage = VK_SHADER_STAGE_VERTEX_BIT;
 		shaderStages[0].module = vertexShaderModule;
@@ -80,10 +81,9 @@ namespace cmgt {
 		return VulkanUniformObject::Builder();
 		//return VulkanDescriptorSetLayout::Builder().build();
 	}
-	VkPushConstantRange* ColorMaterial::setupPushConsts(uint8_t& num)
+	std::vector<VkPushConstantRange> ColorMaterial::setupPushConsts()
 	{
-		num = 1;
-		VkPushConstantRange* range= new VkPushConstantRange[num];
+		std::vector<VkPushConstantRange> range(1);
 		range[0].stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
 		range[0].offset = 0;
 		range[0].size = sizeof(PushConstData);

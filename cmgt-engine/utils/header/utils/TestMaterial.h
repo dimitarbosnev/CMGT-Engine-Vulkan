@@ -29,19 +29,16 @@ namespace cmgt {
 		GraphicsPipeline* getPipeline() override {return pipeline;}
 	private:
 		void bindPushConstants(const VulkanFrameData& frameData, const glm::mat4 pModelMatrix) override;
-		//Uniform Buffers Are meant to be one for all instances of the material
 		static void bindUniformBuffers(const VulkanFrameData&);
 		static void initPipeline();
 		static void freePipeline();
-		static VkPipelineShaderStageCreateInfo* bindPipelineShaderStages(uint8_t& num);
+		static std::vector<VkPipelineShaderStageCreateInfo> bindPipelineShaderStages();
 		static VulkanUniformObject::Builder createDescriptorSetLayout();
-		static VkPushConstantRange* setupPushConsts(uint8_t& num);
+		static std::vector<VkPushConstantRange> setupPushConsts();
 
 		inline static VkShaderModule vertexShaderModule = nullptr;
 		inline static VkShaderModule fragmentShaderModule = nullptr;
 		inline static GraphicsPipeline* pipeline = nullptr;
-		//virtual GraphicsPipeline* getPipeline() override { return &_pipeline; }
-		//"vert.spv","frag.spv"
 	};
 }
 #endif // TESTMATERIAL_H

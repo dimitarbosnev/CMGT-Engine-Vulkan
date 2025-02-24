@@ -24,8 +24,6 @@ namespace cmgt {
 	void TestMaterial::bindUniformBuffers(const VulkanFrameData& frameData){
 
 		UniformData uniformData;
-		//uniformData.cameraMatrix = frameData.viewMatrix;
-		//uniformData.projMatrix = frameData.projectionMatrix;
 		uniformData.dirLight = glm::vec4(glm::normalize(glm::vec3(1, -1, 1)), 1);
 		uniformData.ambientLight = glm::vec4(1, 1, 1, .2f);
 		std::vector<const void*> data {&uniformData};
@@ -42,7 +40,10 @@ namespace cmgt {
 		Log::msg("\t Fragment Shader Initalized!");
 
 		Log::msg("Initalizing TestMaterial Pipeline...");
-		pipeline = new GraphicsPipeline(GraphicsPipeline::defaultGraphicsPipelineInfo(), createDescriptorSetLayout, bindPipelineShaderStages, setupPushConsts, bindUniformBuffers,freePipeline);
+		std::vector<VkPipelineShaderStageCreateInfo> shaderStages = bindPipelineShaderStages();
+		VulkanUniformObject::Builder builder = createDescriptorSetLayout();
+		std::vector<VkPushConstantRange> pushConstants = setupPushConsts();
+		pipeline = new GraphicsPipeline(GraphicsPipeline::defaultGraphicsPipelineInfo(), builder, shaderStages, pushConstants, bindUniformBuffers,freePipeline);
 		
 		Log::msg("Initalizing TestMaterial Complete!");
 
@@ -54,10 +55,10 @@ namespace cmgt {
 		vkDestroyShaderModule(VulkanInstance::get()->device(), vertexShaderModule, nullptr);
 		vkDestroyShaderModule(VulkanInstance::get()->device(), fragmentShaderModule, nullptr);
 	}
-	VkPipelineShaderStageCreateInfo* TestMaterial::bindPipelineShaderStages(uint8_t& num)
+	std::vector<VkPipelineShaderStageCreateInfo> TestMaterial::bindPipelineShaderStages()
 	{
-		num = 2;
-		VkPipelineShaderStageCreateInfo* shaderStages = new VkPipelineShaderStageCreateInfo[num];
+		std::vector<VkPipelineShaderStageCreateInfo> shaderStages(2);
+
 		shaderStages[0].sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
 		shaderStages[0].stage = VK_SHADER_STAGE_VERTEX_BIT;
 		shaderStages[0].module = vertexShaderModule;
@@ -82,10 +83,9 @@ namespace cmgt {
 		//return VulkanDescriptorSetLayout::Builder().build();
 	}
 
-	VkPushConstantRange* TestMaterial::setupPushConsts(uint8_t& num)
+	std::vector<VkPushConstantRange> TestMaterial::setupPushConsts()
 	{
-		num = 1;
-		VkPushConstantRange* range= new VkPushConstantRange[num];
+		std::vector<VkPushConstantRange> range(1);
 		range[0].stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
 		range[0].offset = 0;
 		range[0].size = sizeof(PushConstData);
