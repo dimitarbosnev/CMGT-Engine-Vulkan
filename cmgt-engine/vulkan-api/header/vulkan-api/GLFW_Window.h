@@ -28,6 +28,7 @@ namespace cmgt
 		~GLFWindow();
 		void waitEvents() override;
 		bool isOpened() override;
+		void close() override;
 		void initVKSurface(VkInstance& instance, VkSurfaceKHR& surface) override;
 		std::vector<const char*> getInstanceExtentions() override;
 		void GetFrameBuffer(int& width, int& height) override;

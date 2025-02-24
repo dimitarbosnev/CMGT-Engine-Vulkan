@@ -24,7 +24,7 @@ namespace cmgt {
 		light.type = _type;
 		std::stringstream ss;
 		ss << "Light type is: " << light.type;
-		Log::msg(ss.str());
+		//Log::msg(ss.str());
 		light.intencity = _intencity;
 		light.range = _range;
 		light.color = _color;

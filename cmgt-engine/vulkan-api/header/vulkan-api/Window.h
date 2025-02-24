@@ -35,6 +35,7 @@ namespace cmgt
 		virtual void waitEvents() = 0;
 		virtual bool isOpened() = 0;
 		virtual void update() = 0;
+		virtual void close() = 0;
 		virtual void initVKSurface(VkInstance& instance, VkSurfaceKHR& surface) = 0;
 		virtual std::vector<const char*> getInstanceExtentions() = 0;
 		virtual void GetFrameBuffer(int& width, int& height) = 0;

@@ -23,10 +23,11 @@ namespace cmgt{
         colliderMesh.push_back(v13);
         colliderMesh.push_back(v14);
 
-        colliderFaces.reserve(2);
+        colliderFaces.reserve(4);
         colliderFaces.push_back(Face(v3,v2,v1));
         colliderFaces.push_back(Face(v3,v2,v4));
-
+        colliderFaces.push_back(Face(v13,v12,v11));
+        colliderFaces.push_back(Face(v13,v12,v14));
         computeInertiaTensor();
     }
 }

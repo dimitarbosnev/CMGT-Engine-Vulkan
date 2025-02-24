@@ -41,6 +41,10 @@ namespace cmgt{
         return  glfwWindowShouldClose(window);
     }
 
+    void GLFWindow::close(){
+        glfwSetWindowShouldClose(window, GLFW_TRUE);
+    }
+
     void GLFWindow::update(){
         //this will use event call back
     }

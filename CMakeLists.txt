@@ -15,6 +15,7 @@ set(VULKAN_SHADER_COMPILER $ENV{VULKAN_SDK}/Bin/glslc.exe)
 
 
 add_subdirectory(main)
+add_subdirectory(advanced_tools)
 add_subdirectory(test)
 add_subdirectory(cmgt-engine)
 

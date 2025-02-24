@@ -4,6 +4,7 @@
 #include "physics-engine/Collider.h"
 #include "physics-engine/Shape.h"
 #include "core/Globals.h"
+#include "minimal/log.h"
 #include <iostream>
 
 namespace cmgt
@@ -18,46 +19,44 @@ namespace cmgt
 
     void PhysicsEngine::phys_tick(float pStep)
     {
+       
         auto start = clock::now();
-        bool occuredCollision = false;
         for(int i = 0; i < colliders.size(); i++){
             for (int j = i + 1; j < colliders.size(); j++) {
 
                 if(colliders[i] != nullptr && colliders[j] != nullptr){
                     Shape shape1(colliders[i]), shape2(colliders[j]);
                     Simplex simplex; 
-
                     #ifdef SAT
-                    {
-                        CollisionInfo info(shape1,colliders[i],shape2,colliders[j]);
-                            
+                        CollisionInfo info(shape1,colliders[i],shape2,colliders[j]);                     
                         if(SATcheckCollision(shape1,shape2,&info)){
-                            occuredCollision = true;
                             CollisionResponse(info, pStep);
                         }
-                    }
                     #endif
 
                     #ifdef GJK
-                    //auto start = Clock::now();
                     if(GJKcheckCollision(shape1, shape2, simplex)){
-                        //auto end = Clock::now();
-                        //std::cout << "COLLISION DETECTED GJK!!!" << std::endl;
                         CollisionInfo info(shape1,colliders[i],shape2,colliders[j]);  
                         GetCollisionInfo(shape1,shape2, simplex,&info);
-                        CollisionResponse(info);
-                        //auto elapsed = std::chrono::duration_cast<ns>(end - start);
-
-                        //std::cout << "Elapsed time GJK: " << elapsed.count() << " ns\n";
-                        //get the collision normal
-                        //info.collisionNormal = glm::normalize(info.collider2.first.centroid - info.collider1.first.centroid);
+                        CollisionResponse(info, pStep);
                     }
                     #endif
                 }
             }
         }
         auto end = clock::now();
-        auto elapsed = std::chrono::duration_cast<mc>(end - start);
+        auto elapsed = std::chrono::duration_cast<us>(end - start);
+        max_time = max_time < elapsed? elapsed : max_time;
+        min_time = min_time > elapsed? elapsed : min_time;
+        sum_time += elapsed;
+        counter++;
+        if(counter == ticks){
+            static us average_time = sum_time / ticks;
+            Log::test_complete = true;
+            std::stringstream ss;
+            ss << "Max time is: " << max_time << " Min time is: " << min_time << " Average time is: " << average_time;
+            Log::msg(ss.str());
+        }
         //std::cout << "Elapsed time SAT: " << elapsed.count() << " mc\n";
     }
 

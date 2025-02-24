@@ -48,7 +48,7 @@ namespace cmgt {
 		GlobalUniformSets.getBufferAt(1)->writeToIndex(lights.data(), frameData.imageIndex);
 		std::stringstream ss;
 		ss <<" Number of lights: " << lights.size();
-		Log::msg(ss.str());
+		//Log::msg(ss.str());
 	}
 
 	void VulkanRenderer::freeCommandBuffers() {

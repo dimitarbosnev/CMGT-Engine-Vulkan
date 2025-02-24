@@ -34,7 +34,7 @@ namespace cmgt {
         public:
         Log() = delete;
         ~Log() = delete;
-
+        inline static bool test_complete = false;
         static void init(){
             std::string filename = CMGT_LOG_PATH;
             fs::path logDir = filename;

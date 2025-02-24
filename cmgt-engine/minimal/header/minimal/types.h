@@ -15,7 +15,7 @@ namespace cmgt {
     typedef long int id_t;
 	typedef std::chrono::high_resolution_clock clock;
 	typedef std::chrono::milliseconds ms;
-	typedef std::chrono::microseconds mc;
+	typedef std::chrono::microseconds us;
     typedef std::chrono::nanoseconds ns;
 
     struct Vertex {

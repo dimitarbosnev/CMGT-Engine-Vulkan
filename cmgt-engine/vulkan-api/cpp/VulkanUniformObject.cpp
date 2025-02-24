@@ -61,7 +61,7 @@ namespace cmgt {
 			descriptorPoolInfo.poolSizeCount = poolSizes.size();
 			descriptorPoolInfo.pPoolSizes = poolSizes.data();
 			descriptorPoolInfo.maxSets = descriptors.size();
-			descriptorPoolInfo.flags = NULL; // set it up later
+			descriptorPoolInfo.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT; // set it up later
 
 		if (vkCreateDescriptorPool(instance->device(), &descriptorPoolInfo, nullptr, &descriptorPool) != VK_SUCCESS) {
 			throw std::runtime_error(Log::error_critical("failed to create descriptor pool!"));
