@@ -1,43 +1,50 @@
-
+#define STB_IMAGE_IMPLEMENTATION
 #include <iostream>
 #include <string>
+#include <stb_image.h>
 #include "core/Texture.h"
+#include "minimal/log.h"
 namespace cmgt {
-    Texture::Texture() {
-        //glGenTextures (1, &_id);
+    Texture::Texture(Builder& builder) {
+        
     }
 
     Texture::~Texture()
     {
-        //glDeleteTextures(1, &_id);
     }
 
-    /*GLuint Texture::getId() {
-        return _id;
-    }*/
+    void Texture::Builder::loadImage(const std::string& filePath){
 
-    // importer for textures
-    Texture* Texture::load(const std::string& pFilename)
-    {
-        /*// load from file and store in cache
-        Image image;
-        if (image.loadFromFile(pFilename)) {
-            //normal image 0,0 is top left, but opengl considers 0,0 to be bottom left, so we flip the image internally
-            image.flipVertically();
-            //create a wrapper for the id (texture is nothing more than that) and
-            //load corresponding data into opengl using this id
-            Texture* texture = new Texture();
-            glBindTexture(GL_TEXTURE_2D, texture->getId());
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image.getSize().x, image.getSize().y, 0, GL_RGBA, GL_UNSIGNED_BYTE, image.getPixelsPtr());
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-            glBindTexture(GL_TEXTURE_2D, 0);
-            return texture;
+        stbi_uc* data = stbi_load(filePath.c_str(), &width, &height, &channels, STBI_rgb_alpha);
+        if (data) {
+            Log::msg("Image loaded successfully!");
+            std::stringstream ss;
+            ss << "Width: " << width << ", Height: " << height << ", Channels: " << channels;
+            Log::msg(ss.str());
+            std::vector<glm::vec4> image(height*width);
+            for (int i = 0; i < height*width; i++) {
+                int x = i % height;
+                int y = i / height;
+
+                // Calculate the index of the pixel (each pixel has 3 or 4 components depending on channels)
+                int index = (x * height + y) * channels;
+
+                // Extract the RGB values (assuming the image has at least 3 channels)
+                unsigned char r = data[index    ];      // Red channel
+                unsigned char g = data[index + 1];      // Green channel
+                unsigned char b = data[index + 2];      // Blue channel
+                unsigned char a = data[index + 3];      // Alpha channel 
+
+                // Store the RGB values in a glm::vec4
+
+                pixels[i] = glm::vec4(r / 255.0f, g / 255.0f, b / 255.0f, a / 255.0f);  // Normalize to [0, 1] range
+            }
+            move(image.begin(), image.end(), back_inserter(pixels));
+            // Free the image memory after use
+            stbi_image_free(data);
+        } else {
+            Log::error("Failed to load image");
         }
-        else {
-            return nullptr;
-        }*/
-        return nullptr;
     }
 }
 

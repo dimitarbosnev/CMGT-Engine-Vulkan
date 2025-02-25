@@ -39,8 +39,6 @@ namespace cmgt {
 		inline static VkShaderModule vertexShaderModule = nullptr;
 		inline static VkShaderModule fragmentShaderModule = nullptr;
 		inline static GraphicsPipeline* pipeline = nullptr;
-		//virtual GraphicsPipeline* getPipeline() override { return &_pipeline; }
-		//"vert.spv","frag.spv"
 	};
 }
 #endif // COLORMATERIAL_H

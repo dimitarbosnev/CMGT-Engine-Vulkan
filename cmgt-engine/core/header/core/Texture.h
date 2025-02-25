@@ -5,22 +5,27 @@
 #include <map>
 #include <string>
 #include "core/Object.h"
+#include "vulkan-api/VulkanImage.h"
 namespace cmgt {
 	class Texture : public Object
 	{
 	public:
-		static Texture* load(const std::string& pTexturePath);
+	struct Builder {
+		public:
+			std::vector<glm::vec4> pixels{};
 
-		//GLuint getId();
+			int width = 0;
+			int height = 0;
+			int channels = 0;
+			uint32_t layers;
+			void loadImage(const std::string& filePath);
+		};
 
-	protected:
-		Texture();
-		virtual ~Texture();
+	public:
+		Texture(Builder& builder);
+		~Texture();
 
-		static Texture* _loadFromFile(const std::string pTexturePath);
-
-		//OpenGL id for texture buffer
-		//GLuint _id;
+	private:
 	};
 }
 #endif // TEXTURE_H

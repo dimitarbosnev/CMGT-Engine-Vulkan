@@ -153,7 +153,7 @@ namespace cmgt
 		    glm::vec3 support = getSupportPoint(shape1, shape2, minNormal);
 		    float sDistance = glm::dot(minNormal, support);
  
-		    if (abs(sDistance - minDistance) > -EPSILON) {
+		    if (abs(sDistance - minDistance) < -EPSILON) {
 			    minDistance = MAX;
             
                 std::vector<std::pair<size_t, size_t>> uniqueEdges;

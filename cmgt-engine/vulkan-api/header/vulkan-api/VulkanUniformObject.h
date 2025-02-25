@@ -11,6 +11,8 @@
 #include <tuple>
 namespace cmgt {
 
+	bool getDescriptorUsage(const VkDescriptorType& type);
+
 	class VulkanUniformObject{
 	public:
 
@@ -22,6 +24,7 @@ namespace cmgt {
 		VkDescriptorBufferInfo bufferInfo;
 		
 		// add vulkan sampler in the future
+		
 		VkDescriptorImageInfo  imageInfo;
 	};
 

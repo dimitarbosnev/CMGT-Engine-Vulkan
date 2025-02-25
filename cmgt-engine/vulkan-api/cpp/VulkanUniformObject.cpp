@@ -1,11 +1,40 @@
 
 #include "vulkan-api/VulkanUniformObject.h"
 #include "vulkan-api/VulkanSwapchain.h"
+#include "vulkan-api/VulkanImage.h"
 #include "minimal/Log.h"
 #include <cassert>
 #include <stdexcept>
 
 namespace cmgt {
+
+	bool getDescriptorUsage(const VkDescriptorType& type){
+		bool withBuffer;
+		switch (type)
+		{
+		case VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER:
+		case VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC:
+		case VK_DESCRIPTOR_TYPE_STORAGE_BUFFER:
+		case VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC:
+		case VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER:
+		case VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER:
+			{
+				withBuffer = true;
+			}
+			break;
+		
+		case VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE:
+		case VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER:
+		case VK_DESCRIPTOR_TYPE_STORAGE_IMAGE:
+		case VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT:
+			{
+				withBuffer = false;
+			}
+			break;
+		}
+
+		return withBuffer;
+	}
 
 	// *************** Vulkan Uniform Object Builder *********************
 
@@ -70,12 +99,19 @@ namespace cmgt {
 		//create Buffers
 		for (auto& binding : bindings) {
 			// TODO: create a sampler depending on descriptor type
-			VulkanBuffer* buffer = new VulkanBuffer(instance->physicalDevice(), instance->device(),binding.second.size, descriptors.size(),
-			getBufferUsage(binding.second.layout), VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
-			buffer->map();
-			binding.second.buffer = buffer;
-			binding.second.bufferInfo = buffer->descriptorInfo();
-			writeBuffer(binding.first);
+			if(getDescriptorUsage(binding.second.layout.descriptorType)){
+				VulkanBuffer* buffer = new VulkanBuffer(instance->physicalDevice(), instance->device(),binding.second.size, descriptors.size(),
+				getBufferUsage(binding.second.layout), VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+				buffer->map();
+				binding.second.buffer = buffer;
+				binding.second.bufferInfo = buffer->descriptorInfo();
+				writeBuffer(binding.first);
+			} else {
+				//VulkanImage* image = new VulkanImage(instance->physicalDevice(), instance->device())
+				//And here I decided to pivot towards openGL glhf
+			}
+
+
 		}
 
 

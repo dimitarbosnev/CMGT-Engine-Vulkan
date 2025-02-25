@@ -20,10 +20,6 @@
 #include <string>
 #include <thread>
 #include <random>
-	
-#define _CRTDBG_MAP_ALLOC
-#include <stdlib.h>
-#include <crtdbg.h>
 
 cmgt::PhysicsEngine* physicsEngnie;
 uint32_t num_of_colliders = 0;
@@ -149,21 +145,37 @@ void physics_loop(){
 		if(cmgt::clock::now() >= phys_clock){
 			phys_clock += phys_step;
 			float phys_tick = std::chrono::duration<float>(phys_clock - cmgt::clock::now()).count();
-			//std::cout<<phys_tick<<std::endl;
-			//if(cmgt::Input::isKeyPressed(GLFW_KEY_SPACE))
-			{
-				cmgt::SceneManager::physics_update(phys_tick);
-				cmgt::PhysicsEngine::get()->phys_tick(phys_tick);
-			}
+			cmgt::SceneManager::physics_update(phys_tick);
+			cmgt::PhysicsEngine::get()->phys_tick(phys_tick);
 		}
 	}
 }
 
 
-int main() {
+int main(int argc, char* argv[]) {
 
-	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-	//_CrtSetBreakAlloc(200); //replase 200 with the coresponding number from the memory leack report :]
+    if (argc < 2) {
+        std::cerr << "Usage: " << argv[0] << " <positive integer>" << std::endl;
+        return EXIT_FAILURE;
+    }
+
+    try {
+        // Convert the argument to an unsigned long first
+        unsigned long temp = std::stoul(argv[1]);
+
+        // Ensure it fits within uint32_t range
+        if (temp > UINT32_MAX) {
+            throw std::out_of_range("Value exceeds uint32_t limit.");
+        }
+
+        // Safely cast to uint32_t
+        num_of_colliders = static_cast<uint32_t>(temp);
+
+        std::cout << "You entered: " << num_of_colliders << std::endl;
+    } catch (const std::exception& e) {
+        std::cerr << "Error: Invalid input. " << e.what() << std::endl;
+        return EXIT_FAILURE;
+    }
 	cmgt::Log::init();
 	cmgt::InitGlobals();
 	OnGameStart();
@@ -179,7 +191,7 @@ int main() {
 	float fps = 0;
 
 	std::stringstream ss;
-	ss << "Testing started setup: algorithm: SAT / collider type: Mesh Collider / number of colliders: " << num_of_colliders << " / sample ticks: " << cmgt::ticks;
+	ss << "Testing started setup: algorithm: GJK/EPA / collider type: Sphere Collider / number of colliders: " << num_of_colliders << " / sample ticks: " << cmgt::ticks;
 	cmgt::Log::msg(ss.str());
 
 	while (!cmgt::Window::get()->isOpened()) {

@@ -18,8 +18,8 @@ namespace cmgt {
 	public:
 		struct Builder {
 		public:
-			std::vector<Vertex> vertecies;
-			std::vector<uint32_t> indices;
+			std::vector<Vertex> vertecies{};
+			std::vector<uint32_t> indices{};
 
 			void loadModel(const std::string& filePath);
 		};

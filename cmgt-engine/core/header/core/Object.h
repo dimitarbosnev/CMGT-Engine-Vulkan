@@ -23,9 +23,8 @@ namespace cmgt
 	{
 		friend class ObjectManager;
 	public:
-		Object();
 		//Object should only be deleted through the ObjectManager
-		virtual ~Object();
+		Object();
 		const id_t getID() { return _id; }
 		void setName(const std::string& pName);
 		std::string getName() { return _name; }
