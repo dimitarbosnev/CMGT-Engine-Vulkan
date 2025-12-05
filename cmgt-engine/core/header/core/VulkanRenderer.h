@@ -19,6 +19,7 @@
 #define MAX_AMOUT_LIGHTS 100
 namespace cmgt {
 	class GraphicsPipeline;
+	class Object;
 	class VulkanRenderer : public Singelton<VulkanRenderer>{
 		public:
 		struct GlobalUniformData {
@@ -31,9 +32,11 @@ namespace cmgt {
 			void recordCommandBuffer(uint8_t imageIndex, glm::mat4 viewMatrix, glm::mat4 projectionMatrix);
 			void drawFrame(glm::mat4 viewMatrix, glm::mat4 projectionMatrix);
 			VkDescriptorSetLayout getDescriptorSetLayout(){ return GlobalUniformSets.getLayout(); }
-			std::list<GraphicsPipeline*> pipelines;
 			void scheduleLight(LightStruct light);
+			void scheduleForRender(GraphicsPipeline* pipeline, Object* obj);
 			private:
+
+			std::map<GraphicsPipeline*, std::vector<Object*>> pipelines;
 			std::vector<LightStruct> lights;
 			VulkanUniformObject GlobalUniformSets;
 

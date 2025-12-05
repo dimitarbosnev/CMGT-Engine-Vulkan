@@ -22,7 +22,7 @@ namespace cmgt{
         if(speed > 0 ){
         glm::vec3 quadraticAccel = (-0.5f * AIR_DENSITY * DRAG_COEF * 1.f * speed * speed * (velocity / speed)) / mass * pStep;
         velocity += quadraticAccel*pStep;
-        getTransform().WorldTranslate(velocity*pStep);
+        //getTransform().WorldTranslate(velocity*pStep);
         }
         acceleration = glm::vec3(0);
 
@@ -45,6 +45,7 @@ namespace cmgt{
     void PhysicsBody::update(float pStep) {
         
         if(type == phys_type::STATIC) return;
+            getTransform().WorldTranslate(velocity*pStep);
 
     }
 
@@ -57,7 +58,7 @@ namespace cmgt{
 
     glm::vec3 PhysicsBody::reflectVelosity(const glm::vec3& collNormal){
         //bounciness value can be added here
-        float bounciness = 1.0f;
+        float bounciness = 0.1f;
         return bounciness * (-2.f* glm::dot(velocity, collNormal) * collNormal + velocity);
     }
 }

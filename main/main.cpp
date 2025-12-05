@@ -120,7 +120,7 @@ void OnGameStart(){
 
 void physics_loop(){
 
- 	const cmgt::ms phys_step = cmgt::ms(1000 / (int)PHYSICS_STEP); // Time per iteration
+ 	const cmgt::ms phys_step = cmgt::ms((int)PHYSICS_STEP); // Time per iteration
 	//const float phys_tick = PHYSICS_STEP / 1000.f;
 	std::cout<<std::chrono::duration<float>(phys_step).count()<<std::endl;
     auto phys_clock = cmgt::clock::now();
@@ -129,7 +129,8 @@ void physics_loop(){
 				phys_clock += phys_step;
 				float phys_tick = std::chrono::duration<float>(phys_clock - cmgt::clock::now()).count();
 				//std::cout<<phys_tick<<std::endl;
-				if(cmgt::Input::isKeyPressed(GLFW_KEY_SPACE)){
+				//if(cmgt::Input::isKeyPressed(GLFW_KEY_SPACE))
+				{
 					cmgt::SceneManager::physics_update(phys_tick);
 					cmgt::PhysicsEngine::get()->phys_tick(phys_tick);
 				}

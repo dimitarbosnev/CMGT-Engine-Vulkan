@@ -72,7 +72,7 @@ namespace cmgt {
 		else vkCmdDraw(frameData.commandBuffer, vertexCount, 1, 0, 0);
 	}
 	void Mesh::update(float dt) {
-		_material->getPipeline()->scheduleToRender(this);
+		VulkanRenderer::get()->scheduleForRender(_material->getPipeline(), this);
 	}
 	
 	void Mesh::Builder::loadModel(const std::string& filePath) {

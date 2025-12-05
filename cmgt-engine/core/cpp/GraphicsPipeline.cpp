@@ -1,14 +1,13 @@
 
 #include "core/GraphicsPipeline.h"
+#include "core/VulkanRenderer.h"
+#include "vulkan-api/VulkanSwapchain.h"
 #include <fstream>
 #include <stdexcept>
 #include <iostream>
 #include <array>
 #include <vector>
 #include <filesystem>
-#include "vulkan-api/VulkanSwapchain.h"
-#include "core/VulkanRenderer.h"
-#include "core/Mesh.h"
 #include "minimal/types.h"
 namespace cmgt {
 
@@ -48,31 +47,35 @@ namespace cmgt {
 		}
 	}
 
-	GraphicsPipeline::GraphicsPipeline(const GraphicsPipelineInfo& info, VulkanUniformObject::Builder& uniformBuilder,
+	GraphicsPipeline::GraphicsPipeline(const GraphicsPipelineInfo& info, 
+		VulkanUniformObject::Builder& pipelineUniformBuilder,
+		VkDescriptorSetLayout instanceLayout,
 		std::vector<VkPipelineShaderStageCreateInfo>& shadersStages,
 		std::vector<VkPushConstantRange>& pushConstantRanges,
 		std::function<void(const VulkanFrameData&)> uniformData,
 		std::function<void()> deleteShaders) : 
-		uniformSets(uniformBuilder, VulkanInstance::get()), setUniformData(uniformData), freeShaders(deleteShaders) {
+		uniformSets(pipelineUniformBuilder, VulkanInstance::get()), setUniformData(uniformData), freeShaders(deleteShaders) {
 		std::cout << " Creating Graphics Pipeline...\n";
-		createPipelineLayout(pushConstantRanges);
+		createPipelineLayout(pushConstantRanges, instanceLayout);
 
 		createPipeline(info, shadersStages);
 		std::cout << "Graphics Pipeline Initalized!\n";
-		VulkanRenderer::get()->pipelines.push_back(this);
 	}
 
 
 	GraphicsPipeline::~GraphicsPipeline() {
 		freeShaders();
 		//clear meshes
-		renderMeshs.clear();
 		vkDestroyPipelineLayout(VulkanInstance::get()->device(), _pipelineLayout, nullptr);
 		vkDestroyPipeline(VulkanInstance::get()->device(), graphicsPipeline, nullptr);
 		std::cout << "Pipeline destroyed" << std::endl;
 	}
-	void GraphicsPipeline::createPipelineLayout(std::vector<VkPushConstantRange>& ranges) {
+	void GraphicsPipeline::createPipelineLayout(std::vector<VkPushConstantRange>& ranges, VkDescriptorSetLayout instanceLayout) {
+
 		std::vector<VkDescriptorSetLayout> descriptorSetLayouts{ VulkanRenderer::get()->getDescriptorSetLayout(), uniformSets.getLayout() };
+		if(instanceLayout != nullptr)
+			descriptorSetLayouts.push_back(instanceLayout);
+			
 		VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
 		pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
 		pipelineLayoutInfo.setLayoutCount = static_cast<uint32_t>(descriptorSetLayouts.size());
@@ -120,10 +123,6 @@ namespace cmgt {
 			throw std::runtime_error("failed to create pipeline");
 	}
 
-	void GraphicsPipeline::scheduleToRender(Mesh* mesh){
-		renderMeshs.push_back(mesh);
-	}
-
 	void GraphicsPipeline::writeUniformBuffers(const short& imageIndex, const VkCommandBuffer& commandBuffer, std::vector<const void*>& pData)
 	{
 		if(pData.size() != uniformSets.bindingsSize())
@@ -138,19 +137,12 @@ namespace cmgt {
 	}
 
 	void GraphicsPipeline::recordFrameCommandBuffer(const VulkanFrameData& frameData){
-
 		//Write UniformData
 		setUniformData(frameData);
-
-		//CallRenderOnAllMeshes
-		for(Mesh* mesh : renderMeshs){
-			mesh->render(frameData);
-		}
-		renderMeshs.clear();
 	}
 
 	void GraphicsPipeline::bind(VkCommandBuffer commandBuffer) {
-		vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS,graphicsPipeline);
+		vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline);
 	}
 
 	void GraphicsPipeline::defaultGraphicsPipelineInfo(GraphicsPipelineInfo& configInfo) {

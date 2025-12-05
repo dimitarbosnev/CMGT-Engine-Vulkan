@@ -1,36 +1,29 @@
 
-#include "utils/ColorMaterial.h"
+#include "utils/TextureMaterial.h"
 #include "minimal/paths.h"
 #include "core/Globals.h"
 #include "minimal/log.h"
 #include<iostream>
 namespace cmgt {	
-	ColorMaterial::ColorMaterial()
+	TextureMaterial::TextureMaterial()
 	{
-		_name = "ColorMaterial";
+		_name = "TextureMaterial";
 		//For Everymaterial the pipeline should be initalized
 		if(pipeline == nullptr){
 			initPipeline();
 		}
 	}
-	void ColorMaterial::bindPushConstants(const VulkanFrameData& frameData, const glm::mat4 pModelMatrix){
+	void TextureMaterial::bindPushConstants(const VulkanFrameData& frameData, const glm::mat4 pModelMatrix){
 
 		PushConstData data;
-		data.normalMatrix = pModelMatrix;
-		data.color = color;
+		data.modelMatrix = pModelMatrix;
 
 		vkCmdPushConstants(frameData.commandBuffer, pipeline->pipelineLayout(), VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(PushConstData), &data);	
 	}
-	void ColorMaterial::bindUniformBuffers(const VulkanFrameData& frameData){
+	void TextureMaterial::bindUniformBuffers(const VulkanFrameData& frameData){
 
-		//UniformData uniformData;
-		//uniformData.cameraMatrix = frameData.viewMatrix;
-		//uniformData.projMatrix = frameData.projectionMatrix;
-		//uniformData.lightCount = frameData.lights.size();
-		//uniformData.vector_lights = frameData.lights.data();
-		//pipeline->writeUniformBuffers(frameData.imageIndex, frameData.commandBuffer,&uniformData);
 	}
-	void ColorMaterial::initPipeline(){
+	void TextureMaterial::initPipeline(){
 
 		Log::msg("Initalizing Shaders...");
 
@@ -40,22 +33,23 @@ namespace cmgt {
 		CreateShader("ColorShader.frag", &fragmentShaderModule);
 		Log::msg("\t Fragment Shader Initalized!");
 
-		Log::msg("Initalizing ColorMaterial Pipeline...");
+		Log::msg("Initalizing TextureMaterial Pipeline...");
 		std::vector<VkPipelineShaderStageCreateInfo> shaderStages = bindPipelineShaderStages();
 		VulkanUniformObject::Builder builder = createDescriptorSetLayout();
 		std::vector<VkPushConstantRange> pushConstants = setupPushConsts();
+		
 		pipeline = new GraphicsPipeline(GraphicsPipeline::defaultGraphicsPipelineInfo(), builder, nullptr, shaderStages, pushConstants, bindUniformBuffers,freePipeline);
-		Log::msg("Initalizing ColorMaterial Complete!");
+		Log::msg("Initalizing TextureMaterial Complete!");
 
 		Log::flush_buffer();
 	}
 
 	//has to be called somewhere
-	void ColorMaterial::freePipeline(){
+	void TextureMaterial::freePipeline(){
 		vkDestroyShaderModule(VulkanInstance::get()->device(), vertexShaderModule, nullptr);
 		vkDestroyShaderModule(VulkanInstance::get()->device(), fragmentShaderModule, nullptr);
 	}
-	std::vector<VkPipelineShaderStageCreateInfo> ColorMaterial::bindPipelineShaderStages()
+	std::vector<VkPipelineShaderStageCreateInfo> TextureMaterial::bindPipelineShaderStages()
 	{
 		std::vector<VkPipelineShaderStageCreateInfo> shaderStages(2);
 		shaderStages[0].sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
@@ -77,11 +71,11 @@ namespace cmgt {
 		return shaderStages;
 	}
 
-	VulkanUniformObject::Builder ColorMaterial::createDescriptorSetLayout(){
+	VulkanUniformObject::Builder TextureMaterial::createDescriptorSetLayout(){
 		return VulkanUniformObject::Builder();
 		//return VulkanDescriptorSetLayout::Builder().build();
 	}
-	std::vector<VkPushConstantRange> ColorMaterial::setupPushConsts()
+	std::vector<VkPushConstantRange> TextureMaterial::setupPushConsts()
 	{
 		std::vector<VkPushConstantRange> range(1);
 		range[0].stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;

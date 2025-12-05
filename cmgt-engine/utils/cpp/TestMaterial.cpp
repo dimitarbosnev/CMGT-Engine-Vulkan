@@ -43,7 +43,7 @@ namespace cmgt {
 		std::vector<VkPipelineShaderStageCreateInfo> shaderStages = bindPipelineShaderStages();
 		VulkanUniformObject::Builder builder = createDescriptorSetLayout();
 		std::vector<VkPushConstantRange> pushConstants = setupPushConsts();
-		pipeline = new GraphicsPipeline(GraphicsPipeline::defaultGraphicsPipelineInfo(), builder, shaderStages, pushConstants, bindUniformBuffers,freePipeline);
+		pipeline = new GraphicsPipeline(GraphicsPipeline::defaultGraphicsPipelineInfo(), builder, nullptr, shaderStages, pushConstants, bindUniformBuffers,freePipeline);
 		
 		Log::msg("Initalizing TestMaterial Complete!");
 
@@ -79,7 +79,7 @@ namespace cmgt {
 	}
 
 	VulkanUniformObject::Builder TestMaterial::createDescriptorSetLayout(){
-		return VulkanUniformObject::Builder().addBinding(0,VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, sizeof(UniformData));
+		return VulkanUniformObject::Builder().addBufferBinding(0,VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, sizeof(UniformData));
 		//return VulkanDescriptorSetLayout::Builder().build();
 	}
 

@@ -38,7 +38,7 @@ namespace cmgt {
 
 	// *************** Vulkan Uniform Object Builder *********************
 
-	VulkanUniformObject::Builder& VulkanUniformObject::Builder::addBinding(uint32_t binding, VkDescriptorType descriptorType, 
+	VulkanUniformObject::Builder& VulkanUniformObject::Builder::addBufferBinding(uint32_t binding, VkDescriptorType descriptorType, 
 		VkShaderStageFlags stageFlags, size_t size){
 		
 		assert(bindings.count(binding) == 0 && "Binding already in use");
@@ -50,10 +50,30 @@ namespace cmgt {
 		layoutBinding.stageFlags = stageFlags;
 		bindings[binding].layout = layoutBinding;
 		bindings[binding].size = size;
+		bindings[binding].isBufferBinding = true;
 		//save the size of the descriptor to somewhere
 
 		return *this;
 	}
+
+	VulkanUniformObject::Builder& VulkanUniformObject::Builder::addImageBinding( uint32_t binding, VkDescriptorType descriptorType, VkShaderStageFlags stageFlags, uint32_t width, uint32_t height, uint32_t layers){
+			assert(bindings.count(binding) == 0 && "Binding already in use");
+
+			VkDescriptorSetLayoutBinding layoutBinding{};
+			layoutBinding.binding = binding;
+			layoutBinding.descriptorType = descriptorType;
+			layoutBinding.descriptorCount = 1;
+			layoutBinding.stageFlags = stageFlags;
+			bindings[binding].layout = layoutBinding;
+			bindings[binding].width = width;
+			bindings[binding].height = height;
+			bindings[binding].layers = layers;
+			bindings[binding].isImageBinding = true;
+			//save the size of the descriptor to somewhere
+	
+			return *this;
+
+		}
 
 	// *************** Vulkan Uniform Object *********************
 
@@ -99,16 +119,19 @@ namespace cmgt {
 		//create Buffers
 		for (auto& binding : bindings) {
 			// TODO: create a sampler depending on descriptor type
-			if(getDescriptorUsage(binding.second.layout.descriptorType)){
+			if(binding.second.isBufferBinding){
 				VulkanBuffer* buffer = new VulkanBuffer(instance->physicalDevice(), instance->device(),binding.second.size, descriptors.size(),
 				getBufferUsage(binding.second.layout), VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 				buffer->map();
 				binding.second.buffer = buffer;
 				binding.second.bufferInfo = buffer->descriptorInfo();
 				writeBuffer(binding.first);
-			} else {
-				//VulkanImage* image = new VulkanImage(instance->physicalDevice(), instance->device())
-				//And here I decided to pivot towards openGL glhf
+			} else if(binding.second.isImageBinding) {
+				VulkanImage* image = new VulkanImage(instance->physicalDevice(), instance->device(), binding.second.width, binding.second.height, binding.second.layers,
+				VK_FORMAT_R8G8B8A8_SRGB, getImageUsage(binding.second.layout), VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT);
+				binding.second.image = image;
+				binding.second.imageInfo = image->descriptorInfo();
+				writeImage(binding.first);
 			}
 
 
@@ -126,7 +149,10 @@ namespace cmgt {
 	VulkanUniformObject::~VulkanUniformObject(){
 		freeDescriptors();
 		for (auto& binding : bindings){
-			delete binding.second.buffer;
+			if(binding.second.buffer != nullptr)
+				delete binding.second.buffer;
+			if(binding.second.image != nullptr)
+				delete binding.second.image;
 		}
 		bindings.clear();
 		vkDestroyDescriptorPool(instance->device(), descriptorPool, nullptr);

@@ -25,6 +25,7 @@ namespace cmgt
 	public:
 		//Object should only be deleted through the ObjectManager
 		Object();
+		virtual ~Object();
 		const id_t getID() { return _id; }
 		void setName(const std::string& pName);
 		std::string getName() { return _name; }

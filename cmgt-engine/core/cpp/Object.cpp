@@ -6,6 +6,9 @@ namespace cmgt {
     Object::Object() {
         ObjectManager::get()->addObject(this);
     }
+    Object::~Object(){
+
+    }
 
     void Object::setName(const  std::string& pName)
     {

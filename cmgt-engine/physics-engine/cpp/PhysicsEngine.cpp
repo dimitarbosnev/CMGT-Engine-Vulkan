@@ -85,8 +85,8 @@ namespace cmgt
         float mass1 = info.collider1.second->getInverseMass();
         float mass2 = info.collider2.second->getInverseMass();
         float totalMass = mass1 + mass2;
-        glm::vec3 resolution1 = info.collisionNormal * (info.peneterationDepth + 0.001f) * (mass1 / totalMass);
-        glm::vec3 resolution2 = info.collisionNormal * (info.peneterationDepth +  0.001f) * (mass2 / totalMass);
+        glm::vec3 resolution1 = info.collisionNormal * (info.peneterationDepth + EPSILON) * (mass1 / totalMass);
+        glm::vec3 resolution2 = info.collisionNormal * (info.peneterationDepth +  EPSILON) * (mass2 / totalMass);
         if(glm::dot(relative1,resolution1) < 0)
             resolution1 = -resolution1;
         if(glm::dot(relative2,resolution2) > 0)
@@ -504,13 +504,21 @@ namespace cmgt
         if (shape1_max < shape2_min || shape2_max < shape1_min) {
             return false;
         }
-
         // The overlapping (penetration) length is the difference between the lower of the two max values
         // and the higher of the two min values.
         float min_of_max = std::min(shape1_max, shape2_max);
         float max_of_min = std::max(shape1_min, shape2_min);
         newPenetration = min_of_max - max_of_min;
+        if(newPenetration == 0){
+            //directions might be wrong do additional checks
+            
+            glm::vec3 vert1 = shape1.getFurthestPoint(axis);
+            glm::vec3 vert2 = shape2.getFurthestPoint(axis);
+            float p1 = glm::dot(vert1, axis);
+            float p2 = glm::dot(vert2, axis);
 
+            newPenetration = p1 - p2;
+        }
         if(newPenetration < info->peneterationDepth){
             info->peneterationDepth = newPenetration;
             info->collisionNormal = axis;

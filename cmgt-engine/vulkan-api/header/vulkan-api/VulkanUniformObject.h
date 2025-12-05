@@ -17,26 +17,38 @@ namespace cmgt {
 	public:
 
 	struct VulkanDescriptorBinding{
-		size_t size = 0;
 		VkDescriptorSetLayoutBinding layout;
 		VkWriteDescriptorSet descriptorWrite;
+
+		//buffer specific
+		bool isBufferBinding = false;
 		VulkanBuffer* buffer = nullptr;
 		VkDescriptorBufferInfo bufferInfo;
+		size_t size = 0;
 		
-		// add vulkan sampler in the future
-		
+		// image specific
+		bool isImageBinding = false;
+		VulkanImage* image = nullptr;
 		VkDescriptorImageInfo  imageInfo;
+		uint32_t width = 0;
+		uint32_t height = 0;
+		uint32_t layers = 0;
 	};
 
 	class Builder {
 		friend class VulkanUniformObject;
 		public:
 		Builder& setDescriptorCount(uint32_t count) { descriptorCount = count; }
-			Builder& addBinding(
+			Builder& addBufferBinding(
 				uint32_t binding,
 				VkDescriptorType descriptorType,
 				VkShaderStageFlags stageFlags, 
 				size_t size);
+			Builder& addImageBinding(
+					uint32_t binding,
+					VkDescriptorType descriptorType,
+					VkShaderStageFlags stageFlags, 
+					uint32_t width, uint32_t height, uint32_t layers);
 		private:
 		std::unordered_map<uint32_t, VulkanDescriptorBinding> bindings{};
 		uint32_t descriptorCount = MAX_FRAMES_IN_FLIGHT;
@@ -70,6 +82,11 @@ namespace cmgt {
 		VulkanBuffer* getBufferAt(uint32_t index){
 			return bindings[index].buffer;
 		}
+
+		VulkanImage* getImageAt(uint32_t index){
+			return bindings[index].image;
+		}
+
 
 		VkDescriptorSet& getDescriptorSet(uint32_t index){
 			return descriptors[index];

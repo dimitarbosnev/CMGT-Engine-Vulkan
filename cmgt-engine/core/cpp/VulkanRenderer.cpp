@@ -4,22 +4,23 @@
 #include "vulkan-api/VulkanBuffer.h"
 #include "vulkan-api/Window.h"
 #include "core/GraphicsPipeline.h"
+#include "core/Object.h"
 #include "minimal/log.h"
 #include<array>
 #include <stdexcept>
 
 namespace cmgt {
 	VulkanRenderer::VulkanRenderer() : Singelton<VulkanRenderer>(this), GlobalUniformSets(VulkanUniformObject::Builder()
-	.addBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, sizeof(GlobalUniformData))	
-	.addBinding(1, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, sizeof(LightStruct) * MAX_AMOUT_LIGHTS),VulkanInstance::get())
+	.addBufferBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, sizeof(GlobalUniformData))	
+	.addBufferBinding(1, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, sizeof(LightStruct) * MAX_AMOUT_LIGHTS),VulkanInstance::get())
 	{
 		lights.reserve(MAX_AMOUT_LIGHTS);
 		createCommandBuffers();
 		//createDescriptorSets();
 	}
 	VulkanRenderer::~VulkanRenderer() {
-		for(GraphicsPipeline* pipeline : pipelines){
-			delete pipeline;
+		for(auto& pipeline : pipelines){
+			delete pipeline.first;
 		}
 		pipelines.clear();
 	}
@@ -100,10 +101,13 @@ namespace cmgt {
 		//This way you don't have to keep track of which mesh is visible
 
 		writeDescriptorBuffers(frameData);
-		for(GraphicsPipeline* pipeline : pipelines){
-			pipeline->bind(frameData.commandBuffer);
-			vkCmdBindDescriptorSets(frameData.commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline->pipelineLayout(), 0, 1, &GlobalUniformSets.getDescriptorSet(frameData.imageIndex), 0, nullptr);
-			pipeline->recordFrameCommandBuffer(frameData);
+		for(auto& pipeline : pipelines){
+			pipeline.first->bind(frameData.commandBuffer);
+			vkCmdBindDescriptorSets(frameData.commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline.first->pipelineLayout(), 0, 1, &GlobalUniformSets.getDescriptorSet(frameData.imageIndex), 0, nullptr);
+			pipeline.first->recordFrameCommandBuffer(frameData);
+			for(Object* obj : pipeline.second){
+				obj->render(frameData);
+			}
 		}
 		
 		vkCmdEndRenderPass(commandBuffers[imageIndex]);
@@ -133,7 +137,8 @@ namespace cmgt {
 		}
 		if (result != VK_SUCCESS)
 			throw std::runtime_error("failed to present swap chian image!");
-		
+		for(auto& pipeline : pipelines)
+			pipeline.second.clear();
 		lights.clear();
 	}
 
@@ -163,5 +168,9 @@ namespace cmgt {
 			lights.push_back(light);
 		else
 			Log::warning("Reached the maximum amount of lights. This light will not be scheduled for render");
+	}
+
+	void VulkanRenderer::scheduleForRender(GraphicsPipeline* pipeline, Object* obj){
+		pipelines[pipeline].push_back(obj);
 	}
 }
