@@ -18,5 +18,3 @@ add_subdirectory(main)
 add_subdirectory(advanced_tools)
 add_subdirectory(test)
 add_subdirectory(cmgt-engine)
-
-

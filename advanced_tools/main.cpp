@@ -56,8 +56,8 @@ cmgt::GameObject* SpawnBall(glm::vec3 pos, glm::vec3 scale, glm::vec3 force){
 	childObject->getTransform().Translate(pos);
 	childObject->getTransform().Scale(scale);
 	cmgt::Mesh* cube = new cmgt::Mesh("sphere_smooth.obj", new cmgt::ColorMaterial());
-	cmgt::SphereCollider* collider = new cmgt::SphereCollider();
-	collider->setRadius(scale.x);
+	cmgt::MeshCollider* collider = new cmgt::MeshCollider();
+	//collider->setRadius(scale.x);
 	collider->addForce(force, true);
 	childObject->addComponent(cube);
 	childObject->addComponent(collider);
@@ -69,9 +69,7 @@ void OnGameStart(){
 	physicsEngnie = new cmgt::PhysicsEngine();
 	cmgt::Scene* firstScene = new cmgt::Scene("First Scene");
 	
-	std::random_device rd;  
-    // Use the Mersenne Twister engine
-    std::mt19937 engine(rd());
+    std::mt19937 engine(123456);
 	std::uniform_real_distribution<float> distrib_x(1.f, 9.f);
 	std::uniform_real_distribution<float> distrib_y(-9.f, -1.f);
 	std::uniform_real_distribution<float> distrib_z(1.f, 9.f);

@@ -157,5 +157,6 @@ namespace cmgt {
         info.imageLayout = currentLayout;
         info.imageView = imageView;
         info.sampler = imageSampler;
+        return info;
     }
 }  // namespace cmgt
